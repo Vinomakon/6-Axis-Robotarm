@@ -50,7 +50,7 @@ def set_stepPS2(x: int):
     asyncio.run(con([data]))
 
 
-def set_global_stepsPS(x: int):
+def set_global_stepsPS(x: float):
     data = f"01{x}"
     asyncio.run(con([data]))
 
@@ -59,7 +59,7 @@ def initTMC():
     asyncio.run(con(["99"]))
 
 
-def startMovement(synch: bool, step1: float, step2: float):
+def startMovement(synch: bool, speed: float, step1: float, step2: float):
     class step_module:
         def __init__(self, motor, step, cur):
             self.motor = motor
@@ -87,12 +87,10 @@ def startMovement(synch: bool, step1: float, step2: float):
         speeds = []
         for i in range(len(steps)):
             if i == 0:
-                speeds.append(1000)
+                speeds.append(speed)
                 continue
-            speeds.append(round(1000 * (steps[0] / steps[i]), 5))
-        send_data = []
-        send_data.append(get_setPos1(step1))
-        send_data.append(get_setPos2(step2))
+            speeds.append(round(speed * (steps[0] / steps[i]), 5))
+        send_data = [get_setPos1(step1), get_setPos2(step2)]
         if steps[0].motor == 1:
             send_data.append(get_stepPS1(speeds[1]))
             send_data.append(get_stepPS2(speeds[0]))
@@ -102,13 +100,12 @@ def startMovement(synch: bool, step1: float, step2: float):
         send_data.append("00")
         asyncio.run(con(send_data))
     else:
-        set_global_stepsPS(DEFAULT_STEPS)
-        asyncio.run(con(["00"]))
+        send_data = [get_setPos1(step1), get_setPos2(step2), get_global_stepsPS(speed), "00"]
+        asyncio.run(con(send_data))
 
 
-def synch_movement(en: bool):
-    print(en)
-    return gr.update(interactive=not en)
+def homeSend(synch: bool, speed: float):
+    startMovement(synch, speed, 0, 0)
 
 
 with gr.Blocks() as iface:
@@ -118,28 +115,25 @@ with gr.Blocks() as iface:
     # Motor 1
     with gr.Row():
         # Position
-        deg1 = gr.Number(value=0, label="Degree Position of first Motor", minimum=-360, maximum=360)
+        deg1 = gr.Number(value=0, label="Degree Position of first Motor", minimum=-360 * 3, maximum=360 * 3)
         deg1_btn = gr.Button("Submit DegreePosition")
-        deg1_btn.click(givePos1, inputs=[deg1])
-        # Speed
 
     # Motor 2
     with gr.Row():
         # Position
-        deg2 = gr.Number(value=0, label="Degree Position of second Motor", minimum=-360, maximum=360)
+        deg2 = gr.Number(value=0, label="Degree Position of second Motor", minimum=-360 * 3, maximum=360 * 3)
         deg2_btn = gr.Button("Submit DegreePosition")
-        deg2_btn.click(givePos2, inputs=[deg2])
 
     # Global Variables
     with gr.Row():
-        speed = gr.Number(value=1000, label="Global Motor Speed", minimum=0, maximum=10000)
+        speed_set = gr.Number(value=1000, label="Global Motor Speed", minimum=0, maximum=10000)
         speed_btn = gr.Button("Submit Global Speed")
-        speed_btn.click(set_global_stepsPS, inputs=[speed])
 
-    sync_movement = gr.Checkbox(value=False, label="Synchrounous Movement")
-    sync_movement.input(synch_movement, inputs=[sync_movement], outputs=[speed_btn])
+    sync_movement = gr.Checkbox(value=False, label="Synchronous Movement")
     start_btn = gr.Button("Start Movement")
-    start_btn.click(startMovement, inputs=[sync_movement, deg1, deg2])
+    start_btn.click(startMovement, inputs=[sync_movement, speed_set, deg1, deg2])
+    home_btn = gr.Button("Set To 0")
+    home_btn.click(homeSend, inputs=[sync_movement, speed_set])
     # CHOPCONF
     '''
     with gr.Accordion("CHOPCONF", open=False):
