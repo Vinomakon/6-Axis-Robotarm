@@ -1,0 +1,34 @@
+#include "constants.h"
+// PINS FOR TMC-SPI
+int SDO_PIN = 9;
+int SCK_PIN = 7;
+int SDI_PIN = 6;
+
+// PINS FOR MOTOR 1
+int DIR1_PIN = 12;
+int STEP1_PIN = 11;
+int EN1_PIN = 5;
+int CS1_PIN = 8;
+int SW1_PIN = 45;
+
+// PINS FOR MOTOR 1
+int DIR2_PIN = 4;
+int STEP2_PIN = 3;
+int EN2_PIN = 1;
+int CS2_PIN = 2;
+int SW2_PIN = 46;
+
+// VALUES FOR ESP
+int ONE_ROTATION = 3200;
+int HOME_OFFSET = 400;
+int DEFAULT_SPEED = 1000;
+int HOMING_SPEED = 1000;
+int SHOMING_SPEED = 200;
+
+// VALUES FOR TMC
+int STALL_VALUE = 15;
+int R_SENSE = 0.11f;
+int MSTEP = 256;
+
+// WRITE ADDRESS
+int WRITE_ADDR = 0x80;
