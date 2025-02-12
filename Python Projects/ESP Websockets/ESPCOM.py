@@ -108,10 +108,29 @@ def homeSend(synch: bool, speed: float):
     startMovement(synch, speed, 0, 0)
 
 
+def home_motor1():
+    asyncio.run(con(["13"]))
+
+
+def home_motor2():
+    asyncio.run(con(["23"]))
+
+
+def home_all_motors():
+    asyncio.run(con(["13", "23"]))
+
+
 with gr.Blocks() as iface:
     init_tmc = gr.Button("INIT TMCs")
     init_tmc.click(initTMC)
 
+    home_all_btn = gr.Button("Home all Motors")
+    home_all_btn.click(home_all_motors)
+    with gr.Row():
+        home1_btn = gr.Button("Home Motor 1")
+        home1_btn.click(home_motor1)
+        home2_btn = gr.Button("Home Motor 2")
+        home2_btn.click(home_motor2)
     # Motor 1
     with gr.Row():
         # Position
@@ -126,7 +145,7 @@ with gr.Blocks() as iface:
 
     # Global Variables
     with gr.Row():
-        speed_set = gr.Number(value=1000, label="Global Motor Speed", minimum=0, maximum=10000)
+        speed_set = gr.Number(value=1000, label="Global Motor Speed", minimum=0, maximum=25000)
         speed_btn = gr.Button("Submit Global Speed")
 
     sync_movement = gr.Checkbox(value=False, label="Synchronous Movement")

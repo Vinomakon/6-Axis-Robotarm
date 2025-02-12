@@ -10,25 +10,30 @@
 using namespace std;
 
 // PINS FOR TMC-SPI
-#define SDO_PIN 17
-#define SCK_PIN 16
-#define SDI_PIN 15
+#define SDO_PIN 9
+#define SCK_PIN 7
+#define SDI_PIN 6
 
 // PINS FOR MOTOR 1
 #define DIR1_PIN 12
 #define STEP1_PIN 11
 #define EN1_PIN 5
-#define CS1_PIN 14
+#define CS1_PIN 8
+#define SW1_PIN 45
 
 // PINS FOR MOTOR 1
 #define DIR2_PIN 4
 #define STEP2_PIN 3
-#define EN2_PIN 2
-#define CS2_PIN 9
+#define EN2_PIN 1
+#define CS2_PIN 2
+#define SW2_PIN 46
 
 // VALUES FOR ESP
 #define ONE_ROTATION 3200
+#define HOME_OFFSET 400
 #define DEFAULT_SPEED 1000
+#define HOMING_SPEED 1000
+#define SHOMING_SPEED 200
 
 // VALUES FOR TMC
 #define STALL_VALUE 15
@@ -54,6 +59,9 @@ int move_to1 = 0;
 bool pos_movement1 = true;
 float sps1 = 1000;
 int sps_mic1 = int(1000000 / sps1);
+bool home_mot1 = false;
+bool second_home1 = false;
+bool home_slow1 = false;
 
 // MOTOR2 ARGUMENTS
 float current_deg2 = 0;
@@ -63,6 +71,9 @@ int move_to2 = 0;
 bool pos_movement2 = true;
 float sps2 = 1000;
 int sps_mic2 = int(1000000 / sps2);
+bool home_mot2 = false;
+bool second_home2 = false;
+bool home_slow2 = false;
 
 bool can_move = false;
 
@@ -458,6 +469,18 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
       sps2 = msg.substring(2, str_len).toFloat();
       sps_mic2 = int(1000000 / sps2);
       break;
+    case 13:
+      home_mot1 = true;
+      sps1 = HOMING_SPEED;
+      sps_mic1 = int(1000000 / sps1);
+      digitalWrite(DIR1_PIN, LOW);
+      break;
+    case 23:
+      home_mot2 = true;
+      sps2 = HOMING_SPEED;
+      sps_mic2 = int(1000000 / sps2);
+      digitalWrite(DIR2_PIN, LOW);
+      break;
     case 18:
       ws.textAll((String)current_deg1);
       break;
@@ -502,9 +525,6 @@ void initWebSocket() {
   server.addHandler(&ws);
 }
 
-
-
-
 void setup() {
   Serial.begin(115200);
 
@@ -525,11 +545,13 @@ void setup() {
   pinMode(STEP1_PIN, OUTPUT);
   pinMode(EN1_PIN, OUTPUT);
   pinMode(CS1_PIN, OUTPUT);
+  pinMode(SW1_PIN, INPUT_PULLUP);
 
   pinMode(DIR2_PIN, OUTPUT);
   pinMode(STEP2_PIN, OUTPUT);
   pinMode(EN2_PIN, OUTPUT);
   pinMode(CS2_PIN, OUTPUT);
+  pinMode(SW2_PIN, INPUT_PULLUP);
 
   pinMode(SCK_PIN, OUTPUT);
   pinMode(SDI_PIN, OUTPUT);
@@ -544,9 +566,6 @@ void setup() {
 
   digitalWrite(CS1_PIN, LOW);
   digitalWrite(CS2_PIN, LOW);
-
-  initTMC(CS1_PIN);
-  initTMC(CS2_PIN);
 }
 
 /*
@@ -570,9 +589,20 @@ void moveTo(float move_deg){
   current_pos = move_pos;
 }*/
 
+bool sw1_on = false;
+int last_sw1 = 0;
+bool sw2_on = false;
+int last_sw2 = 0;
+
+#define SWITCH_ON_TIME 10000
+
 void loop() {
   static int mot1_last = 0;
   static int mot2_last = 0;
+
+  static bool sw1_on = false;
+  static bool sw2_on = false;
+
   int us = micros();
 
   if(can_move){
@@ -601,11 +631,73 @@ void loop() {
     }
   }
   
-  /*
-  if ((us - mot2_last) >= int(1000 * steps_mils * 3)){
-    mot2_last = us;
-    digitalWrite(STEP2_PIN, HIGH);
-    delayMicroseconds(1);
-    digitalWrite(STEP2_PIN, LOW);
-  }*/
+  if(home_mot1){
+    if(second_home1) {
+      if (current_pos1 >= move_to1){
+        digitalWrite(DIR1_PIN, LOW);
+        second_home1 = false;
+        sps1 = SHOMING_SPEED;
+        sps_mic1 = int(1000000 / sps1);
+      } else if ((us - mot1_last) >= sps_mic1){
+        current_pos1++;
+        mot1_last = us;
+        digitalWrite(STEP1_PIN, HIGH);
+        digitalWrite(STEP1_PIN, LOW);
+      }
+    } else if(digitalRead(SW1_PIN) == 1) {
+        if ((us - mot1_last) >= sps_mic1){
+          mot1_last = us;
+          digitalWrite(STEP1_PIN, HIGH);
+          digitalWrite(STEP1_PIN, LOW);
+        }
+    } else {
+      if(home_slow1){
+        home_mot1 = false;
+        home_slow1 = false;
+        current_pos1 = 0;
+        current_deg1 = 0;
+      } else {
+        home_slow1 = true;
+        second_home1 = true;
+        current_pos1 = 0;
+        move_to1 = HOME_OFFSET;
+        digitalWrite(DIR1_PIN, HIGH);
+      }
+    }
+  }
+
+  if(home_mot2){
+    if(second_home2) {
+      if (current_pos2 >= move_to2){
+        digitalWrite(DIR2_PIN, LOW);
+        second_home2 = false;
+        sps2 = SHOMING_SPEED;
+        sps_mic2 = int(1000000 / sps2);
+      } else if ((us - mot2_last) >= sps_mic2){
+        current_pos2++;
+        mot2_last = us;
+        digitalWrite(STEP2_PIN, HIGH);
+        digitalWrite(STEP2_PIN, LOW);
+      }
+    } else if(digitalRead(SW2_PIN) == 1) {
+        if ((us - mot2_last) >= sps_mic2){
+          mot2_last = us;
+          digitalWrite(STEP2_PIN, HIGH);
+          digitalWrite(STEP2_PIN, LOW);
+        }
+    } else {
+      if(home_slow2){
+        home_mot2 = false;
+        home_slow2 = false;
+        current_pos2 = 0;
+        current_deg2 = 0;
+      } else {
+        home_slow2 = true;
+        second_home2 = true;
+        current_pos2 = 0;
+        move_to2 = HOME_OFFSET;
+        digitalWrite(DIR2_PIN, HIGH);
+      }
+    }
+  }
 }
