@@ -59,7 +59,7 @@ def initTMC():
     asyncio.run(con(["99"]))
 
 
-def startMovement(synch: bool, speed: float, step1: float, step2: float):
+def startMovement(synch: bool, speed: int, accel: int, step1: float, step2: float):
     class step_module:
         def __init__(self, motor, step, cur):
             self.motor = motor
@@ -85,18 +85,25 @@ def startMovement(synch: bool, speed: float, step1: float, step2: float):
         steps = [step_module(1, step1, float(cur_poss[0])), step_module(2, step2, float(cur_poss[1]))]
         steps.sort()
         speeds = []
+        accels = []
         for i in range(len(steps)):
             if i == 0:
                 speeds.append(speed)
+                accels.append(accel)
                 continue
-            speeds.append(round(speed * (steps[0] / steps[i]), 5))
+            speeds.append(int(speed * (steps[0] / steps[i])))
+            accels.append(int(accel * (steps[i] / steps[0])))
         send_data = [get_setPos1(step1), get_setPos2(step2)]
         if steps[0].motor == 1:
             send_data.append(get_stepPS1(speeds[1]))
+            send_data.append(get_accel1(accels[0]))
             send_data.append(get_stepPS2(speeds[0]))
+            send_data.append(get_accel2(accels[1]))
         else:
             send_data.append(get_stepPS1(speeds[0]))
+            send_data.append(get_accel1(accels[1]))
             send_data.append(get_stepPS2(speeds[1]))
+            send_data.append(get_accel2(accels[0]))
         send_data.append("00")
         asyncio.run(con(send_data))
     else:
@@ -104,8 +111,8 @@ def startMovement(synch: bool, speed: float, step1: float, step2: float):
         asyncio.run(con(send_data))
 
 
-def homeSend(synch: bool, speed: float):
-    startMovement(synch, speed, 0, 0)
+def homeSend(synch: bool, speed: int, accel: int):
+    startMovement(synch, speed, accel, 0, 0)
 
 
 def home_motor1():
@@ -146,13 +153,13 @@ with gr.Blocks() as iface:
     # Global Variables
     with gr.Row():
         speed_set = gr.Number(value=1000, label="Global Motor Speed", minimum=0, maximum=25000)
-        speed_btn = gr.Button("Submit Global Speed")
+        accel_set = gr.Number(value=10000, label="Global Motor Acceleration", minimum=0, maximum=250000)
 
     sync_movement = gr.Checkbox(value=False, label="Synchronous Movement")
     start_btn = gr.Button("Start Movement")
-    start_btn.click(startMovement, inputs=[sync_movement, speed_set, deg1, deg2])
+    start_btn.click(startMovement, inputs=[sync_movement, speed_set, accel_set, deg1, deg2])
     home_btn = gr.Button("Set To 0")
-    home_btn.click(homeSend, inputs=[sync_movement, speed_set])
+    home_btn.click(homeSend, inputs=[sync_movement, speed_set, accel_set])
     # CHOPCONF
     '''
     with gr.Accordion("CHOPCONF", open=False):

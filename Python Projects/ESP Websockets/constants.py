@@ -21,12 +21,27 @@ def get_stepPS1(x: float) -> str:
     return data
 
 
-def get_stepPS2(x: float) -> str:
+def get_stepPS2(x: int) -> str:
     data = f"21{x}"
     return data
 
 
-def get_global_stepsPS(x: float) -> str:
+def get_global_stepsPS(x: int) -> str:
+    data = f"01{x}"
+    return data
+
+
+def get_accel1(x: int) -> str:
+    data = f"12{x}"
+    return data
+
+
+def get_accel2(x: int) -> str:
+    data = f"22{x}"
+    return data
+
+
+def get_global_accel(x: int) -> str:
     data = f"01{x}"
     return data
 
