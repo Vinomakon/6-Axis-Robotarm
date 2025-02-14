@@ -91,8 +91,14 @@ def startMovement(synch: bool, speed: int, accel: int, step1: float, step2: floa
                 speeds.append(speed)
                 accels.append(accel)
                 continue
-            speeds.append(int(speed * (steps[0] / steps[i])))
-            accels.append(int(accel * (steps[i] / steps[0])))
+            if steps[i].t_steps == 0:
+                speeds.append(int(speed))
+            else:
+                speeds.append(int(speed * (steps[0] / steps[i])))
+            if steps[0].t_steps == 0:
+                accels.append(int(accel))
+            else:
+                accels.append(int(accel * (steps[i] / steps[0])))
         send_data = [get_setPos1(step1), get_setPos2(step2)]
         if steps[0].motor == 1:
             send_data.append(get_stepPS1(speeds[1]))
@@ -141,19 +147,19 @@ with gr.Blocks() as iface:
     # Motor 1
     with gr.Row():
         # Position
-        deg1 = gr.Number(value=0, label="Degree Position of first Motor", minimum=-360 * 3, maximum=360 * 3)
+        deg1 = gr.Number(value=0, label="Degree Position of first Motor")
         deg1_btn = gr.Button("Submit DegreePosition")
 
     # Motor 2
     with gr.Row():
         # Position
-        deg2 = gr.Number(value=0, label="Degree Position of second Motor", minimum=-360 * 3, maximum=360 * 3)
+        deg2 = gr.Number(value=0, label="Degree Position of second Motor")
         deg2_btn = gr.Button("Submit DegreePosition")
 
     # Global Variables
     with gr.Row():
-        speed_set = gr.Number(value=1000, label="Global Motor Speed", minimum=0, maximum=25000)
-        accel_set = gr.Number(value=10000, label="Global Motor Acceleration", minimum=0, maximum=250000)
+        speed_set = gr.Number(value=1000, label="Global Motor Speed", minimum=0, maximum=25000, step=1)
+        accel_set = gr.Number(value=10000, label="Global Motor Acceleration", minimum=0, maximum=250000, step=1)
 
     sync_movement = gr.Checkbox(value=False, label="Synchronous Movement")
     start_btn = gr.Button("Start Movement")

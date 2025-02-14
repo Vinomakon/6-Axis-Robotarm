@@ -32,7 +32,8 @@ using namespace TMC2130_n;
 #define SW2_PIN 46
 
 // VALUES FOR ESP
-#define ONE_ROTATION 3200
+#define DEFAULT_MRES 16
+#define ONE_ROTATION 200 * DEFAULT_MRES
 
 #define HOMING_OFFSET 400
 #define HOMING_SPEED 1000
@@ -82,7 +83,7 @@ void initTMC(int num){
   driver[num].toff(4);                                                                      // off time
   driver[num].blank_time(24);                                                               // blank tim
   driver[num].pwm_autoscale(1);
-  driver[num].microsteps(16); // What microstep range to use
+  driver[num].microsteps(DEFAULT_MRES); // What microstep range to use
   driver[num].ihold(18);
   driver[num].irun(18);
   driver[num].TPWMTHRS(20);
@@ -135,14 +136,17 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
     case 13:
       home_mot1 = true;
       stepper[0].setSpeed(-HOMING_SPEED);
+      stepper[0].setMaxSpeed(HOMING_SPEED);
       stepper[0].setAcceleration(DEF_ACCEL);
+      driver[0].microsteps(DEFAULT_MRES);
       break;
     case 23:
       home_mot2 = true;
       stepper[1].setSpeed(-HOMING_SPEED);
+      stepper[1].setMaxSpeed(HOMING_SPEED);
       stepper[1].setAcceleration(DEF_ACCEL);
+      driver[1].microsteps(DEFAULT_MRES);
       break;
-    
     case 18:
       ws.textAll((String)current_deg1);
       break;
@@ -209,7 +213,6 @@ void setup() {
   
   SPI.begin(SCK_PIN, SDO_PIN, SDI_PIN);
   for(int i = 0; i < 2; i++){
-    initTMC(i);
     initStepper(i);
   }
   
