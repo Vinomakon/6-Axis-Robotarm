@@ -124,7 +124,7 @@ void initTMC2130(int num){
 
 void initTMC5160(int num){
   sdriver[num].begin();                                                                      // Initiate pins and registeries
-  sdriver[num].rms_current(2000, 0.8); // Set stepper current, second parameter is hold_multiplier
+  sdriver[num].rms_current(1000, 0.8); // Set stepper current, second parameter is hold_multiplier
   sdriver[num].en_pwm_mode(1);                                                               // Enable extremely quiet stepping
   sdriver[num].toff(4);                                                                      // off time
   sdriver[num].blank_time(24);                                                               // blank tim
@@ -225,7 +225,16 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
       stepper[1].setAcceleration(DEF_ACCEL);
       driver[1].microsteps(DEFAULT_MRES);
       break;
-    
+
+    // ENABLE MOTORS
+    case 19:
+      digitalWrite(EN1_PIN, msg.charAt(2) == '1' ? LOW : HIGH);
+    case 29:
+      digitalWrite(EN2_PIN, msg.charAt(2) == '1' ? LOW : HIGH);
+    case 39:
+      digitalWrite(EN3_PIN, msg.charAt(2) == '1' ? LOW : HIGH);
+    case 49:
+      digitalWrite(EN4_PIN, msg.charAt(2) == '1' ? LOW : HIGH);
     // GIVE CURRENT POSITION
     case 18:
       ws.textAll((String)current_deg1);
@@ -300,15 +309,18 @@ void setup() {
   pinMode(SW2_PIN, INPUT_PULLUP);
 
   pinMode(EN3_PIN, OUTPUT);
+
+  pinMode(EN4_PIN, OUTPUT);
   
   SPI.begin(SCK_PIN, SDO_PIN, SDI_PIN);
   for(int i = 0; i < 4; i++){
     initStepper(i);
   }
   
-  digitalWrite(EN1_PIN, HIGH);
-  digitalWrite(EN2_PIN, HIGH);
+  digitalWrite(EN1_PIN, LOW);
+  digitalWrite(EN2_PIN, LOW);
   digitalWrite(EN3_PIN, LOW);
+  digitalWrite(EN4_PIN, LOW);
 }
 
 #define SWITCH_ON_TIME 10000

@@ -113,7 +113,7 @@ def startMovement(synch: bool, speed: int, accel: int, step1: float, step2: floa
         send_data.append("00")
         asyncio.run(con(send_data))
     else:
-        send_data = [get_setPos1(step1), get_setPos2(step2), get_global_stepsPS(speed), "00"]
+        send_data = [get_setPos1(step1), get_setPos2(step2), get_stepPS1(speed), get_stepPS2(speed), "00"]
         asyncio.run(con(send_data))
 
 
@@ -146,12 +146,30 @@ def big_motor_turn(speed1: int, speed2: int, accel1: int, accel2: int, pos1: int
     pass
 
 
+def en_mot(m1: bool, m2: bool, m3: bool, m4: bool):
+    mots = [m1, m2, m3, m4]
+    data = []
+    for m in range(4):
+        data.append(f"{m + 1}9{1 if mots[m] else 0}")
+    asyncio.run(con(data))
+
+
 with gr.Blocks() as iface:
     init_tmc = gr.Button("INIT TMCs")
     init_tmc.click(initTMC)
 
     home_all_btn = gr.Button("Home all Motors")
     home_all_btn.click(home_all_motors)
+
+    # ENABLE MOTORS
+    with gr.Row():
+        mot1_en = gr.Checkbox(label="Mot1", value=True)
+        mot2_en = gr.Checkbox(label="Mot2", value=True)
+        mot3_en = gr.Checkbox(label="Mot3", value=True)
+        mot4_en = gr.Checkbox(label="Mot4", value=True)
+        mot_en = gr.Button("Submit States")
+        mot_en.click(en_mot, inputs=[mot1_en, mot2_en, mot3_en, mot4_en])
+
     with gr.Row():
         home1_btn = gr.Button("Home Motor 1")
         home1_btn.click(home_motor1)
@@ -182,6 +200,9 @@ with gr.Blocks() as iface:
 
     big_motor_btn = gr.Button("Move THICC Motors")
     big_motor_btn.click(big_motor_turn, inputs=[speed3, speed4, accel3, accel4, deg3, deg4])
+    big_motor_zero_btn = gr.Button("Move THICC Motors to 0")
+    zero_pos = gr.State(value=0)
+    big_motor_zero_btn.click(big_motor_turn, inputs=[speed3, speed4, accel3, accel4, zero_pos, zero_pos])
 
     # Global Variables
     with gr.Row():
