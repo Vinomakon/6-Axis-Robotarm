@@ -117,6 +117,14 @@ def startMovement(synch: bool, speed: int, accel: int, step1: float, step2: floa
         asyncio.run(con(send_data))
 
 
+def fn_speed3(speed: int):
+    asyncio.run(con([f"31{speed}"]))
+
+
+def fn_speed4(speed: int):
+    asyncio.run(con([f"41{speed}"]))
+
+
 def homeSend(synch: bool, speed: int, accel: int):
     startMovement(synch, speed, accel, 0, 0)
 
@@ -133,6 +141,11 @@ def home_all_motors():
     asyncio.run(con(["13", "23"]))
 
 
+def big_motor_turn(speed1: int, speed2: int, accel1: int, accel2: int, pos1: int, pos2: int):
+    asyncio.run(con([f"31{speed1}", f"41{speed2}", f"32{accel1}", f"42{accel2}", f"30{pos1}", f"40{pos2}", "00"]))
+    pass
+
+
 with gr.Blocks() as iface:
     init_tmc = gr.Button("INIT TMCs")
     init_tmc.click(initTMC)
@@ -147,14 +160,28 @@ with gr.Blocks() as iface:
     # Motor 1
     with gr.Row():
         # Position
-        deg1 = gr.Number(value=0, label="Degree Position of first Motor")
-        deg1_btn = gr.Button("Submit DegreePosition")
+        deg1 = gr.Number(value=0, label="Degree Position of 1st Motor")
 
     # Motor 2
     with gr.Row():
         # Position
-        deg2 = gr.Number(value=0, label="Degree Position of second Motor")
-        deg2_btn = gr.Button("Submit DegreePosition")
+        deg2 = gr.Number(value=0, label="Degree Position of 2nd Motor")
+
+    # Motor 2
+    with gr.Row():
+        # Speed
+        speed3 = gr.Number(value=6000, label="Speed of 3rd Motor")
+        accel3 = gr.Number(value=1000, label="Acceleration of 3rd Motor")
+        deg3 = gr.Number(value=0, label="Degree Position of 3rd Motor")
+
+    with gr.Row():
+        # Speed
+        speed4 = gr.Number(value=6000, label="Speed of 4th Motor")
+        accel4 = gr.Number(value=1000, label="Acceleration of 4th Motor")
+        deg4 = gr.Number(value=0, label="Degree Position of 4th Motor")
+
+    big_motor_btn = gr.Button("Move THICC Motors")
+    big_motor_btn.click(big_motor_turn, inputs=[speed3, speed4, accel3, accel4, deg3, deg4])
 
     # Global Variables
     with gr.Row():

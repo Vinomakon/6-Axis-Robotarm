@@ -24,16 +24,31 @@ using namespace TMC2130_n;
 #define CS1_PIN 8
 #define SW1_PIN 45
 
-// PINS FOR MOTOR 1
+// PINS FOR MOTOR 2
 #define DIR2_PIN 4
 #define STEP2_PIN 3
 #define EN2_PIN 1
 #define CS2_PIN 2
 #define SW2_PIN 46
 
+//PINS FOR MOTOR 3
+#define DIR3_PIN 16
+#define STEP3_PIN 15
+#define EN3_PIN 17
+#define CS3_PIN 18
+
+//PINS FOR MOTOR 4
+#define DIR4_PIN 19
+#define STEP4_PIN 20
+#define EN4_PIN 48
+#define CS4_PIN 47
+
 // VALUES FOR ESP
 #define DEFAULT_MRES 16
+#define B_DEFAULT_MRES 8
+#define B_REDUCTION 20
 #define ONE_ROTATION 200 * DEFAULT_MRES
+#define B_ONE_ROTATION 200 * B_DEFAULT_MRES * B_REDUCTION
 
 #define HOMING_OFFSET 400
 #define HOMING_SPEED 1000
@@ -45,14 +60,14 @@ using namespace TMC2130_n;
 // VALUES FOR TMC
 #define STALL_VALUE 15
 #define R_SENSE 0.11f
-#define MSTEP 256
 
 // WRITE ADDRESS
 #define WRITE_ADDR 0x80
 
 int cs_select[] = {8, 2};
 TMC2130Stepper driver[] = {TMC2130Stepper(CS1_PIN, R_SENSE), TMC2130Stepper(CS2_PIN, R_SENSE)};
-AccelStepper stepper[] = {AccelStepper(1, STEP1_PIN, DIR1_PIN), AccelStepper(1, STEP2_PIN, DIR2_PIN)};
+TMC5160Stepper sdriver[] = {TMC5160Stepper(CS3_PIN, R_SENSE), TMC5160Stepper(CS4_PIN, R_SENSE)};
+AccelStepper stepper[] = {AccelStepper(1, STEP1_PIN, DIR1_PIN), AccelStepper(1, STEP2_PIN, DIR2_PIN), AccelStepper(1, STEP3_PIN, DIR3_PIN), AccelStepper(1, STEP4_PIN, DIR4_PIN)};
 
 // WIFI
 AsyncWebServer server(80);
@@ -74,9 +89,27 @@ bool home_mot2 = false;
 bool second_home2 = false;
 bool home_slow2 = false;
 
+// MOTOR3 ARGUMENTS
+float current_deg3 = 0;
+float move_to_deg3 = 0;
+int move_to3 = 0;
+bool home_mot3 = false;
+bool second_home3 = false;
+bool home_slow3 = false;
+int stepper_speed3 = 100;
+
+// MOTOR4 ARGUMENTS
+float current_deg4 = 0;
+float move_to_deg4 = 0;
+int move_to4 = 0;
+bool home_mot4 = false;
+bool second_home4 = false;
+bool home_slow4 = false;
+int stepper_speed4 = 100;
+
 bool can_move = false;
 
-void initTMC(int num){
+void initTMC2130(int num){
   driver[num].begin();                                                                      // Initiate pins and registeries
   driver[num].rms_current(1000, 0.8); // Set stepper current, second parameter is hold_multiplier
   driver[num].en_pwm_mode(1);                                                               // Enable extremely quiet stepping
@@ -89,8 +122,21 @@ void initTMC(int num){
   driver[num].TPWMTHRS(20);
 }
 
+void initTMC5160(int num){
+  sdriver[num].begin();                                                                      // Initiate pins and registeries
+  sdriver[num].rms_current(2000, 0.8); // Set stepper current, second parameter is hold_multiplier
+  sdriver[num].en_pwm_mode(1);                                                               // Enable extremely quiet stepping
+  sdriver[num].toff(4);                                                                      // off time
+  sdriver[num].blank_time(24);                                                               // blank tim
+  sdriver[num].pwm_autoscale(1);
+  sdriver[num].microsteps(8); // What microstep range to use
+  sdriver[num].ihold(18);
+  sdriver[num].irun(18);
+  sdriver[num].TPWMTHRS(20);
+}
+
 void initStepper(int num){
-  stepper[num].setMaxSpeed(1000);
+  stepper[num].setMaxSpeed(100000);
   stepper[num].setAcceleration(100000);
   stepper[num].setSpeed(1000);
 }
@@ -106,9 +152,11 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
     String cmpr = msg.substring(0, 2);
     switch (cmpr.toInt())
     {
+    // ALLOW MOVEMENT
     case 0:
       can_move = true;
       break;
+    // POSITION SET
     case 10:
       move_to_deg1 = msg.substring(2, str_len).toFloat();
       move_to1 = int(ONE_ROTATION / (360 / move_to_deg1));
@@ -121,18 +169,48 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
       stepper[1].moveTo(move_to2);
       current_deg2 = move_to_deg2;
       break;
+    case 30:
+      move_to_deg3 = msg.substring(2, str_len).toFloat();
+      move_to3 = int(B_ONE_ROTATION / (360 / move_to_deg3));
+      stepper[2].moveTo(move_to3);
+      current_deg3 = move_to_deg3;
+      break;
+    case 40:
+      move_to_deg4 = msg.substring(2, str_len).toFloat();
+      move_to4 = int(B_ONE_ROTATION / (360 / move_to_deg4));
+      stepper[3].moveTo(move_to4);
+      current_deg4 = move_to_deg4;
+      break;
+
+    // SET SPEED
     case 11:
       stepper[0].setMaxSpeed(msg.substring(2, str_len).toInt());
       break;
     case 21:
       stepper[1].setMaxSpeed(msg.substring(2, str_len).toInt());
       break;
+    case 31:
+    stepper[2].setMaxSpeed(msg.substring(2, str_len).toInt());
+      break;
+    case 41:
+    stepper[3].setMaxSpeed(msg.substring(2, str_len).toInt());
+      break;
+    
+    // SET ACCELERATION
     case 12:
       stepper[0].setAcceleration(msg.substring(2, str_len).toInt());
       break;
     case 22:
       stepper[1].setAcceleration(msg.substring(2, str_len).toInt());
       break;
+    case 32:
+      stepper[2].setAcceleration(msg.substring(2, str_len).toInt());
+      break;
+    case 42:
+      stepper[3].setAcceleration(msg.substring(2, str_len).toInt());
+      break;
+    
+    // HOME MOTOR
     case 13:
       home_mot1 = true;
       stepper[0].setSpeed(-HOMING_SPEED);
@@ -147,19 +225,29 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
       stepper[1].setAcceleration(DEF_ACCEL);
       driver[1].microsteps(DEFAULT_MRES);
       break;
+    
+    // GIVE CURRENT POSITION
     case 18:
       ws.textAll((String)current_deg1);
       break;
     case 28:
       ws.textAll((String)current_deg2);
       break;
+    
+    // SET GLOBAL SPEED
     case 1:
       stepper[0].setMaxSpeed(msg.substring(2, str_len).toInt());
       stepper[1].setMaxSpeed(msg.substring(2, str_len).toInt());
+      stepper[2].setMaxSpeed(msg.substring(2, str_len).toInt());
+      stepper[3].setMaxSpeed(msg.substring(2, str_len).toInt());
       break;
+    
+    // INITIATE TMCs
     case 99:
-      initTMC(0);
-      initTMC(1);
+      initTMC2130(0);
+      initTMC2130(1);
+      initTMC5160(0);
+      initTMC5160(1);
       break;
     default:
       break;
@@ -210,40 +298,32 @@ void setup() {
 
   pinMode(EN2_PIN, OUTPUT);
   pinMode(SW2_PIN, INPUT_PULLUP);
+
+  pinMode(EN3_PIN, OUTPUT);
   
   SPI.begin(SCK_PIN, SDO_PIN, SDI_PIN);
-  for(int i = 0; i < 2; i++){
+  for(int i = 0; i < 4; i++){
     initStepper(i);
   }
   
-  digitalWrite(EN1_PIN, LOW);
-
-  digitalWrite(EN2_PIN, LOW);
+  digitalWrite(EN1_PIN, HIGH);
+  digitalWrite(EN2_PIN, HIGH);
+  digitalWrite(EN3_PIN, LOW);
 }
-
-bool sw1_on = false;
-int last_sw1 = 0;
-bool sw2_on = false;
-int last_sw2 = 0;
 
 #define SWITCH_ON_TIME 10000
 
 void loop() {
-  static int mot1_last = 0;
-  static int mot2_last = 0;
-
   static bool sw1_on = false;
   static bool sw2_on = false;
 
-  int us = micros();
-
   if(can_move){
-    for(int i = 0; i < 2; i++){
+    for(int i = 0; i < 4; i++){
       stepper[i].run();
     }
     
     bool stop_move = true;
-    for(int i = 0; i < 2; i++){
+    for(int i = 0; i < 4; i++){
       stop_move = stop_move && (stepper[i].distanceToGo() == 0);
     }
     can_move = !stop_move;
