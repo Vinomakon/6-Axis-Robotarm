@@ -59,7 +59,14 @@ def initTMC():
     asyncio.run(con(["99"]))
 
 
-def startMovement(synch: bool, speed: int, accel: int, step1: float, step2: float):
+def startMovement(synch: bool,
+                  mot_s: int, mot_a: int,
+                  b_mot_s: int, b_mot_a: int,
+                  b_m1: bool, b_m2: bool, b_m3: bool, b_m4: bool, b_m5: bool,
+                  m_deg1: float, m_deg2: float, m_deg3: float, m_deg4: float, m_deg5: float):
+    degs = [m_deg1, m_deg2, m_deg3, m_deg4, m_deg5]
+    b_mot = [b_m1, b_m2, b_m3, b_m4, b_m5]
+
     class step_module:
         def __init__(self, motor, step, cur):
             self.motor = motor
@@ -79,7 +86,7 @@ def startMovement(synch: bool, speed: int, accel: int, step1: float, step2: floa
         def __truediv__(self, other) -> int:
             return self.t_steps / other.t_steps
 
-    if synch:
+    """if synch:
         cur_poss = asyncio.run(con_get([getPos1(), getPos2()]))
         print(cur_poss)
         steps = [step_module(1, step1, float(cur_poss[0])), step_module(2, step2, float(cur_poss[1]))]
@@ -111,22 +118,20 @@ def startMovement(synch: bool, speed: int, accel: int, step1: float, step2: floa
             send_data.append(get_stepPS2(speeds[1]))
             send_data.append(get_accel2(accels[0]))
         send_data.append("00")
-        asyncio.run(con(send_data))
+        asyncio.run(con(send_data))"""
+    if synch:
+        return
     else:
-        send_data = [get_setPos1(step1), get_setPos2(step2), get_stepPS1(speed), get_stepPS2(speed), "00"]
+        send_data = []
+        for m in range(5):
+            cur = m + 1
+            b = b_mot[m]
+            send_data.append(f"{cur}0{degs[m]}")
+            send_data.append(f"{cur}1{b_mot_s if b else mot_s}")
+            send_data.append(f"{cur}2{b_mot_a if b else mot_a}")
+        # send_data = [get_setPos1(step1), get_setPos2(step2), get_stepPS1(speed), get_stepPS2(speed), "00"]
+        send_data.append("00")
         asyncio.run(con(send_data))
-
-
-def fn_speed3(speed: int):
-    asyncio.run(con([f"31{speed}"]))
-
-
-def fn_speed4(speed: int):
-    asyncio.run(con([f"41{speed}"]))
-
-
-def homeSend(synch: bool, speed: int, accel: int):
-    startMovement(synch, speed, accel, 0, 0)
 
 
 def home_motor1():
@@ -137,101 +142,100 @@ def home_motor2():
     asyncio.run(con(["23"]))
 
 
+def home_motor3():
+    asyncio.run(con(["33"]))
+
+
+def home_motor4():
+    asyncio.run(con(["43"]))
+
+
+def home_motor5():
+    asyncio.run(con(["53"]))
+
+
 def home_all_motors():
-    asyncio.run(con(["13", "23"]))
+    asyncio.run(con(["13", "23", "33", "43", "53"]))
 
 
-def big_motor_turn(speed1: int, speed2: int, accel1: int, accel2: int, pos1: int, pos2: int):
-    asyncio.run(con([f"31{speed1}", f"41{speed2}", f"32{accel1}", f"42{accel2}", f"30{pos1}", f"40{pos2}", "00"]))
-    pass
-
-
-def en_mot(m1: bool, m2: bool, m3: bool, m4: bool):
-    mots = [m1, m2, m3, m4]
+def en_mot(m1: bool, m2: bool, m3: bool, m4: bool, m5: bool):
+    mots = [m1, m2, m3, m4, m5]
     data = []
-    for m in range(4):
+    for m in range(5):
         data.append(f"{m + 1}9{1 if mots[m] else 0}")
     asyncio.run(con(data))
 
 
 with gr.Blocks() as iface:
+    with gr.Accordion("Motor Parameters", open=False):
+        with gr.Row():
+            with gr.Column():
+                mot_speed = gr.Number(value=600, step=1, minimum=0, label="Motor Speed")
+                mot_accel = gr.Number(value=800, step=1, minimum=0, label="Motor Acceleration")
+            with gr.Column():
+                b_mot_speed = gr.Number(value=6000, step=1, label="Big Motor Speed")
+                b_mot_accel = gr.Number(value=10000, step=1, label="Big Motor Acceleration")
+        with gr.Row():
+            mot1_en = gr.Checkbox(label="Enable Motor 1", value=False)
+            mot2_en = gr.Checkbox(label="Enable Motor 2", value=False)
+            mot3_en = gr.Checkbox(label="Enable Motor 3", value=False)
+            mot4_en = gr.Checkbox(label="Enable Motor 4", value=False)
+            mot5_en = gr.Checkbox(label="Enable Motor 5", value=False)
+            mot_en = gr.Button("Submit States")
+            mot_en.click(en_mot, inputs=[mot1_en, mot2_en, mot3_en, mot4_en, mot5_en])
+        with gr.Row():
+            b_mot1 = gr.Checkbox(label="Big Motor 1", value=False)
+            b_mot2 = gr.Checkbox(label="Big Motor 2", value=False)
+            b_mot3 = gr.Checkbox(label="Big Motor 3", value=True)
+            b_mot4 = gr.Checkbox(label="Big Motor 4", value=True)
+            b_mot5 = gr.Checkbox(label="Big Motor 5", value=False)
+            big_mot = gr.Button("Submit States", interactive=False)
+            # big_mot.click(mot_big, inputs=[b_mot1, b_mot2, b_mot3, b_mot4, b_mot5])
+
     init_tmc = gr.Button("INIT TMCs")
     init_tmc.click(initTMC)
 
-    home_all_btn = gr.Button("Home all Motors")
-    home_all_btn.click(home_all_motors)
+    with gr.Column():
+        home_all_btn = gr.Button("Home all Motors")
+        home_all_btn.click(home_all_motors)
 
-    # ENABLE MOTORS
-    with gr.Row():
-        mot1_en = gr.Checkbox(label="Mot1", value=True)
-        mot2_en = gr.Checkbox(label="Mot2", value=True)
-        mot3_en = gr.Checkbox(label="Mot3", value=True)
-        mot4_en = gr.Checkbox(label="Mot4", value=True)
-        mot_en = gr.Button("Submit States")
-        mot_en.click(en_mot, inputs=[mot1_en, mot2_en, mot3_en, mot4_en])
+        with gr.Row():
+            home1_btn = gr.Button("Home Motor 1")
+            home1_btn.click(home_motor1)
+            home2_btn = gr.Button("Home Motor 2")
+            home2_btn.click(home_motor2)
+            home3_btn = gr.Button("Home Motor 3")
+            home3_btn.click(home_motor3)
+            home4_btn = gr.Button("Home Motor 4")
+            home4_btn.click(home_motor4)
+            home5_btn = gr.Button("Home Motor 5")
+            home5_btn.click(home_motor5)
 
-    with gr.Row():
-        home1_btn = gr.Button("Home Motor 1")
-        home1_btn.click(home_motor1)
-        home2_btn = gr.Button("Home Motor 2")
-        home2_btn.click(home_motor2)
-    # Motor 1
     with gr.Row():
         # Position
         deg1 = gr.Number(value=0, label="Degree Position of 1st Motor")
-
-    # Motor 2
-    with gr.Row():
-        # Position
         deg2 = gr.Number(value=0, label="Degree Position of 2nd Motor")
-
-    # Motor 2
-    with gr.Row():
-        # Speed
-        speed3 = gr.Number(value=6000, label="Speed of 3rd Motor")
-        accel3 = gr.Number(value=1000, label="Acceleration of 3rd Motor")
-        deg3 = gr.Number(value=0, label="Degree Position of 3rd Motor")
-
-    with gr.Row():
-        # Speed
-        speed4 = gr.Number(value=6000, label="Speed of 4th Motor")
-        accel4 = gr.Number(value=1000, label="Acceleration of 4th Motor")
-        deg4 = gr.Number(value=0, label="Degree Position of 4th Motor")
-
-    big_motor_btn = gr.Button("Move THICC Motors")
-    big_motor_btn.click(big_motor_turn, inputs=[speed3, speed4, accel3, accel4, deg3, deg4])
-    big_motor_zero_btn = gr.Button("Move THICC Motors to 0")
-    zero_pos = gr.State(value=0)
-    big_motor_zero_btn.click(big_motor_turn, inputs=[speed3, speed4, accel3, accel4, zero_pos, zero_pos])
-
-    # Global Variables
-    with gr.Row():
-        speed_set = gr.Number(value=1000, label="Global Motor Speed", minimum=0, maximum=25000, step=1)
-        accel_set = gr.Number(value=10000, label="Global Motor Acceleration", minimum=0, maximum=250000, step=1)
+        deg3 = gr.Number(value=0, label="Degree Position of 3nd Motor")
+        deg4 = gr.Number(value=0, label="Degree Position of 4nd Motor")
+        deg5 = gr.Number(value=0, label="Degree Position of 5nd Motor")
 
     sync_movement = gr.Checkbox(value=False, label="Synchronous Movement")
-    start_btn = gr.Button("Start Movement")
-    start_btn.click(startMovement, inputs=[sync_movement, speed_set, accel_set, deg1, deg2])
-    home_btn = gr.Button("Set To 0")
-    home_btn.click(homeSend, inputs=[sync_movement, speed_set, accel_set])
-    # CHOPCONF
-    '''
-    with gr.Accordion("CHOPCONF", open=False):
-        toff = gr.Slider(value=0, label="Off Time {toff}", minimum=0, maximum=15, step=1)
-        hstrt = gr.Slider(value=0, label="Hysteresis Start Value {hstrt}", minimum=0, maximum=7, step=1)
-        hend = gr.Slider(value=0, label="Hysteresis End Value {hend}", minimum=0, maximum=15, step=1)
-        fd3 = gr.Checkbox(value=False, label="TFD {fd3}")
-        disfdcc = gr.Checkbox(value=False, label="Fast Decay Mode {disfdcc}")
-        rndtf = gr.Checkbox(value=False, label="Random Off Time {rndtf}")
-        chm = gr.Checkbox(value=True, label="Chopper Mode {chm}")
-        tbl = gr.Dropdown([16, 24, 36, 54], interactive=True, label="Blank Time Select {tbl}")
-        vsense = gr.Checkbox(value=False, label="Sense Resistor Voltage {vsense}")
-        vhighfs = gr.Checkbox(value=False, label="High Velocity Fullstep Selection {vhighfs}")
-        vhighchm = gr.Checkbox(value=False, label="High Velocity Chopper Mode {vhighchm}")
-        sync = gr.Slider(value=0, label="PWM Sync Clock", minimum=0, maximum=15, step=1)
-        mres = gr.Dropdown([256, 128, 64, 32, 16, 8, 4, 2, 1], interactive=True, label="Step Resolution {mres}")
-        intpol = gr.Checkbox(value=False, label="Interpolation to 256 Microsteps {intpol}")
-        dedge = gr.Checkbox(value=False, label="Enable Double Edge Step Pulses {dedge}")
-        diss2g = gr.Checkbox(value=False, label="Short to Ground {diss2g}")'''
+    start_btn = gr.Button("Submit Position")
+    start_btn.click(startMovement, inputs=[
+        sync_movement,
+        mot_speed, mot_accel, b_mot_speed, b_mot_accel,
+        b_mot1, b_mot2, b_mot3, b_mot4, b_mot5,
+        deg1, deg2, deg3, deg4, deg5
+    ])
+
+    global_deg = gr.Number(value=0, label="Global Position")
+
+    home_btn = gr.Button("Set All Global Position")
+    home_btn.click(startMovement, inputs=[
+        sync_movement,
+        mot_speed, mot_accel, b_mot_speed, b_mot_accel,
+        b_mot1, b_mot2, b_mot3, b_mot4, b_mot5,
+        global_deg, global_deg, global_deg, global_deg, global_deg
+    ])
 
 iface.launch()
