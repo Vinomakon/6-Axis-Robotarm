@@ -68,23 +68,40 @@ def startMovement(synch: bool,
     b_mot = [b_m1, b_m2, b_m3, b_m4, b_m5]
 
     class step_module:
-        def __init__(self, motor, step, cur):
+        def __init__(self, motor: int, b: bool, deg: float, cur: float):
             self.motor = motor
-            self.steps = step
-            self.t_steps = abs(step - cur)
-            self.a_steps = abs(step)
+            self.b = bool
+            self.steps = deg
+            self.a_degs = abs(deg - cur)
+            self.d_degs = abs(deg)
+            if b:
+                self.def_speed = b_mot_s
+                self.def_accel = b_mot_a
+            else:
+                self.def_speed = mot_s
+                self.def_accel = mot_a
+            self.speed = 0
+            self.accel = 0
 
         def __lt__(self, other):
-            return self.t_steps < other.t_steps
+            return self.a_degs < other.a_degs
 
         def __repr__(self):
-            return f"(Motor: {self.motor}; Steps: {self.t_steps})"
+            return f"(Motor: {self.motor}, Degrees: {self.a_degs})"
 
         def __int__(self):
-            return self.t_steps
+            return self.a_degs
 
-        def __truediv__(self, other) -> int:
-            return self.t_steps / other.t_steps
+        def setValues(self, deg: float) -> None:
+            if self.a_degs == 0:
+                self.speed = self.def_speed
+                self.accel = self.def_accel
+            else:
+                self.speed = self.def_speed * (self.a_degs / deg)
+                self.accel = self.def_accel * (self.a_degs / deg)
+
+        def getMsg(self):
+            return [f"{self.motor}0{self.d_degs}", f"{self.motor}1{self.speed}", f"{self.motor}2{self.accel}"]
 
     """if synch:
         cur_poss = asyncio.run(con_get([getPos1(), getPos2()]))
@@ -120,7 +137,21 @@ def startMovement(synch: bool,
         send_data.append("00")
         asyncio.run(con(send_data))"""
     if synch:
-        return
+        cur_poss = asyncio.run(con_get(["18", "28", "38", "48", "58"]))
+        values = [step_module(i + 1, b_mot[i], degs[i], float(cur_poss[i])) for i in range(5)]
+        values.sort(reverse=True)
+        main_val = values[0]
+        if main_val.a_degs == 0:
+            return
+        for i in range(5):
+            values[i].setValues(main_val.a_degs)
+        data = []
+        for i in range(5):
+            for j in values[i].getMsg():
+                data.append(j)
+        data.append("00")
+        asyncio.run(con(data))
+
     else:
         send_data = []
         for m in range(5):
