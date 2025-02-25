@@ -182,7 +182,7 @@
 		)
 		(symbol "ESP32-S3-DEVKITC_FEMALE_HEADERS_1_0"
 			(pin bidirectional line
-				(at -2.54 51.816 0)
+				(at -2.54 52.07 0)
 				(length 2.54)
 				(name "3V3"
 					(effects
@@ -200,7 +200,7 @@
 				)
 			)
 			(pin input line
-				(at -2.54 49.276 0)
+				(at -2.54 49.53 0)
 				(length 2.54)
 				(name "RST"
 					(effects
@@ -218,7 +218,7 @@
 				)
 			)
 			(pin bidirectional line
-				(at -2.54 46.736 0)
+				(at -2.54 46.99 0)
 				(length 2.54)
 				(name "GPIO4"
 					(effects
@@ -236,7 +236,7 @@
 				)
 			)
 			(pin bidirectional line
-				(at -2.54 44.196 0)
+				(at -2.54 44.45 0)
 				(length 2.54)
 				(name "GPIO5"
 					(effects
@@ -254,7 +254,7 @@
 				)
 			)
 			(pin bidirectional line
-				(at -2.54 41.656 0)
+				(at -2.54 41.91 0)
 				(length 2.54)
 				(name "GPIO6"
 					(effects
@@ -272,7 +272,7 @@
 				)
 			)
 			(pin bidirectional line
-				(at -2.54 39.116 0)
+				(at -2.54 39.37 0)
 				(length 2.54)
 				(name "GPIO7"
 					(effects
@@ -290,7 +290,7 @@
 				)
 			)
 			(pin bidirectional line
-				(at -2.54 36.576 0)
+				(at -2.54 36.83 0)
 				(length 2.54)
 				(name "GPIO15"
 					(effects
@@ -308,7 +308,7 @@
 				)
 			)
 			(pin bidirectional line
-				(at -2.54 34.036 0)
+				(at -2.54 34.29 0)
 				(length 2.54)
 				(name "GPIO16"
 					(effects
@@ -326,7 +326,7 @@
 				)
 			)
 			(pin bidirectional line
-				(at -2.54 31.496 0)
+				(at -2.54 31.75 0)
 				(length 2.54)
 				(name "GPIO17"
 					(effects
@@ -344,7 +344,7 @@
 				)
 			)
 			(pin bidirectional line
-				(at -2.54 28.956 0)
+				(at -2.54 29.21 0)
 				(length 2.54)
 				(name "GPIO18"
 					(effects
@@ -362,7 +362,7 @@
 				)
 			)
 			(pin bidirectional line
-				(at -2.54 26.416 0)
+				(at -2.54 26.67 0)
 				(length 2.54)
 				(name "GPIO8"
 					(effects
@@ -380,7 +380,7 @@
 				)
 			)
 			(pin bidirectional line
-				(at -2.54 23.876 0)
+				(at -2.54 24.13 0)
 				(length 2.54)
 				(name "GPIO3"
 					(effects
@@ -398,7 +398,7 @@
 				)
 			)
 			(pin bidirectional line
-				(at -2.54 21.336 0)
+				(at -2.54 21.59 0)
 				(length 2.54)
 				(name "GPIO46"
 					(effects
@@ -416,7 +416,7 @@
 				)
 			)
 			(pin bidirectional line
-				(at -2.54 18.796 0)
+				(at -2.54 19.05 0)
 				(length 2.54)
 				(name "GPIO9"
 					(effects
@@ -434,7 +434,7 @@
 				)
 			)
 			(pin bidirectional line
-				(at -2.54 16.256 0)
+				(at -2.54 16.51 0)
 				(length 2.54)
 				(name "GPIO10"
 					(effects
@@ -452,7 +452,7 @@
 				)
 			)
 			(pin bidirectional line
-				(at -2.54 13.716 0)
+				(at -2.54 13.97 0)
 				(length 2.54)
 				(name "GPIO11"
 					(effects
@@ -470,7 +470,7 @@
 				)
 			)
 			(pin bidirectional line
-				(at -2.54 11.176 0)
+				(at -2.54 11.43 0)
 				(length 2.54)
 				(name "GPIO12"
 					(effects
@@ -488,7 +488,7 @@
 				)
 			)
 			(pin bidirectional line
-				(at -2.54 8.636 0)
+				(at -2.54 8.89 0)
 				(length 2.54)
 				(name "GPIO13"
 					(effects
@@ -506,7 +506,7 @@
 				)
 			)
 			(pin bidirectional line
-				(at -2.54 6.096 0)
+				(at -2.54 6.35 0)
 				(length 2.54)
 				(name "GPIO14"
 					(effects
@@ -524,7 +524,7 @@
 				)
 			)
 			(pin bidirectional line
-				(at -2.54 3.556 0)
+				(at -2.54 3.81 0)
 				(length 2.54)
 				(name "5V"
 					(effects
@@ -542,7 +542,7 @@
 				)
 			)
 			(pin bidirectional line
-				(at -2.54 1.016 0)
+				(at -2.54 1.27 0)
 				(length 2.54)
 				(name "GND"
 					(effects
@@ -969,7 +969,7 @@
 				)
 			)
 			(pin bidirectional line
-				(at -2.54 54.356 0)
+				(at -2.54 54.61 0)
 				(length 2.54)
 				(name "3V3"
 					(effects
@@ -1037,10 +1037,10 @@
 			)
 		)
 		(symbol "ESP32-S3-DEVKITM_FEMALE_HEADERS_1_0"
-			(pin bidirectional line
-				(at -12.7 51.816 0)
+			(pin input line
+				(at -12.7 52.07 0)
 				(length 2.54)
-				(name "3V3"
+				(name "GPIO0"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -1055,10 +1055,10 @@
 					)
 				)
 			)
-			(pin input line
-				(at -12.7 49.276 0)
+			(pin bidirectional line
+				(at -12.7 49.53 0)
 				(length 2.54)
-				(name "RST"
+				(name "GPIO1"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -1074,9 +1074,9 @@
 				)
 			)
 			(pin bidirectional line
-				(at -12.7 46.736 0)
+				(at -12.7 46.99 0)
 				(length 2.54)
-				(name "GPIO4"
+				(name "GPIO2"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -1092,9 +1092,9 @@
 				)
 			)
 			(pin bidirectional line
-				(at -12.7 44.196 0)
+				(at -12.7 44.45 0)
 				(length 2.54)
-				(name "GPIO5"
+				(name "GPIO3"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -1110,9 +1110,9 @@
 				)
 			)
 			(pin bidirectional line
-				(at -12.7 41.656 0)
+				(at -12.7 41.91 0)
 				(length 2.54)
-				(name "GPIO6"
+				(name "GPIO4"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -1128,9 +1128,9 @@
 				)
 			)
 			(pin bidirectional line
-				(at -12.7 39.116 0)
+				(at -12.7 39.37 0)
 				(length 2.54)
-				(name "GPIO7"
+				(name "GPIO5"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -1146,9 +1146,9 @@
 				)
 			)
 			(pin bidirectional line
-				(at -12.7 36.576 0)
+				(at -12.7 36.83 0)
 				(length 2.54)
-				(name "GPIO15"
+				(name "GPIO6"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -1164,9 +1164,9 @@
 				)
 			)
 			(pin bidirectional line
-				(at -12.7 34.036 0)
+				(at -12.7 34.29 0)
 				(length 2.54)
-				(name "GPIO16"
+				(name "GPIO7"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -1182,9 +1182,9 @@
 				)
 			)
 			(pin bidirectional line
-				(at -12.7 31.496 0)
+				(at -12.7 31.75 0)
 				(length 2.54)
-				(name "GPIO17"
+				(name "GPIO8"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -1200,9 +1200,9 @@
 				)
 			)
 			(pin bidirectional line
-				(at -12.7 28.956 0)
+				(at -12.7 29.21 0)
 				(length 2.54)
-				(name "GPIO18"
+				(name "GPIO9"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -1218,9 +1218,9 @@
 				)
 			)
 			(pin bidirectional line
-				(at -12.7 26.416 0)
+				(at -12.7 26.67 0)
 				(length 2.54)
-				(name "GPIO8"
+				(name "GPIO10"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -1236,9 +1236,9 @@
 				)
 			)
 			(pin bidirectional line
-				(at -12.7 23.876 0)
+				(at -12.7 24.13 0)
 				(length 2.54)
-				(name "GPIO3"
+				(name "GPIO11"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -1254,9 +1254,9 @@
 				)
 			)
 			(pin bidirectional line
-				(at -12.7 21.336 0)
+				(at -12.7 21.59 0)
 				(length 2.54)
-				(name "GPIO46"
+				(name "GPIO12"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -1272,9 +1272,9 @@
 				)
 			)
 			(pin bidirectional line
-				(at -12.7 18.796 0)
+				(at -12.7 19.05 0)
 				(length 2.54)
-				(name "GPIO9"
+				(name "GPIO13"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -1290,9 +1290,9 @@
 				)
 			)
 			(pin bidirectional line
-				(at -12.7 16.256 0)
+				(at -12.7 16.51 0)
 				(length 2.54)
-				(name "GPIO10"
+				(name "GPIO14"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -1308,9 +1308,9 @@
 				)
 			)
 			(pin bidirectional line
-				(at -12.7 13.716 0)
+				(at -12.7 13.97 0)
 				(length 2.54)
-				(name "GPIO11"
+				(name "GPIO15"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -1326,9 +1326,9 @@
 				)
 			)
 			(pin bidirectional line
-				(at -12.7 11.176 0)
+				(at -12.7 11.43 0)
 				(length 2.54)
-				(name "GPIO12"
+				(name "GPIO16"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -1344,9 +1344,9 @@
 				)
 			)
 			(pin bidirectional line
-				(at -12.7 8.636 0)
+				(at -12.7 8.89 0)
 				(length 2.54)
-				(name "GPIO13"
+				(name "GPIO17"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -1362,9 +1362,9 @@
 				)
 			)
 			(pin bidirectional line
-				(at -12.7 6.096 0)
+				(at -12.7 6.35 0)
 				(length 2.54)
-				(name "GPIO14"
+				(name "GPIO18"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -1380,7 +1380,7 @@
 				)
 			)
 			(pin bidirectional line
-				(at -12.7 3.556 0)
+				(at -12.7 3.81 0)
 				(length 2.54)
 				(name "5V"
 					(effects
@@ -1398,7 +1398,7 @@
 				)
 			)
 			(pin bidirectional line
-				(at -12.7 1.016 0)
+				(at -12.7 1.27 0)
 				(length 2.54)
 				(name "GND"
 					(effects
@@ -1436,7 +1436,7 @@
 			(pin bidirectional line
 				(at 12.7 52.07 180)
 				(length 2.54)
-				(name "GPIO43/TX"
+				(name "RST"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -1454,7 +1454,7 @@
 			(pin bidirectional line
 				(at 12.7 49.53 180)
 				(length 2.54)
-				(name "GPIO44/RX"
+				(name "GPIO46"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -1472,7 +1472,7 @@
 			(pin bidirectional line
 				(at 12.7 46.99 180)
 				(length 2.54)
-				(name "GPIO1"
+				(name "GPIO45"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -1490,7 +1490,7 @@
 			(pin bidirectional line
 				(at 12.7 44.45 180)
 				(length 2.54)
-				(name "GPIO2"
+				(name "RX"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -1508,7 +1508,7 @@
 			(pin bidirectional line
 				(at 12.7 41.91 180)
 				(length 2.54)
-				(name "GPIO42"
+				(name "TX"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -1526,7 +1526,7 @@
 			(pin bidirectional line
 				(at 12.7 39.37 180)
 				(length 2.54)
-				(name "GPIO41"
+				(name "GPIO42"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -1544,7 +1544,7 @@
 			(pin bidirectional line
 				(at 12.7 36.83 180)
 				(length 2.54)
-				(name "GPIO40"
+				(name "GPIO41"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -1562,7 +1562,7 @@
 			(pin bidirectional line
 				(at 12.7 34.29 180)
 				(length 2.54)
-				(name "GPIO39"
+				(name "GPIO40"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -1580,7 +1580,7 @@
 			(pin bidirectional line
 				(at 12.7 31.75 180)
 				(length 2.54)
-				(name "GPIO38"
+				(name "GPIO39"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -1598,7 +1598,7 @@
 			(pin bidirectional line
 				(at 12.7 29.21 180)
 				(length 2.54)
-				(name "GPIO37"
+				(name "GPIO38"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -1616,7 +1616,7 @@
 			(pin bidirectional line
 				(at 12.7 26.67 180)
 				(length 2.54)
-				(name "GPIO36"
+				(name "GPIO37"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -1634,7 +1634,7 @@
 			(pin bidirectional line
 				(at 12.7 24.13 180)
 				(length 2.54)
-				(name "GPIO35"
+				(name "GPIO36"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -1652,7 +1652,7 @@
 			(pin bidirectional line
 				(at 12.7 21.59 180)
 				(length 2.54)
-				(name "GPIO0"
+				(name "GPIO35"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -1670,7 +1670,7 @@
 			(pin bidirectional line
 				(at 12.7 19.05 180)
 				(length 2.54)
-				(name "GPIO45"
+				(name "GPIO34"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -1688,7 +1688,7 @@
 			(pin bidirectional line
 				(at 12.7 16.51 180)
 				(length 2.54)
-				(name "GPIO48"
+				(name "GPIO33"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -1706,7 +1706,7 @@
 			(pin bidirectional line
 				(at 12.7 13.97 180)
 				(length 2.54)
-				(name "GPIO47"
+				(name "GPIO26"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -1778,7 +1778,7 @@
 			(pin bidirectional line
 				(at 12.7 3.81 180)
 				(length 2.54)
-				(name "GND"
+				(name "GPIO48"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -1796,7 +1796,7 @@
 			(pin bidirectional line
 				(at 12.7 1.27 180)
 				(length 2.54)
-				(name "GND"
+				(name "GPIO47"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -1825,7 +1825,7 @@
 				)
 			)
 			(pin bidirectional line
-				(at -12.7 54.356 0)
+				(at -12.7 54.61 0)
 				(length 2.54)
 				(name "3V3"
 					(effects
@@ -2660,6 +2660,746 @@
 							(size 1.27 1.27)
 						)
 					)
+				)
+			)
+		)
+		(embedded_fonts no)
+	)
+	(symbol "SILENTSTEPSTICK2130"
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(property "Reference" "U"
+			(at 0 24.384 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "SILENTSTEPSTICK TMC2130"
+			(at 0.508 22.352 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 0 0 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 0 0 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Stepper Motor Driver 5.5-46V max. 960mA per Phase"
+			(at 0 -6.35 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Digikey Link" "https://www.digikey.ch/en/products/detail/analog-devices-inc-maxim-integrated/TMCSILENTSTEPSTICK-SPI/6572861?s=N4IgTCBcDaIKwAY4FoAqBZAwgZQJIBkBRAOVW1UIAVzdMBpbS3ZYgERAF0BfIA"
+			(at 0 -10.16 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Digikey PartN" "TMCSILENTSTEPSTICK SPI"
+			(at 0 -8.128 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(symbol "SILENTSTEPSTICK2130_0_0"
+			(pin input line
+				(at -8.89 19.05 0)
+				(length 2.54)
+				(name "EN"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "1"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin input line
+				(at -8.89 16.51 0)
+				(length 2.54)
+				(name "SDI"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "2"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin input line
+				(at -8.89 13.97 0)
+				(length 2.54)
+				(name "SCK"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "3"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin input line
+				(at -8.89 11.43 0)
+				(length 2.54)
+				(name "CS"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "4"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin output line
+				(at -8.89 8.89 0)
+				(length 2.54)
+				(name "SDO"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "5"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin no_connect line
+				(at -8.89 6.35 0)
+				(length 2.54)
+				(name "DCO"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "6"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin input line
+				(at -8.89 3.81 0)
+				(length 2.54)
+				(name "STEP"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "7"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin input line
+				(at -8.89 1.27 0)
+				(length 2.54)
+				(name "DIR"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "8"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin power_in line
+				(at 8.89 19.05 180)
+				(length 2.54)
+				(name "VM"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "9"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin input line
+				(at 8.89 16.51 180)
+				(length 2.54)
+				(name "GND"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "10"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin output line
+				(at 8.89 13.97 180)
+				(length 2.54)
+				(name "M2B"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "11"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin output line
+				(at 8.89 11.43 180)
+				(length 2.54)
+				(name "M2A"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "12"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin output line
+				(at 8.89 8.89 180)
+				(length 2.54)
+				(name "M1A"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "13"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin output line
+				(at 8.89 6.35 180)
+				(length 2.54)
+				(name "M1B"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "14"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin power_in line
+				(at 8.89 3.81 180)
+				(length 2.54)
+				(name "VIO"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "15"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin input line
+				(at 8.89 1.27 180)
+				(length 2.54)
+				(name "GND"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "16"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+		)
+		(symbol "SILENTSTEPSTICK2130_1_1"
+			(rectangle
+				(start -6.35 20.32)
+				(end 6.35 0)
+				(stroke
+					(width 0)
+					(type solid)
+				)
+				(fill
+					(type background)
+				)
+			)
+		)
+		(embedded_fonts no)
+	)
+	(symbol "SILENTSTEPSTICK5160"
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(property "Reference" "U"
+			(at 0 24.638 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "SILENTSTEPSTICK TMC5160"
+			(at 0 22.098 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 0 0 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 0 0 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Stepper Motor Driver 10-36V max. 3A per Phase"
+			(at 0 -6.096 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Digikey PartN" "TMC5160SILENTSTEPSTICK"
+			(at 0 -3.556 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Digikey Link" "https://www.digikey.ch/en/products/detail/analog-devices-inc-maxim-integrated/TMC5160SILENTSTEPSTICK/9990281?=&utm_adgroup=&utm_source=google&utm_medium=cpc&utm_campaign=PMax%20Shopping_Product_Medium%20ROAS&utm_term=&productid=9990281&utm_content=&utm_id=go_cmp-20185743540_adg-_ad-__dev-c_ext-_prd-9990281_sig-Cj0KCQiA8fW9BhC8ARIsACwHqYq0kKtuSAy5XmAmMikDVFipH_2FE8HsxKc7TywXbP0Zj7xqkbdXMDUaAnlAEALw_wcB&gad_source=1"
+			(at 0.254 -9.652 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(symbol "SILENTSTEPSTICK5160_0_0"
+			(pin power_in line
+				(at -8.89 19.05 0)
+				(length 2.54)
+				(name "VM"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "9"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin input line
+				(at -8.89 16.51 0)
+				(length 2.54)
+				(name "GND"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "10"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin output line
+				(at -8.89 13.97 0)
+				(length 2.54)
+				(name "M2B"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "11"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin output line
+				(at -8.89 11.43 0)
+				(length 2.54)
+				(name "M2A"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "12"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin output line
+				(at -8.89 8.89 0)
+				(length 2.54)
+				(name "M1A"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "13"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin output line
+				(at -8.89 6.35 0)
+				(length 2.54)
+				(name "M1B"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "14"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin power_in line
+				(at -8.89 3.81 0)
+				(length 2.54)
+				(name "VIO"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "15"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin input line
+				(at -8.89 1.27 0)
+				(length 2.54)
+				(name "GND"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "16"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin input line
+				(at 8.89 19.05 180)
+				(length 2.54)
+				(name "EN"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "1"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin input line
+				(at 8.89 16.51 180)
+				(length 2.54)
+				(name "SDI"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "2"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin input line
+				(at 8.89 13.97 180)
+				(length 2.54)
+				(name "SCK"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "3"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin input line
+				(at 8.89 11.43 180)
+				(length 2.54)
+				(name "CS"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "4"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin output line
+				(at 8.89 8.89 180)
+				(length 2.54)
+				(name "SDO"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "5"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin no_connect line
+				(at 8.89 6.35 180)
+				(length 2.54)
+				(name "DCO"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "6"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin input line
+				(at 8.89 3.81 180)
+				(length 2.54)
+				(name "STEP"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "7"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin input line
+				(at 8.89 1.27 180)
+				(length 2.54)
+				(name "DIR"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "8"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+		)
+		(symbol "SILENTSTEPSTICK5160_1_1"
+			(rectangle
+				(start 6.35 0)
+				(end -6.35 20.32)
+				(stroke
+					(width 0)
+					(type solid)
+				)
+				(fill
+					(type background)
 				)
 			)
 		)

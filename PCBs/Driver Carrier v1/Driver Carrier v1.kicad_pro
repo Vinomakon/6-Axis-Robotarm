@@ -51,7 +51,13 @@
           "min_clearance": 0.5
         }
       },
-      "diff_pair_dimensions": [],
+      "diff_pair_dimensions": [
+        {
+          "gap": 0.0,
+          "via_gap": 0.0,
+          "width": 0.0
+        }
+      ],
       "drc_exclusions": [],
       "meta": {
         "version": 2
@@ -116,7 +122,7 @@
       },
       "rules": {
         "max_error": 0.005,
-        "min_clearance": 0.0,
+        "min_clearance": 0.127,
         "min_connection": 0.0,
         "min_copper_edge_clearance": 0.5,
         "min_groove_width": 0.0,
@@ -129,7 +135,7 @@
         "min_text_height": 0.8,
         "min_text_thickness": 0.08,
         "min_through_hole_diameter": 0.3,
-        "min_track_width": 0.0,
+        "min_track_width": 0.127,
         "min_via_annular_width": 0.1,
         "min_via_diameter": 0.5,
         "solder_mask_to_copper_clearance": 0.0,
@@ -179,7 +185,9 @@
           "td_width_to_size_filter_ratio": 0.9
         }
       ],
-      "track_widths": [],
+      "track_widths": [
+        0.0
+      ],
       "tuning_pattern_settings": {
         "diff_pair_defaults": {
           "corner_radius_percentage": 80,
@@ -206,7 +214,12 @@
           "spacing": 0.6
         }
       },
-      "via_dimensions": [],
+      "via_dimensions": [
+        {
+          "diameter": 0.0,
+          "drill": 0.0
+        }
+      ],
       "zones_allow_external_fillets": false
     },
     "ipc2581": {
@@ -625,28 +638,32 @@
       "Root"
     ],
     [
-      "d36e60f8-50e5-40ba-accb-2b8fd025dccb",
-      "SILENTSTEPSTICK Insert n1"
+      "8a190e82-2a09-4ff3-b645-8ecef9ff4aec",
+      "BothTMCs n2"
     ],
     [
-      "c57a411b-5a49-4ef1-ba5a-8f213d6cfd8b",
-      "SILENTSTEPSTICK Insert n3"
+      "f38bc85c-7091-4917-a419-8b97603f477b",
+      "All TMCs"
     ],
     [
-      "802333d7-1c00-4a58-8341-05e407a54a35",
-      "SILENTSTEPSTICK Insert2 n5"
+      "27e845fa-7a6c-4695-8db7-f6a08065cb82",
+      "BothTMCs n1"
     ],
     [
-      "596fcfb5-2505-4e64-ae87-a8a8b969af1c",
-      "SILENTSTEPSTICK Insert n2"
+      "0dda7cea-57ec-4070-aed0-c52190f2b0cd",
+      "BothTMCs n4"
     ],
     [
-      "5c939542-e53a-40c9-bd40-c72c894baee9",
-      "SILENTSTEPSTICK Insert4 n4"
+      "9aa1a7ea-d89a-4773-b6a9-df0e8831afe4",
+      "BothTMCs n5"
     ],
     [
-      "66e19764-c3fe-4263-b075-7b46f95f7734",
-      "SILENTSTEPSTICK Insert5 n6"
+      "85bfa518-fa29-4b69-81a3-b9a2cd68ceda",
+      "BothTMCs n3"
+    ],
+    [
+      "60323ed2-c592-4d5f-a3df-90344162b27c",
+      "BothTMCs n6"
     ]
   ],
   "text_variables": {}

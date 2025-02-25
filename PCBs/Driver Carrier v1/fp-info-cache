@@ -1,4 +1,4 @@
-24838269117845020
+24843490636351622
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -55248,8 +55248,15 @@ ESP32-S3-DEVKITC Female Headers
 
 
 0
+44
+44
+Custom_Footprints
+ESP32-S3-DEVKITM Female Headers
+
+
 0
-0
+44
+44
 Custom_Footprints
 FDMC89521L
 WDFN8 3x3, 0.65P CASE 511DG ISSUE O
@@ -55306,6 +55313,20 @@ QFP50P900X900X120-49N
 0
 49
 49
+Custom_Footprints
+SILENTSTEPSTICK TMC2130
+
+
+0
+16
+16
+Custom_Footprints
+SILENTSTEPSTICK TMC5160
+
+
+0
+16
+16
 Diode_SMD
 D_0201_0603Metric
 Diode SMD 0201 (0603 Metric), square (rectangular) end terminal, IPC_7351 nominal, (Body size source: https://www.vishay.com/docs/20052/crcw0201e3.pdf), generated with kicad-footprint-generator
