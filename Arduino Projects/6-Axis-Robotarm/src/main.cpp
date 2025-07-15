@@ -361,6 +361,7 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
       initTMC5160(0, 8);
       initTMC5160(1, 8);
       initTMC5160(2, 16);
+      initTMC5160(3, 16);
       break;
     default:
       break;
