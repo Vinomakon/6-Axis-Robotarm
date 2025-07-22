@@ -13,51 +13,44 @@ using namespace std;
 using namespace TMC2130_n;
 
 // PINS FOR TMC-SPI
-#define SDO_PIN 41
-#define SCK_PIN 39
-#define SDI_PIN 40
+#define SDO_PIN 9
+#define SCK_PIN 7
+#define SDI_PIN 6
 
 // PINS FOR MOTOR 1
-#define DIR1_PIN 4
-#define STEP1_PIN 3
-#define EN1_PIN 1
-#define CS1_PIN 2
-#define SW1_PIN 13
+#define DIR1_PIN 12
+#define STEP1_PIN 11
+#define EN1_PIN 5
+#define CS1_PIN 8
+#define SW1_PIN 45
 
 // PINS FOR MOTOR 2
-#define DIR2_PIN 8
-#define STEP2_PIN 7
-#define EN2_PIN 5
-#define CS2_PIN 6
-#define SW2_PIN 14
+#define DIR2_PIN 4
+#define STEP2_PIN 3
+#define EN2_PIN 1
+#define CS2_PIN 2
+#define SW2_PIN 46
 
 //PINS FOR MOTOR 3
-#define DIR3_PIN 12
-#define STEP3_PIN 11
-#define EN3_PIN 9
-#define CS3_PIN 10
-#define SW3_PIN 15
+#define DIR3_PIN 16
+#define STEP3_PIN 15
+#define EN3_PIN 17
+#define CS3_PIN 18
+#define SW3_PIN 35
 
 //PINS FOR MOTOR 4
-#define DIR4_PIN 47
-#define STEP4_PIN 48
-#define EN4_PIN 20
-#define CS4_PIN 19
-#define SW4_PIN 16
+#define DIR4_PIN 19
+#define STEP4_PIN 20
+#define EN4_PIN 48
+#define CS4_PIN 47
+#define SW4_PIN 36
 
 //PINS FOR MOTOR 5
-#define DIR5_PIN 21
-#define STEP5_PIN 26
-#define EN5_PIN 34
-#define CS5_PIN 33
-#define SW5_PIN 17
-
-//PINS FOR MOTOR 6
-#define DIR6_PIN 35
-#define STEP6_PIN 36
-#define EN6_PIN 38
-#define CS6_PIN 37
-#define SW6_PIN 18
+#define DIR5_PIN 33
+#define STEP5_PIN 34
+#define EN5_PIN 26
+#define CS5_PIN 21
+#define SW5_PIN 37
 
 // VALUES FOR ESP
 #define DEFAULT_MRES 16
@@ -145,19 +138,11 @@ bool home_mot5 = false;
 bool second_home5 = false;
 bool home_slow5 = false;
 
-// MOTOR5 ARGUMENTS
-float current_deg6 = 0;
-float move_to_deg6 = 0;
-int move_to6 = 0;
-bool home_mot6 = false;
-bool second_home6 = false;
-bool home_slow6 = false;
-
 bool can_move = false;
 
 void initTMC2130(int num, int mcrstps){
   driver[num].begin();                                                                      // Initiate pins and registeries
-  driver[num].rms_current(1500, 0.8); // Set stepper current, second parameter is hold_multiplier
+  driver[num].rms_current(1000, 0.8); // Set stepper current, second parameter is hold_multiplier
   driver[num].en_pwm_mode(1);                                                               // Enable extremely quiet stepping
   driver[num].toff(4);                                                                      // off time
   driver[num].blank_time(24);                                                               // blank tim
@@ -170,7 +155,7 @@ void initTMC2130(int num, int mcrstps){
 
 void initTMC5160(int num, int mcrstps){
   sdriver[num].begin();                                                                      // Initiate pins and registeries
-  sdriver[num].rms_current(1500, 0.8); // Set stepper current, second parameter is hold_multiplier
+  sdriver[num].rms_current(1000, 0.8); // Set stepper current, second parameter is hold_multiplier
   sdriver[num].en_pwm_mode(1);                                                               // Enable extremely quiet stepping
   sdriver[num].toff(4);                                                                      // off time
   sdriver[num].blank_time(24);                                                               // blank tim
@@ -234,12 +219,6 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
       stepper[4].moveTo(move_to5);
       current_deg5 = move_to_deg5;
       break;
-    case 60:
-      move_to_deg6 = msg.substring(2, str_len).toFloat();
-      move_to6 = int(ONE_ROTATION / (360 / move_to_deg6));
-      stepper[5].moveTo(move_to6);
-      current_deg6 = move_to_deg6;
-      break;
 
     // SET SPEED
     case 11:
@@ -257,9 +236,6 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
     case 51:
       stepper[4].setMaxSpeed(msg.substring(2, str_len).toInt());
       break;
-    case 61:
-      stepper[5].setMaxSpeed(msg.substring(2, str_len).toInt());
-      break;
     
     // SET ACCELERATION
     case 12:
@@ -276,9 +252,6 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
       break;
     case 52:
       stepper[4].setAcceleration(msg.substring(2, str_len).toInt());
-      break;
-    case 62:
-      stepper[5].setAcceleration(msg.substring(2, str_len).toInt());
       break;
     
     // HOME MOTOR
@@ -312,12 +285,6 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
       stepper[4].setMaxSpeed(HOMING_SPEED);
       stepper[4].setAcceleration(DEF_ACCEL);
       break;
-    case 63:
-      home_mot6 = true;
-      stepper[5].setSpeed(-HOMING_SPEED);
-      stepper[5].setMaxSpeed(HOMING_SPEED);
-      stepper[5].setAcceleration(DEF_ACCEL);
-      break;
     
     // ENABLE MOTORS
     case 19:
@@ -330,8 +297,6 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
       digitalWrite(EN4_PIN, msg.charAt(2) == '1' ? LOW : HIGH);
     case 59:
       digitalWrite(EN5_PIN, msg.charAt(2) == '1' ? LOW : HIGH);
-    case 69:
-      digitalWrite(EN6_PIN, msg.charAt(2) == '1' ? LOW : HIGH);
     
     // GIVE CURRENT POSITION
     case 18:
@@ -347,9 +312,6 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
       ws.textAll((String)current_deg4);
       break;
     case 58:
-      ws.textAll((String)current_deg5);
-      break;
-    case 68:
       ws.textAll((String)current_deg5);
       break;
     
@@ -410,14 +372,12 @@ void setup() {
   pinMode(EN3_PIN, OUTPUT);
   pinMode(EN4_PIN, OUTPUT);
   pinMode(EN5_PIN, OUTPUT);
-  pinMode(EN6_PIN, OUTPUT);
 
   pinMode(SW1_PIN, INPUT_PULLUP);
   pinMode(SW2_PIN, INPUT_PULLUP);
   pinMode(SW3_PIN, INPUT_PULLUP);
   pinMode(SW4_PIN, INPUT_PULLUP);
   pinMode(SW5_PIN, INPUT_PULLUP);
-  pinMode(SW6_PIN, INPUT_PULLUP);
   
   SPI.begin(SCK_PIN, SDO_PIN, SDI_PIN);
   for(int i = 0; i < 5; i++)
@@ -427,7 +387,6 @@ void setup() {
   digitalWrite(EN3_PIN, HIGH);
   digitalWrite(EN4_PIN, HIGH);
   digitalWrite(EN5_PIN, HIGH);
-  digitalWrite(EN6_PIN, HIGH);
 }
 
 void loop() {
@@ -565,31 +524,6 @@ void loop() {
         second_home5 = true;
         stepper[4].setCurrentPosition(0);
         stepper[4].moveTo(HOMING_OFFSET);
-      }
-    }
-  }
-
-  if(home_mot6){
-    if(second_home6) {
-      if (stepper[5].distanceToGo() == 0){
-        second_home5 = false;
-        stepper[5].setSpeed(-B_SHOMING_SPEED);
-      } else {
-        stepper[5].run();
-      }
-    } else if(digitalRead(SW6_PIN) == 1) {
-        stepper[5].runSpeed();
-    } else {
-      if(home_slow6){
-        home_mot6 = false;
-        home_slow6 = false;
-        current_deg6 = 0;
-        stepper[5].setCurrentPosition(0);
-      } else {
-        home_slow6 = true;
-        second_home6 = true;
-        stepper[5].setCurrentPosition(0);
-        stepper[5].moveTo(HOMING_OFFSET);
       }
     }
   }
