@@ -1,0 +1,41 @@
+{
+  "motor0": {
+    "speed": 600,
+    "acceleration" : 800,
+    "reduction" :  20
+  },
+  "motor1": {
+    "speed": 6000,
+    "acceleration" : 1000,
+    "reduction" :  20
+  },
+  "motor2": {
+    "speed": 6000,
+    "acceleration" : 1000,
+    "reduction" :  30
+  },
+  "motor3": {
+    "speed": 6000,
+    "acceleration" : 1000,
+    "reduction" :  2.5
+  },
+  "motor4": {
+    "speed": 600,
+    "acceleration" : 1000,
+    "reduction" :  4
+  },
+  "motor5": {
+    "speed": 600,
+    "acceleration" : 1000,
+    "reduction" :  10
+  },
+  "degrees" : {
+    "mot0" : 0,
+    "mot1" : 0,
+    "mot2" : 0,
+    "mot3" : 0,
+    "mot4" : 0,
+    "mot5" : 0
+  },
+  "preset_positions" : []
+}

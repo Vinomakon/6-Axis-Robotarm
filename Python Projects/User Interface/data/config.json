@@ -1,0 +1,72 @@
+{
+  "motor0": {
+    "speed": 600,
+    "acceleration": 800,
+    "reduction": 20,
+    "home_speed": 200,
+    "home_acceleration": 800,
+    "home_offset": 400,
+    "microsteps": 16,
+    "rms_current": 1500,
+    "hold_current_mult": 0.8
+  },
+  "motor1": {
+    "speed": 6000,
+    "acceleration": 1000,
+    "reduction": 20,
+    "home_speed": 800,
+    "home_acceleration": 1000,
+    "home_offset": 400,
+    "microsteps": 16,
+    "rms_current": 1500,
+    "hold_current_mult": 0.8
+  },
+  "motor2": {
+    "speed": 6000,
+    "acceleration": 1000,
+    "reduction": 30,
+    "home_speed": 800,
+    "home_acceleration": 1000,
+    "home_offset": 400,
+    "microsteps": 16,
+    "rms_current": 1500,
+    "hold_current_mult": 0.8
+  },
+  "motor3": {
+    "speed": 6000,
+    "acceleration": 1000,
+    "reduction": 2.5,
+    "home_speed": 800,
+    "home_acceleration": 1000,
+    "home_offset": 400,
+    "microsteps": 16,
+    "rms_current": 1500,
+    "hold_current_mult": 0.8
+  },
+  "motor4": {
+    "speed": 600,
+    "acceleration": 1000,
+    "reduction": 4,
+    "home_speed": 200,
+    "home_acceleration": 800,
+    "home_offset": 400,
+    "microsteps": 16,
+    "rms_current": 1500,
+    "hold_current_mult": 0.8
+  },
+  "motor5": {
+    "speed": 600,
+    "acceleration": 1000,
+    "reduction": 10,
+    "home_speed": 200,
+    "home_acceleration": 800,
+    "home_offset": 400,
+    "microsteps": 16,
+    "rms_current": 1500,
+    "hold_current_mult": 0.8
+  },
+  "general": {
+    "steps_p_revolution": 200
+  },
+  "preset_positions": []
+}
