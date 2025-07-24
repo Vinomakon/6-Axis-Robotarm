@@ -9,14 +9,12 @@ from formatting import n_th
 
 DEFAULT_STEPS = 1000
 
-
 async def con(data: list) -> None:
     async with websockets.connect("ws://192.168.4.1/ws") as websocket:
         for i in data:
             # print(f"sending {i}")
             await websocket.send(i)
     # print("finished")
-
 
 async def con_get(data: list) -> list:
     end_data = []
@@ -133,22 +131,22 @@ def submit_params():
     data.append(f'{c.igener}{c.idefst}{mot_steps.value}')
     asyncio.run(con(data))
 
-def individual_movement(mot: int):
-    mult = mot_mult[mot].value
-    speed = f'{mot}1{mot_speed[mot].value * mult}'
-    accel = f'{mot}2{mot_accel[mot].value * mult}'
-    move = f"{mot}0{mot_deg[mot].value}"
-    asyncio.run(con([speed, accel, move, '000']))
+def individual_movement(mot: int, deg_: float, speed_: int, mult_: float, accel_: int):
+    speed = f'{mot}1{speed_ * mult_}'
+    accel = f'{mot}2{accel_ * mult_}'
+    move = f"{mot}0{deg_}"
+    print([speed, accel, move, '000'])
+    # asyncio.run(con([speed, accel, move, '000']))
 
-def start_movement():
+def start_movement(deg: float, speed: int, mult: float, accel: int):
     class StepModule:
-        def __init__(self, motor: int, deg: float, speed: int, accel: int, cur_: float):
-            self.motor = motor
-            self.steps = deg
+        def __init__(self, mot_: int, deg_: float, speed_: int, mult_: float, accel_: int, cur_: float):
+            self.motor = mot_
+            self.steps = deg_
             self.a_degs = abs(deg - cur_)
             self.d_degs = abs(deg)
-            self.speed = speed * mot_mult[motor]
-            self.accel = accel * mot_mult[motor]
+            self.speed = speed_ * mult_
+            self.accel = accel_ * mult_
             self.speed = 0
             self.accel = 0
 
@@ -161,7 +159,7 @@ def start_movement():
         def __int__(self):
             return self.steps
 
-        def set_values(self, deg: float) -> None:
+        def set_values(self, deg_: float) -> None:
             if self.a_degs == 0:
                 return
             else:
@@ -169,10 +167,10 @@ def start_movement():
                 self.accel = self.accel * (self.a_degs / deg)
 
         def get_msg(self) -> list:
-            return [f"{self.motor}0{self.steps}", f"{self.motor}1{self.speed}", f"{self.motor}2{self.accel}"]
+            return [f"{self.motor}{c.iangle}{self.steps}", f"{self.motor}{c.ispeed}{self.speed}", f"{self.motor}{c.iaccel}{self.accel}"]
 
     cur_pos_ = asyncio.run(con_get([f'{mot + 1}8' for mot in range(6)]))
-    values = [StepModule(n, mot_deg[n], mot_speed[n], mot_accel[n], float(cur_pos_[n])) for n in range(6)]
+    values = [StepModule(n, deg, speed, mult, accel, float(cur_pos_[n])) for n in range(6)]
     values.sort(reverse=True)
     main_val = values[0]
     if main_val.a_degs == 0:
@@ -182,21 +180,18 @@ def start_movement():
     data = []
     for n in range(6):
         data = data + values[n].get_msg()
-    data.append('000')
+    data.append(c.istart)
     asyncio.run(con(data))
 
 def home_motor(mot: int):
-    asyncio.run(con([f"{mot + 1}3"]))
+    asyncio.run(con([f'{mot + 1}{c.ihomst}']))
     pass
 
 def home_all_motors():
-    asyncio.run(con(["03", "13", "23", "33", "43", "53"]))
+    asyncio.run(con([f'{n}{c.ihomst}' for n in range(6)]))
 
-def enable_motors():
-    data = []
-    for m in range(6):
-        data.append(f"{m}{c.ienmot}{'1' if mot_en[m].value else '0'}")
-    asyncio.run(con(data))
+def enable_motors(mot: int, mode: bool):
+    asyncio.run(con([f'{mot}{c.ienmot}{'1' if mode else '0'}']))
 
 preset_list = user_config['preset_positions']
 
@@ -265,8 +260,9 @@ with gr.Blocks() as iface:
     with gr.Row():
         mot_en = []
         for i in range(6):
+            i_state = gr.State(i)
             en_mot = gr.Checkbox(label=f"Enable Motor {i + 1}", value=False)
-            en_mot.input(fn=enable_motors)
+            en_mot.input(fn=enable_motors, inputs=[i_state, en_mot])
             mot_en.append(en_mot)
         tmc_init = gr.Button("INIT TMC Drivers")
         tmc_init.click(fn=init_tmc)
@@ -299,7 +295,7 @@ with gr.Blocks() as iface:
                             mot_mult_i = gr.Number(value=user_config[f'motor{i}']['speed_mult'], label=f"Motor Speed Multiplier", minimum=0, maximum=1)
                             mot_mult.append(mot_mult_i)
                             deg_btn_ = gr.Button(f"Submit Motor {i + 1} Position")
-                            deg_btn_.click(individual_movement, inputs=[motor_i])
+                            deg_btn_.click(individual_movement, inputs=[motor_i, mot_deg_, mot_speed[i], mot_mult_i, mot_accel[i]])
 
                 start_btn = gr.Button("Submit Position")
                 start_btn.click(fn=start_movement)
