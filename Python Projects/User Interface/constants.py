@@ -1,50 +1,25 @@
-def get_setPos1(x: float) -> str:
-    data = f"10{x}"
-    return data
+# First Adresses
+# 0-5 are occupied by the motors
+igener = '6' # General Parameters
+istart = '9' # Starting all the motors
 
+# Second Motor Addresses
+ienmot = '00' # Enable motor
+iangle = '01' # Set angle to move to
+ispeed = '02' # Set speed
+iaccel = '03' # Set acceleration
+ireduc = '04' # Set reduction
+isthom = '10' # Start homing
+ihomsp = '11' # Set homing speed
+ihomin = '12' # Set inverse homing
+ihomac = '13' # Set homing acceleration
+ihomof = '14' # Set homing offset
+ihommu = '15' # Set homing speed multiplier
+itmcen = '20' # Initiate TMC
+imrstp = '21' # Set microstep resolution
+ipkrms = '22' # Set peak RMS
+ihcmlt = '23' # Set Hold Current Multiplier
+icrpos = '80' # Get current Position
 
-def getPos1():
-    return "18"
-
-
-def get_setPos2(x: float) -> str:
-    data = f"20{x}"
-    return data
-
-
-def getPos2():
-    return "28"
-
-
-def get_stepPS1(x: float) -> str:
-    data = f"11{x}"
-    return data
-
-
-def get_stepPS2(x: int) -> str:
-    data = f"21{x}"
-    return data
-
-
-def get_global_stepsPS(x: int) -> str:
-    data = f"01{x}"
-    return data
-
-
-def get_accel1(x: int) -> str:
-    data = f"12{x}"
-    return data
-
-
-def get_accel2(x: int) -> str:
-    data = f"22{x}"
-    return data
-
-
-def get_global_accel(x: int) -> str:
-    data = f"01{x}"
-    return data
-
-
-def getInitTMC() -> str:
-    return "99"
+# General Addresses ('6' or 'igener')
+idefst = '00' # Set default steps
