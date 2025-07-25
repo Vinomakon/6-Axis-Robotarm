@@ -81,7 +81,7 @@ def setup_config():
             *mot_mult, deg_presets_]
 
 def config_save(mot_speed0: int, mot_speed1: int, mot_speed2: int, mot_speed3: int, mot_speed4: int, mot_speed5: int,
-                mot_inverse_direction0: bool, mot_inverse_direction1: bool, mot_inverse_direction2: bool, mot_inverse_direction3: bool, mot_inverse_direction4: bool, mot_inverse_direction5: bool,
+                mot_inverse0: bool, mot_inverse1: bool, mot_inverse2: bool, mot_inverse3: bool, mot_inverse4: bool, mot_inverse5: bool,
                 mot_accel0: int, mot_accel1: int, mot_accel2: int, mot_accel3: int, mot_accel4: int, mot_accel5: int,
                 mot_reduc0: float, mot_reduc1: float, mot_reduc2: float, mot_reduc3: float, mot_reduc4: float, mot_reduc5: float,
                 mot_mult0: float, mot_mult1: float, mot_mult2: float, mot_mult3: float, mot_mult4: float, mot_mult5: float,
@@ -96,7 +96,7 @@ def config_save(mot_speed0: int, mot_speed1: int, mot_speed2: int, mot_speed3: i
                 mot_steps_: int):
     save = {}
     mot_speed_ = [mot_speed0, mot_speed1, mot_speed2, mot_speed3, mot_speed4, mot_speed5]
-    mot_inverse_ = [mot_inverse_direction0, mot_inverse_direction1, mot_inverse_direction2, mot_inverse_direction3, mot_inverse_direction4, mot_inverse_direction5]
+    mot_inverse_ = [mot_inverse0, mot_inverse1, mot_inverse2, mot_inverse3, mot_inverse4, mot_inverse5]
     mot_accel_ = [mot_accel0, mot_accel1, mot_accel2, mot_accel3, mot_accel4, mot_accel5]
     mot_reduc_ = [mot_reduc0, mot_reduc1, mot_reduc2, mot_reduc3, mot_reduc4, mot_reduc5]
     mot_mult_ = [mot_mult0, mot_mult1, mot_mult2, mot_mult3, mot_mult4, mot_mult5]
@@ -175,7 +175,7 @@ def submit_parameters(mot_speed0: int, mot_speed1: int, mot_speed2: int, mot_spe
         data.append(f'{mot}{c.ireduc}{mot_reduc_[mot]}')
 
         data.append(f'{mot}{c.ihomsp}{mot_home_speed_[mot]}')
-        data.append(f'{mot}{c.ihomin}{mot_home_inverse_[mot]}')
+        data.append(f'{mot}{c.ihomin}{"1" if mot_home_inverse_[mot] else "0"}')
         data.append(f'{mot}{c.ihomac}{mot_home_accel_[mot]}')
         data.append(f'{mot}{c.ihomof}{mot_home_offset_[mot]}')
         data.append(f'{mot}{c.ihommu}{mot_home_mult_[mot]}')
@@ -190,14 +190,18 @@ def individual_movement(mot: int, deg_: float, speed_: int, inverse_: bool, mult
     speed = f'{mot}{c.ispeed}{round(speed_ * mult_)}'
     accel = f'{mot}{c.iaccel}{round(accel_ * mult_)}'
     move = f"{mot}{c.iangle}{deg_ * (-1 if inverse_ else 1)}"
-    asyncio.run(con([speed, accel, move, '000']))
+    asyncio.run(con([speed, accel, move, c.istart]))
+    print([speed, accel, move, c.istart])
 
 def start_movement(mot_angle0: int, mot_angle1: int, mot_angle2: int, mot_angle3: int, mot_angle4: int, mot_angle5: int,
         mot_speed0: int, mot_speed1: int, mot_speed2: int, mot_speed3: int, mot_speed4: int, mot_speed5: int,
+        mot_inverse0: bool, mot_inverse1: bool, mot_inverse2: bool, mot_inverse3: bool, mot_inverse4: bool, mot_inverse5: bool,
         mot_mult0: float, mot_mult1: float, mot_mult2: float, mot_mult3: float, mot_mult4: float, mot_mult5: float,
         mot_accel0: int, mot_accel1: int, mot_accel2: int, mot_accel3: int, mot_accel4: int, mot_accel5: int,):
     mot_angle_ = [mot_angle0, mot_angle1, mot_angle2, mot_angle3, mot_angle4, mot_angle5]
     mot_speed_ = [mot_speed0, mot_speed1, mot_speed2, mot_speed3, mot_speed4, mot_speed5]
+    mot_inverse_ = [mot_inverse0, mot_inverse1, mot_inverse2, mot_inverse3,
+                    mot_inverse4, mot_inverse5]
     mot_mult_ = [mot_mult0, mot_mult1, mot_mult2, mot_mult3, mot_mult4, mot_mult5]
     mot_accel_ = [mot_accel0, mot_accel1, mot_accel2, mot_accel3, mot_accel4, mot_accel5]
     class StepModule:
@@ -226,10 +230,11 @@ def start_movement(mot_angle0: int, mot_angle1: int, mot_angle2: int, mot_angle3
                 self.accel = round(self.accel * (self.a_deg / deg_))
 
         def get_msg(self) -> list:
-            return [f"{self.motor}{c.iangle}{self.deg}", f"{self.motor}{c.ispeed}{self.speed}", f"{self.motor}{c.iaccel}{self.accel}"]
+            return [f"{self.motor}{c.ispeed}{self.speed}", f"{self.motor}{c.iaccel}{self.accel}", f"{self.motor}{c.iangle}{self.deg}"]
 
-    cur_pos_ = asyncio.run(con_get([f'{mot + 1}8' for mot in range(6)]))
-    values = [StepModule(n, mot_angle_[n], mot_speed_[n], mot_mult_[n], mot_accel_[n], float(cur_pos_[n])) for n in range(6)]
+    cur_pos_ = asyncio.run(con_get([f'{mot}{c.icrpos}' for mot in range(6)]))
+    print(cur_pos_)
+    values = [StepModule(n, mot_angle_[n] * (-1 if mot_inverse_[n] else 1), mot_speed_[n], mot_mult_[n], mot_accel_[n], float(cur_pos_[n])) for n in range(6)]
     values.sort(reverse=True)
     main_val = values[0]
     if main_val.a_deg == 0:
@@ -251,7 +256,7 @@ def home_all_motors():
     asyncio.run(con([f'{n}{c.ihomst}' for n in range(6)]))
 
 def enable_motors(mot: int, mode: bool):
-    asyncio.run(con([f'{mot}{c.ienmot}{'1' if mode else '0'}']))
+    asyncio.run(con([f'{mot}{c.ienmot}{"1" if mode else "0"}']))
 
 preset_list = user_config['preset_positions']
 
@@ -357,14 +362,10 @@ with gr.Blocks() as iface:
                             deg_btn_.click(individual_movement, inputs=[motor_i, mot_deg_, mot_speed[i], mot_inverse[i], mot_mult_i, mot_accel[i]])
 
                 start_btn = gr.Button("Submit Position")
-                start_btn.click(fn=start_movement, inputs=[*mot_deg, *mot_speed, *mot_mult, *mot_accel])
+                start_btn.click(fn=start_movement, inputs=[*mot_deg, *mot_speed, *mot_inverse, *mot_mult, *mot_accel])
             home_btn = gr.Button("Set All to Position 0")
-            ''' home_btn.click(startMovement, inputs=[
-                    sync_movement,
-                    mot_speed, mot_accel, b_mot_speed, b_mot_accel,
-                    r_mot1, r_mot2, r_mot3, r_mot4, r_mot5, r_mot6,
-                    global_deg, global_deg, global_deg, global_deg, global_deg, global_deg
-                ]) '''
+            zero_state = gr.State(0)
+            home_btn.click(start_movement, inputs=[*[zero_state for j in range(6)], *mot_speed, *mot_inverse, *mot_mult, *mot_accel])
         deg_presets = gr.Dataset(label='Motor Position Presets', components=[mot_deg[i] for i in range(6)], headers=[f'Motor {i+1}' for i in range(6)], samples=preset_list)
         deg_presets.click(fn=deg_preset, inputs=[deg_presets], outputs=[mot_deg[i] for i in range(6)])
         deg_presets_add = gr.Button(value='Add Preset')
@@ -383,10 +384,10 @@ with gr.Blocks() as iface:
                                                         *mot_home_speed, *mot_home_inverse, *mot_home_accel, *mot_home_offset, *mot_home_mult,
                                                         *microsteps, *rms_current, *hold_current_mult, mot_steps,
                                                         *mot_mult, deg_presets])
-    submit_params.click(fn=submit_parameters, inputs=[*mot_speed, *mot_accel, *mot_reduc,
+    submit_params.click(fn=submit_parameters, inputs=[*mot_speed,*mot_mult, *mot_accel, *mot_reduc,
                                                       *mot_home_speed, *mot_home_inverse, *mot_home_accel,
                                                       *mot_home_offset, *mot_home_mult,
-                                                      *microsteps, *rms_current, *hold_current_mult, mot_steps,
-                                                      *mot_mult])
+                                                      *microsteps, *rms_current, *hold_current_mult, mot_steps
+                                                      ])
 
 iface.launch()

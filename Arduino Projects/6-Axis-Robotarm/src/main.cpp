@@ -199,14 +199,19 @@ void initStepper(int mot){
 void actionSwitcher(int mot, String msg){
   int str_len = msg.length();
   String act = msg.substring(1, 3);
+  Serial.println("after, action " + act + ", " + "msg");
   switch (act.toInt()){
     case 02: //Set speed
       mot_speed[mot] = msg.substring(3, str_len).toInt();
+      Serial.println("changed speed of " + (String)mot + ", " + (String)mot_speed[mot]);
+      break;
     case 03: //Set acceleration
       mot_accel[mot] = msg.substring(3, str_len).toInt();
+      Serial.println("changed acceleration of " + (String)mot + ", " + (String)mot_accel[mot]);
       break;
     case 04: //Set reduction
-      mot_reduction[mot] = msg.substring(3, str_len).toInt();
+      mot_reduction[mot] = msg.substring(3, str_len).toFloat();
+      Serial.println("changed reduction of " + (String)mot + ", " + (String)mot_reduction[mot]);
       break;
     case 11: //Set homing speed
       mot_home_speed[mot] = msg.substring(3, str_len).toInt();
@@ -221,7 +226,7 @@ void actionSwitcher(int mot, String msg){
       mot_home_offset[mot] = msg.substring(3, str_len).toInt();
       break;
     case 15: //Set second homing speed mult
-      mot_home_mult[mot] = msg.substring(3, str_len).toInt();
+      mot_home_mult[mot] = msg.substring(3, str_len).toFloat();
     case 20: //Initiate TMC Driver
       initTMC5160(mot);
       break;
@@ -232,7 +237,7 @@ void actionSwitcher(int mot, String msg){
       mot_rms[mot] = msg.substring(3, str_len).toInt();
       break;
     case 23: //Set hold current multiplier
-      mot_hcm[mot] = msg.substring(3, str_len).toInt();
+      mot_hcm[mot] = msg.substring(3, str_len).toFloat();
       break;
   }
 }
@@ -247,6 +252,7 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
     int str_len = msg.length();
     String mot = msg.substring(0, 1);
     String act = msg.substring(1, 3);
+    Serial.println("action " + act + ", " + "msg");
     switch (mot.toInt()){
       case 0:
         switch (act.toInt()){
@@ -254,10 +260,10 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
             digitalWrite(EN1_PIN, msg.charAt(3) == '1' ? LOW : HIGH);
             break;
           case 01: //Set angle to travel to
-            stepper[0].setMaxSpeed(msg.substring(3, str_len).toInt());
-            stepper[0].setAcceleration(msg.substring(3, str_len).toInt());
+            stepper[0].setMaxSpeed(mot_speed[0]);
+            stepper[0].setAcceleration(mot_accel[0]);
             move_to_deg0 = msg.substring(3, str_len).toFloat();
-            move_to0 = int((default_steps * mot_reduction[0]) / (360 / move_to_deg0));
+            move_to0 = int((default_steps * mot_reduction[0] * mot_mcrs[0]) * (move_to_deg0 / 360));
             stepper[0].moveTo(move_to0);
             current_deg0 = move_to_deg0;
             break;
@@ -281,10 +287,10 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
             digitalWrite(EN2_PIN, msg.charAt(3) == '1' ? LOW : HIGH);
             break;
           case 01: //Set angle to travel to
-            stepper[1].setMaxSpeed(msg.substring(3, str_len).toInt());
-            stepper[1].setAcceleration(msg.substring(3, str_len).toInt());
+            stepper[1].setMaxSpeed(mot_speed[1]);
+            stepper[1].setAcceleration(mot_accel[1]);
             move_to_deg1 = msg.substring(3, str_len).toFloat();
-            move_to1 = int((default_steps * mot_reduction[1]) / (360 / move_to_deg1));
+            move_to1 = int((default_steps * mot_reduction[1] * mot_mcrs[1]) * (move_to_deg1 / 360));
             stepper[1].moveTo(move_to1);
             current_deg1 = move_to_deg1;
             break;
@@ -308,10 +314,10 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
             digitalWrite(EN3_PIN, msg.charAt(3) == '1' ? LOW : HIGH);
             break;
           case 01: //Set angle to travel to
-            stepper[2].setMaxSpeed(msg.substring(3, str_len).toInt());
-            stepper[2].setAcceleration(msg.substring(3, str_len).toInt());
+            stepper[2].setMaxSpeed(mot_speed[2]);
+            stepper[2].setAcceleration(mot_accel[2]);
             move_to_deg2 = msg.substring(3, str_len).toFloat();
-            move_to2 = int((default_steps * mot_reduction[2]) / (360 / move_to_deg2));
+            move_to2 = int((default_steps * mot_reduction[2] * mot_mcrs[2]) * (move_to_deg2 / 360));
             stepper[2].moveTo(move_to2);
             current_deg2 = move_to_deg2;
             break;
@@ -322,6 +328,7 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
             stepper[2].setAcceleration(mot_home_accel[2]);
             break;
           case 80: //Give current position
+            //ws.textAll((String)current_deg2);
             ws.textAll((String)current_deg2);
             break;
           default:
@@ -335,10 +342,10 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
             digitalWrite(EN4_PIN, msg.charAt(3) == '1' ? LOW : HIGH);
             break;
           case 01: //Set angle to travel to
-            stepper[3].setMaxSpeed(msg.substring(3, str_len).toInt());
-            stepper[3].setAcceleration(msg.substring(3, str_len).toInt());
+            stepper[3].setMaxSpeed(mot_speed[3]);
+            stepper[3].setAcceleration(mot_accel[3]);
             move_to_deg3 = msg.substring(3, str_len).toFloat();
-            move_to3 = int((default_steps * mot_reduction[3]) / (360 / move_to_deg3));
+            move_to3 = int((default_steps * mot_reduction[3] * mot_mcrs[3]) * (move_to_deg3 / 360));
             stepper[3].moveTo(move_to3);
             current_deg3 = move_to_deg3;
             break;
@@ -362,11 +369,11 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
             digitalWrite(EN5_PIN, msg.charAt(3) == '1' ? LOW : HIGH);
             break;
           case 01: //Set angle to travel to
-            stepper[4].setMaxSpeed(msg.substring(3, str_len).toInt());
-            stepper[4].setAcceleration(msg.substring(3, str_len).toInt());
+            stepper[4].setMaxSpeed(mot_speed[4]);
+            stepper[4].setAcceleration(mot_accel[4]);
             move_to_deg4 = msg.substring(3, str_len).toFloat();
-            move_to4 = int((default_steps * mot_reduction[4]) / (360 / move_to_deg4));
-            stepper[0].moveTo(move_to4);
+            move_to4 = int((default_steps * mot_reduction[4] * mot_mcrs[4]) * (move_to_deg4 / 360));
+            stepper[4].moveTo(move_to4);
             current_deg4 = move_to_deg4;
             break;
           case 10: //Start homing
@@ -389,10 +396,10 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
             digitalWrite(EN6_PIN, msg.charAt(3) == '1' ? LOW : HIGH);
             break;
           case 01: //Set angle to travel to
-            stepper[5].setMaxSpeed(msg.substring(3, str_len).toInt());
-            stepper[5].setAcceleration(msg.substring(3, str_len).toInt());
+            stepper[5].setMaxSpeed(mot_speed[5]);
+            stepper[5].setAcceleration(mot_accel[5]);
             move_to_deg5 = msg.substring(3, str_len).toFloat();
-            move_to5 = int((default_steps * mot_reduction[5]) / (360 / move_to_deg5));
+            move_to5 = int((default_steps * mot_reduction[5] * mot_mcrs[5]) * (move_to_deg5 / 360));
             stepper[5].moveTo(move_to5);
             current_deg5 = move_to_deg5;
             break;
