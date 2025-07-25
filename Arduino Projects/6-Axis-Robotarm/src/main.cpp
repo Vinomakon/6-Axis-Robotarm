@@ -84,8 +84,10 @@ float mot_home_offset[6];
 int mot_home_mult[6];
 
 int mot_mcrs[6];
-int mot_rms[6];
-float mot_hcm[6];
+//int mot_rms[6];
+//float mot_hcm[6];
+int mot_irun[6];
+int mot_ihold[6];
 
 // MOTOR0 VARIABLES
 
@@ -179,14 +181,14 @@ AccelStepper stepper[] = {
 
 void initTMC5160(int mot){
   driver[mot].begin();                                                                      // Initiate pins and registeries
-  driver[mot].rms_current(mot_rms[mot], mot_hcm[mot]); // Set stepper current, second parameter is hold_multiplier
+  //driver[mot].rms_current(mot_rms[mot], mot_hcm[mot]); // Set stepper current, second parameter is hold_multiplier
   driver[mot].en_pwm_mode(1);                                                               // Enable extremely quiet stepping
   driver[mot].toff(4);                                                                      // off time
   driver[mot].blank_time(24);                                                               // blank tim
   driver[mot].pwm_autoscale(1);
   driver[mot].microsteps(mot_mcrs[mot]); // What microstep range to use
-  driver[mot].ihold(18);
-  driver[mot].irun(18);
+  driver[mot].ihold(mot_irun[mot]);
+  driver[mot].irun(mot_ihold[mot]);
   driver[mot].TPWMTHRS(20);
 }
 
@@ -226,18 +228,18 @@ void actionSwitcher(int mot, String msg){
       mot_home_offset[mot] = msg.substring(3, str_len).toInt();
       break;
     case 15: //Set second homing speed mult
-      mot_home_mult[mot] = msg.substring(3, str_len).toFloat();
+      mot_home_mult[mot] = msg.substring(3, str_len).toInt();
     case 20: //Initiate TMC Driver
       initTMC5160(mot);
       break;
     case 21: //Set Microsteps
       mot_mcrs[mot] = msg.substring(3, str_len).toInt();
       break;
-    case 22: //Set RMS current
-      mot_rms[mot] = msg.substring(3, str_len).toInt();
+    case 22: //Set IRUN
+      mot_irun[mot] = msg.substring(3, str_len).toInt();
       break;
-    case 23: //Set hold current multiplier
-      mot_hcm[mot] = msg.substring(3, str_len).toFloat();
+    case 23: //Set IHOLD
+      mot_ihold[mot] = msg.substring(3, str_len).toFloat();
       break;
   }
 }
