@@ -186,6 +186,46 @@ def submit_parameters(mot_speed0: int, mot_speed1: int, mot_speed2: int, mot_spe
     data.append(f'{c.igener}{c.idefst}{mot_steps_}')
     asyncio.run(con(data))
 
+def submit_homing_parameters(mot_home_speed0: int, mot_home_speed1: int, mot_home_speed2: int, mot_home_speed3: int, mot_home_speed4: int, mot_home_speed5: int,
+                mot_home_inverse0: bool, mot_home_inverse1: bool, mot_home_inverse2: bool, mot_home_inverse3: bool, mot_home_inverse4: bool, mot_home_inverse5: bool,
+                mot_home_accel0: int, mot_home_accel1: int, mot_home_accel2: int, mot_home_accel3: int, mot_home_accel4: int, mot_home_accel5: int,
+                mot_home_offset0: int, mot_home_offset1: int, mot_home_offset2: int, mot_home_offset3: int, mot_home_offset4: int, mot_home_offset5: int,
+                mot_home_mult0: float, mot_home_mult1: float, mot_home_mult2: float, mot_home_mult3: float, mot_home_mult4: float, mot_home_mult5: float):
+    mot_home_speed_ = [mot_home_speed0, mot_home_speed1, mot_home_speed2, mot_home_speed3, mot_home_speed4,
+                       mot_home_speed5]
+    mot_home_inverse_ = [mot_home_inverse0, mot_home_inverse1, mot_home_inverse2, mot_home_inverse3, mot_home_inverse4,
+                         mot_home_inverse5]
+    mot_home_accel_ = [mot_home_accel0, mot_home_accel1, mot_home_accel2, mot_home_accel3, mot_home_accel4,
+                       mot_home_accel5]
+    mot_home_offset_ = [mot_home_offset0, mot_home_offset1, mot_home_offset2, mot_home_offset3, mot_home_offset4,
+                        mot_home_offset5]
+    mot_home_mult_ = [mot_home_mult0, mot_home_mult1, mot_home_mult2, mot_home_mult3, mot_home_mult4, mot_home_mult5]
+    data = []
+    for mot in range(6):
+        data.append(f'{mot}{c.ihomsp}{mot_home_speed_[mot]}')
+        data.append(f'{mot}{c.ihomin}{"1" if mot_home_inverse_[mot] else "0"}')
+        data.append(f'{mot}{c.ihomac}{mot_home_accel_[mot]}')
+        data.append(f'{mot}{c.ihomof}{mot_home_offset_[mot]}')
+        data.append(f'{mot}{c.ihommu}{mot_home_mult_[mot]}')
+    asyncio.run(con(data))
+
+def submit_technical_parameters(microsteps0: int, microsteps1: int, microsteps2: int, microsteps3: int, microsteps4: int, microsteps5: int,
+                irun0: int, irun1: int, irun2: int, irun3: int, irun4: int, irun5: int,
+                ihold0: int, ihold1: int, ihold2: int, ihold3: int, ihold4: int, ihold5: int,
+                mot_steps_: int):
+    microsteps_ = [microsteps0, microsteps1, microsteps2, microsteps3, microsteps4, microsteps5]
+    irun_ = [irun0, irun1, irun2, irun3, irun4, irun5]
+    ihold_ = [ihold0, ihold1, ihold2, ihold3,
+              ihold4, ihold5]
+
+    data = []
+    for mot in range(6):
+        data.append(f'{mot}{c.imrstp}{microsteps_[mot]}')
+        data.append(f'{mot}{c.ihcmlt}{irun_[mot]}')
+        data.append(f'{mot}{c.icrpos}{ihold_[mot]}')
+    data.append(f'{c.igener}{c.idefst}{mot_steps_}')
+    asyncio.run(con(data))
+
 def individual_movement(mot: int, deg_: float, speed_: int, inverse_: bool, mult_: float, accel_: int):
     speed = f'{mot}{c.ispeed}{round(speed_ * mult_)}'
     accel = f'{mot}{c.iaccel}{round(accel_ * mult_)}'
@@ -233,7 +273,6 @@ def start_movement(mot_angle0: int, mot_angle1: int, mot_angle2: int, mot_angle3
             return [f"{self.motor}{c.ispeed}{self.speed}", f"{self.motor}{c.iaccel}{self.accel}", f"{self.motor}{c.iangle}{self.deg}"]
 
     cur_pos_ = asyncio.run(con_get([f'{mot}{c.icrpos}' for mot in range(6)]))
-    print(cur_pos_)
     values = [StepModule(n, mot_angle_[n] * (-1 if mot_inverse_[n] else 1), mot_speed_[n], mot_mult_[n], mot_accel_[n], float(cur_pos_[n])) for n in range(6)]
     values.sort(reverse=True)
     main_val = values[0]
@@ -245,7 +284,6 @@ def start_movement(mot_angle0: int, mot_angle1: int, mot_angle2: int, mot_angle3
     for n in range(6):
         data = data + values[n].get_msg()
     data.append(c.istart)
-    print(data)
     asyncio.run(con(data))
 
 def home_motor(mot: int):
@@ -257,6 +295,7 @@ def home_all_motors():
 
 def enable_motors(mot: int, mode: bool):
     asyncio.run(con([f'{mot}{c.ienmot}{"1" if mode else "0"}']))
+    return gr.Button(f"Submit Motor {mot + 1} Position", interactive=mode)
 
 preset_list = user_config['preset_positions']
 
@@ -273,8 +312,8 @@ def deg_preset_remove(deg1: int, deg2: int, deg3: int, deg4: int, deg5: int, deg
     preset_list = [i for i in preset_list if i != [deg1, deg2, deg3, deg4, deg5, deg6]]
     return gr.Dataset(label='Motor Position Presets', components=[mot_deg[mot] for mot in range(6)], headers=[f'Motor {num + 1}' for num in range(6)], samples=preset_list)
 
-
 with gr.Blocks() as iface:
+    i_state = [gr.State(i) for i in range(6)]
     with gr.Accordion("Parameters", open=False):
         with gr.Tab(label='Motor Parameters'):
             mot_speed = []
@@ -306,6 +345,10 @@ with gr.Blocks() as iface:
                         mot_home_offset.append(gr.Number(value=user_config[f"motor{i}"]["home_offset"], minimum=0, label="Homing Offset", interactive=True))
                         mot_home_mult.append(
                             gr.Number(value=user_config[f"motor{i}"]["home_mult"], minimum=0, maximum=1, label="Second Homing Speed Multiplier", interactive=True))
+            submit_homing_params = gr.Button("Submit Technical Parameters")
+            submit_homing_params.click(fn=submit_homing_parameters,
+                                          inputs=[*mot_home_speed, *mot_home_inverse, *mot_home_accel,
+                                                      *mot_home_offset, *mot_home_mult])
         with gr.Tab(label='Technical Parameters'):
             microsteps = []
             irun = []
@@ -319,14 +362,13 @@ with gr.Blocks() as iface:
                         ihold.append(gr.Number(value=user_config[f"motor{i}"]["ihold"], step=1, minimum=0, maximum=31, label="IHOLD", interactive=True))
             mot_steps = gr.Number(label='Number of Steps per full revolution',
                                   value=user_config["general"]["steps_p_revolution"], step=1, minimum=0, interactive=True)
-        submit_params = gr.Button("Submit all Parameters")
+            submit_technical_params = gr.Button("Submit Technical Parameters")
+            submit_technical_params.click(fn=submit_technical_parameters, inputs=[*microsteps, *irun, *ihold, mot_steps])
 
     with gr.Row():
         mot_en = []
         for i in range(6):
-            i_state = gr.State(i)
             en_mot = gr.Checkbox(label=f"Enable Motor {i + 1}", value=False)
-            en_mot.input(fn=enable_motors, inputs=[i_state, en_mot])
             mot_en.append(en_mot)
         tmc_init = gr.Button("INIT TMC Drivers")
         tmc_init.click(fn=init_tmc)
@@ -339,9 +381,8 @@ with gr.Blocks() as iface:
                 with gr.Row():
                     home_btn = []
                     for i in range(6):
-                        home_st = gr.State(i)
                         btn_ = gr.Button(f"Home Motor {i+1}")
-                        btn_.click(fn=home_motor, inputs=[home_st])
+                        btn_.click(fn=home_motor, inputs=[i_state[i]])
                         home_btn.append(btn_)
 
         sync_movement = gr.Checkbox(value=False, label="Synchronous Movement")
@@ -351,15 +392,16 @@ with gr.Blocks() as iface:
                     # Position
                     mot_deg = []
                     mot_mult = []
+                    deg_btn = []
                     for i in range(6):
                         with gr.Group():
-                            motor_i = gr.State(i)
                             mot_deg_ = gr.Number(value=0, label=f"Degree Position of {n_th(i + 1)} Motor")
                             mot_deg.append(mot_deg_)
                             mot_mult_i = gr.Number(value=user_config[f'motor{i}']['speed_mult'], label=f"Motor Speed Multiplier", minimum=0, maximum=1)
                             mot_mult.append(mot_mult_i)
-                            deg_btn_ = gr.Button(f"Submit Motor {i + 1} Position")
-                            deg_btn_.click(individual_movement, inputs=[motor_i, mot_deg_, mot_speed[i], mot_inverse[i], mot_mult_i, mot_accel[i]])
+                            deg_btn_ = gr.Button(f"Submit Motor {i + 1} Position", interactive=False)
+                            deg_btn_.click(individual_movement, inputs=[i_state[i], mot_deg_, mot_speed[i], mot_inverse[i], mot_mult_i, mot_accel[i]])
+                            deg_btn.append(deg_btn_)
 
                 start_btn = gr.Button("Submit Position")
                 start_btn.click(fn=start_movement, inputs=[*mot_deg, *mot_speed, *mot_inverse, *mot_mult, *mot_accel])
@@ -372,10 +414,15 @@ with gr.Blocks() as iface:
         deg_presets_add.click(fn=deg_preset_add, inputs=[mot_deg[i] for i in range(6)], outputs=[deg_presets])
         deg_presets_remove = gr.Button(value='Remove Preset')
         deg_presets_remove.click(fn=deg_preset_remove, inputs=[mot_deg[i] for i in range(6)], outputs=[deg_presets])
+
     with gr.Accordion(label='Config Options', open=False):
         with gr.Row():
             save_config = gr.Button(value='Save Config')
             load_config = gr.Button(value='Load Config')
+
+    for i in range(6):
+        mot_en[i].input(fn=enable_motors, inputs=[i_state[i], mot_en[i]], outputs=[deg_btn[i]])
+
     save_config.click(fn=config_save, inputs=[*mot_speed, *mot_mult, *mot_inverse, *mot_accel, *mot_reduc,
                                                         *mot_home_speed, *mot_home_inverse, *mot_home_accel, *mot_home_offset, *mot_home_mult,
                                                         *microsteps, *irun, *ihold, mot_steps])
@@ -383,9 +430,5 @@ with gr.Blocks() as iface:
                                                         *mot_home_speed, *mot_home_inverse, *mot_home_accel, *mot_home_offset, *mot_home_mult,
                                                         *microsteps, *irun, *ihold, mot_steps,
                                                         deg_presets])
-    submit_params.click(fn=submit_parameters, inputs=[*mot_speed, *mot_mult, *mot_accel, *mot_reduc,
-                                                      *mot_home_speed, *mot_home_inverse, *mot_home_accel,
-                                                      *mot_home_offset, *mot_home_mult,
-                                                      *microsteps, *irun, *ihold, mot_steps])
 
 iface.launch()
