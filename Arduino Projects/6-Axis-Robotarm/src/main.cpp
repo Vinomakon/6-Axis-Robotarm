@@ -187,8 +187,8 @@ void initTMC5160(int mot){
   driver[mot].blank_time(24);                                                               // blank tim
   driver[mot].pwm_autoscale(1);
   driver[mot].microsteps(mot_mcrs[mot]); // What microstep range to use
-  driver[mot].ihold(mot_irun[mot]);
-  driver[mot].irun(mot_ihold[mot]);
+  driver[mot].ihold(mot_ihold[mot]);
+  driver[mot].irun(mot_irun[mot]);
   driver[mot].TPWMTHRS(20);
 }
 
@@ -268,6 +268,7 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
             move_to0 = int((default_steps * mot_reduction[0] * mot_mcrs[0]) * (move_to_deg0 / 360));
             stepper[0].moveTo(move_to0);
             current_deg0 = move_to_deg0;
+            Serial.println("Speed: " + (String)mot_speed[0] + ", Acceleration: " + (String)mot_accel[0] + ", Position: " + msg.substring(3, str_len) + ", Steps: " + (String)move_to0);
             break;
           case 10: //Start homing
             home_mot0 = true;
@@ -508,9 +509,11 @@ void loop() {
     for(int i = 0; i < 6; i++){
       stepper[i].run();
     }
+    //Serial.println("moving");
     
     bool stop_move = true;
     for(int i = 0; i < 6; i++){
+      //Serial.println((String)i + (stepper[i].distanceToGo() == 0 ? " stopped moving": " is moving") + "with current position " + (String)stepper[i].distanceToGo());
       stop_move = stop_move && (stepper[i].distanceToGo() == 0);
     }
     can_move = !stop_move;

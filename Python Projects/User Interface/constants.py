@@ -17,8 +17,8 @@ ihomof = '14' # Set homing offset
 ihommu = '15' # Set homing speed multiplier
 itmcen = '20' # Initiate TMC
 imrstp = '21' # Set microstep resolution
-ipkrms = '22' # Set peak RMS
-ihcmlt = '23' # Set Hold Current Multiplier
+i_irun = '22' # Set peak RMS
+i_hold = '23' # Set Hold Current Multiplier
 icrpos = '80' # Get current Position
 
 # General Addresses ('6' or 'igener')
