@@ -77,7 +77,7 @@ def setup_config():
     deg_presets_ = gr.Dataset(label='Motor Position Presets', components=[mot_deg[mot] for mot in range(6)],
                              headers=[f'Motor {num + 1}' for num in range(6)], samples=preset_list)
 
-    return [*mot_speed_, *mot_mult, *mot_inverse_, *mot_accel_, *mot_reduc_,
+    return [mot_global_speed_, mot_global_accel_, *mot_speed_, *mot_mult, *mot_inverse_, *mot_accel_, *mot_reduc_,
             *mot_home_speed_, *mot_home_inverse_, *mot_home_accel_, *mot_home_offset_, *mot_home_mult_,
             *microsteps_, *irun_, *ihold_, mot_steps_,
             deg_presets_]
@@ -127,8 +127,8 @@ def config_save(mot_global_speed_: int, mot_global_accel_: int,
         save[f'motor{j}']['irun'] = irun_[j]
         save[f'motor{j}']['ihold'] = ihold_[j]
     save['general'] = {}
-    save['general']['mot_global_speed'] = mot_global_speed_
-    save['general']['mot_global_accel'] = mot_global_accel_
+    save['general']['global_mot_speed'] = mot_global_speed_
+    save['general']['global_mot_accel'] = mot_global_accel_
     save['general']['steps_p_revolution'] = mot_steps_
     save['preset_positions'] = preset_list
 
@@ -226,17 +226,17 @@ def start_movement(mot_angle0: int, mot_angle1: int, mot_angle2: int, mot_angle3
         def __int__(self):
             return self.deg
 
-        def set_values(self, deg_: float, speed: int, accel: int) -> None:
+        def set_values(self, deg_: float, speed: int, accel: int, reduc_: int) -> None:
             if self.a_deg == 0:
                 return
             else:
-                self.speed = round(speed * (self.a_deg / deg_))
+                self.speed = round(speed * (self.a_deg / deg_) * self.reduc / reduc_)
                 self.speed_overdrive = max(0, self.speed - self.max_speed)
-                self.accel = round(accel * (self.a_deg / deg_))
+                self.accel = round(accel * (self.a_deg / deg_) * self.reduc / reduc_)
                 self.accel_overdrive = max(0, self.accel - self.max_accel)
 
         def get_overdrive(self):
-            return self.max_speed, self.speed_overdrive, self.max_accel, self.accel_overdrive
+            return self.max_speed, self.speed_overdrive, self.max_accel, self.accel_overdrive, self.a_deg
 
         def get_msg(self) -> list:
             if self.a_deg > 0:
@@ -244,40 +244,51 @@ def start_movement(mot_angle0: int, mot_angle1: int, mot_angle2: int, mot_angle3
             else:
                 return []
 
-    # cur_pos_ = asyncio.run(con_get([f'{mot}{c.icrpos}' for mot in range(6)]))
-    cur_pos_ = [0 for n in range(6)]
-    values = [StepModule(n, mot_angle_[n] * (-1 if mot_inverse_[n] else 1), mot_speed_[n], mot_mult_[n], mot_accel_[n], mot_reduc_[n], float(cur_pos_[n])) for n in range(6)]
+    cur_pos_ = asyncio.run(con_get([f'{mot}{c.icrpos}' for mot in range(6)]))
+    #cur_pos_ = [0 for n in range(6)]
+    values = []
+    highest_reduc = 0
+    for n in range(6):
+        temp_ = StepModule(n, mot_angle_[n] * (-1 if mot_inverse_[n] else 1), mot_speed_[n], mot_mult_[n], mot_accel_[n], mot_reduc_[n], float(cur_pos_[n]))
+        if temp_.a_deg > 0:
+            values.append(temp_)
+            if highest_reduc < temp_.reduc:
+                highest_reduc = temp_.reduc
+    if len(values) == 0:
+        print("no more values")
+        return
     values.sort(reverse=True)
     main_val = values[0]
     not_satisfied = True
     overdrive_speed: int
     overdrive_accel: int
     while not_satisfied:
+
         if main_val.a_deg == 0:
             return
-        for n in range(6):
-            values[n].set_values(main_val.a_deg, global_mot_speed_, global_mot_accel_)
+        for n in range(len(values)):
+            values[n].set_values(main_val.a_deg, global_mot_speed_, global_mot_accel_, highest_reduc)
         overdrive_speed = 0
         overdrive_accel = 0
-        for n in range(6):
+        for n in range(len(values)):
             overdrive = values[n].get_overdrive()
-            if overdrive[1] > overdrive_speed:
-                print("overdrive speed")
+            if overdrive[1] > overdrive_speed or overdrive[3] > overdrive_accel:
                 overdrive_speed = overdrive[1]
-                global_mot_speed_ = overdrive[0]
-            if overdrive[3] > overdrive_accel:
-                print("overdrive acceleration")
+                global_mot_speed_ = overdrive[0] / (overdrive[4] / main_val.a_deg)
                 overdrive_accel = overdrive[3]
-                global_mot_accel_ = overdrive[2]
+                global_mot_accel_ = overdrive[2] / (overdrive[4] / main_val.a_deg)
+                print(f"overdrive at {n} with speed now being {global_mot_speed_} and acceleration {global_mot_accel_}")
+                print(f"overdriven speed {overdrive[0]} or acceleration {overdrive[2]}")
 
         if overdrive_speed <= 0 and overdrive_accel <= 0:
             not_satisfied = False
+        print("not satisfied")
     data = []
-    for n in range(6):
+    for n in range(len(values)):
         data = data + values[n].get_msg()
     data.append(c.istart)
     print(data)
-    # asyncio.run(con(data))
+    asyncio.run(con(data))
 
 def home_motor(mot: int):
     asyncio.run(con([f'{mot + 1}{c.ihomst}']))
