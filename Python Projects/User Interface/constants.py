@@ -3,6 +3,7 @@
 igener = '6' # General Parameters
 istart = '900' # Starting all the motors
 
+
 # Second Motor Addresses
 ienmot = '00' # Enable motor
 iangle = '01' # Set angle to move to
