@@ -28,7 +28,7 @@ async def con_get(data: list) -> list:
 
 
 def load_json_config() -> dict:
-    with open('data/user_config.json') as f:
+    with open('../data/user_config.json') as f:
         d = json.load(f)
         f.close()
         return d
@@ -132,7 +132,7 @@ def config_save(mot_global_speed_: int, mot_global_accel_: int,
     save['general']['steps_p_revolution'] = mot_steps_
     save['preset_positions'] = preset_list
 
-    with open('data/user_config.json', "w") as f:
+    with open('../data/user_config.json', "w") as f:
         json.dump(save, f)
         f.close()
     print('Successfully saved config to \'user_config.json\'')
@@ -215,7 +215,6 @@ def start_movement(mot_angle0: int, mot_angle1: int, mot_angle2: int, mot_angle3
             self.speed_overdrive = 0  # How much the calculated speed is over the current motor's maximum speed
             self.accel_overdrive = 0# How much the calculated acceleration is over the current motor's maximum acceleration
             self.reduc = reduc_
-
 
         def __lt__(self, other):
             return self.a_deg < other.a_deg
