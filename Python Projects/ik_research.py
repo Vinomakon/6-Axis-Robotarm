@@ -57,31 +57,23 @@ y_g = m4y + y_pos
 
 lj1 = np.sqrt(np.pow(m5x + m4['x'] + m3['x'], 2) + np.pow(m5y + m4['y'] + m3['y'], 2))
 lj2 = lm2
-print((np.pow(x_pos, 2) + np.pow(y_pos, 2)))
-print(((np.pow(x_pos, 2) + np.pow(y_pos, 2)) - np.pow(lj1, 2) - np.pow(lj2, 2)) / (2 * lj1 * lj2))
+
+# print((np.pow(x_pos, 2) + np.pow(y_pos, 2)))
+# print(((np.pow(x_pos, 2) + np.pow(y_pos, 2)) - np.pow(lj1, 2) - np.pow(lj2, 2)) / (2 * lj1 * lj2))
 q2 = np.arccos(((np.pow(x_pos, 2) + np.pow(y_pos, 2)) - np.pow(lj1, 2) - np.pow(lj2, 2)) / (2 * lj1 * lj2))
 print(np.rad2deg(q2))
-
-'''
-m5norm = np.sqrt(np.pow(m5x, 2) + np.pow(m5y, 2) + np.pow(m5z, 2))
-print(m5norm)
-
-# First operation
-m5x = round(m5norm * np.cos(np.deg2rad(-x_rot)), 2)
-m5z = round(m5norm * np.sin(np.deg2rad(-x_rot)), 2)
-
-# Second operation
-m5y = round(m5z * np.sin(np.deg2rad(-z_rot)), 2)
-m5z = round(m5z * np.cos(np.deg2rad(-z_rot)), 2)
-
+q1 = np.atan2(x_pos, y_pos)
 
 fig = plt.figure()
 ax = fig.add_subplot(projection='3d')
 
-ax.plot([0, m5x], [0, m5y], [0, m5z])
-ax.scatter([0], [0], [0], marker='*', c='#ff0000')
-ax.plot([0, 0, 0, 0, 0], [-m5norm, m5norm, m5norm, -m5norm, -m5norm], [-m5norm, -m5norm, m5norm, m5norm, -m5norm], linestyle='dashed')
+j2 = np.array([lm2 * np.sin(-q1), 0, lm2 * np.cos(-q1)])
+j1 = np.array([])
+# ax.plot([0, m5x], [0, m5y], [0, m5z])
+# ax.scatter([0], [0], [0], marker='*', c='#ff0000')
+# ax.plot([0, 0, 0, 0, 0], [-m5norm, m5norm, m5norm, -m5norm, -m5norm], [-m5norm, -m5norm, m5norm, m5norm, -m5norm], linestyle='dashed')
 
+ax.plot([0, j2[0]], [0, j2[1]], [0, j2[2]], c='#fcba03')
 ax.set_xlabel('X')
 ax.set_ylabel('Y')
 ax.set_zlabel('Z')
@@ -89,4 +81,4 @@ ax.set_xlim(-100, 100)
 ax.set_ylim(-100, 100)
 ax.set_zlim(-100, 100)
 plt.show()
-'''
+
