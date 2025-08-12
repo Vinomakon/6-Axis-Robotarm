@@ -1,7 +1,9 @@
+import copy
+
 import numpy as np
 import json
 import matplotlib.pyplot as plt
-import vector
+from vector import Vector3
 
 cube_size = 300
 def normalize(vec: np.array):
@@ -12,78 +14,60 @@ def normalize(vec: np.array):
 
 
 x_pos = 300
-y_pos = 100
+y_pos = 0
 z_pos = 0
 x_rot = 0
-y_rot = 45
-z_rot = 45
-
+y_rot = 90
+z_rot = 0
+goal = Vector3(x_pos, y_pos, z_pos)
 
 d: dict
 with open('data/ik_config.json') as f:
     d = json.load(f)
     f.close()
 
-m0 = d['motor0']
-m1 = d['motor1']
-m2 = d['motor2']
-m3 = d['motor3']
-m4 = d['motor4']
-m5 = d['motor5']
+m0 = Vector3(d['motor0']['x'], d['motor0']['y'], d['motor0']['z'])
+m1 = Vector3(d['motor1']['x'], d['motor1']['y'], d['motor1']['z'])
+m2 = Vector3(d['motor2']['x'], d['motor2']['y'], d['motor2']['z'])
+m3 = Vector3(d['motor3']['x'], d['motor3']['y'], d['motor3']['z'])
+m4 = Vector3(d['motor4']['x'], d['motor4']['y'], d['motor4']['z'])
+m5 = Vector3(d['motor5']['x'], d['motor5']['y'], d['motor5']['z'])
 
-lm0 = np.sqrt(np.pow(m0['x'], 2) + np.pow(m0['y'], 2) + np.pow(m0['z'], 2))
-lm1 = np.sqrt(np.pow(m1['x'], 2) + np.pow(m1['y'], 2) + np.pow(m1['z'], 2))
-lm2 = np.sqrt(np.pow(m2['x'], 2) + np.pow(m2['y'], 2) + np.pow(m2['z'], 2))
-lm3 = np.sqrt(np.pow(m3['x'], 2) + np.pow(m3['y'], 2) + np.pow(m3['z'], 2))
-lm4 = np.sqrt(np.pow(m4['x'], 2) + np.pow(m4['y'], 2) + np.pow(m4['z'], 2))
+nm5 = copy.copy(m5)
 
+# nm5.rotate(x_rot, y_rot, z_rot, mode='deg')
+nm5.rotate_axis(y_rot, 'y', mode='deg')
+nm5.rotate_axis(x_rot, 'x', mode='deg')
+print(nm5)
+print(np.round(nm5.vec2matrix, 4))
+new_goal = copy.copy(goal)
+new_goal = new_goal - nm5
+print(new_goal)
 
-m5norm = np.sqrt(np.pow(m5['x'], 2) + np.pow(m5['y'], 2) + np.pow(m5['z'], 2))
+lj1 = abs(m2)
+lj2 = np.sqrt(np.pow(m5.x + m4.x + m3.x, 2) + np.pow(m5.y + m4.y + m3.y, 2))
 
-# Z-Rotation
-m5x = round(m5norm * np.cos(np.deg2rad(z_rot)), 4)
-m5y = round(m5norm * np.sin(np.deg2rad(z_rot)), 4)
-print(m5x, m5y)
-
-# Y-Rotation
-m5z = round(m5x * np.sin(np.deg2rad(y_rot)), 4)
-m5x = round(m5x * np.cos(np.deg2rad(y_rot)), 4)
-print(m5x, m5z)
-
-print(m5x, m5y, m5z, m5norm, np.sqrt(np.pow(m5x, 2) + np.pow(m5z, 2) + np.pow(m5y, 2)))
-
-x_g = x_pos - m5x
-y_g = y_pos - m5y
-z_g = z_pos - m5z
-print(x_g, y_g, z_g)
-
-lj1 = lm2
-lj2 = np.sqrt(np.pow(m5x + m4['x'] + m3['x'], 2) + np.pow(m5y + m4['y'] + m3['y'], 2))
-
-# print((np.pow(x_pos, 2) + np.pow(y_pos, 2)))
-# print(((np.pow(x_pos, 2) + np.pow(y_pos, 2)) - np.pow(lj1, 2) - np.pow(lj2, 2)) / (2 * lj1 * lj2))
 q2 = -np.arccos(
-    ((np.pow(x_g, 2) + np.pow(y_g, 2)) - np.pow(lj1, 2) - np.pow(lj2, 2))
+    ((np.pow(new_goal.x, 2) + np.pow(new_goal.y, 2) + np.pow(new_goal.z, 2)) - np.pow(lj1, 2) - np.pow(lj2, 2))
     / (2 * lj1 * lj2))
+q1 = np.atan2(new_goal.y, new_goal.x) - np.atan2(lj2 * np.sin(q2), lj1 + lj2 * np.cos(q2))
 
-q1 = np.atan2(y_g, x_g) - np.atan2(lj2 * np.sin(q2), lj1 + lj2 * np.cos(q2))
+o1 = np.atan2(new_goal.z, new_goal.x)
 
-print(q1, q2)
+j1 = Vector3([lj1, 0, 0])
+j1.rotate(0, o1, -q1)
+j2 = Vector3([lj2, 0, 0])
+j2.rotate(0, o1, -(q1 + q2))
+j2 = j1 + j2
+j3 = Vector3([x_pos, y_pos, z_pos])
 
 fig = plt.figure()
 ax = fig.add_subplot(projection='3d')
-ax.plot([0, x_g], [0, y_g], [0, z_pos], c='#ff00ff')
+ax.plot([0, goal.x], [0, goal.y], [0, goal.z], c='#00ff00', linestyle='dashed')
+ax.plot([0,new_goal.x], [0, new_goal.y], [0, new_goal.z], c='#ff00ff', linestyle='dashed')
 
-j1 = np.array([lj1 * np.cos(q1), lj1 * np.sin(q1), 0])
-j2 = np.array([lj2 * np.cos((q1 + q2)) + j1[0], lj2 * np.sin((q1 + q2)) + j1[1], 0])
-j3 = np.array([x_pos, y_pos, z_pos + m5z])
-print(j1, j2)
-# ax.plot([0, m5x], [0, m5y], [0, m5z])
-# ax.scatter([0], [0], [0], marker='*', c='#ff0000')
-# ax.plot([0, 0, 0, 0, 0], [-m5norm, m5norm, m5norm, -m5norm, -m5norm], [-m5norm, -m5norm, m5norm, m5norm, -m5norm], linestyle='dashed')
-
-ax.plot([0, j1[0], j2[0]], [0, j1[1], j2[1]], [0, j1[2], j2[2]], c='#fcba03')
-ax.plot([j2[0], j3[0]], [j2[1], j3[1]], [j2[2], j3[2]])
+ax.plot([0, j1.x, j2.x], [0, j1.y, j2.y], [0, j1.z, j2.z], c='#fcba03')
+ax.plot([j2.x, j3.x], [j2.y, j3.y], [j2.z, j3.z])
 ax.set_xlabel('X')
 ax.set_ylabel('Y')
 ax.set_zlabel('Z')
