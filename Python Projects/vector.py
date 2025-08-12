@@ -120,7 +120,7 @@ class Vector3:
             raise Exception
         self.x, self.y, self.z = self.matrix2vec(np.round(m, rounding))
 
-    def rotate_around(self, x: Union[int, float, np.uint64, np.float64], y: Union[int, float, np.uint64, np.float64], z: Union[int, float, np.uint64, np.float64], vec):
+    def rotate_around(self, x: Union[int, float, np.uint64, np.float64], y: Union[int, float, np.uint64, np.float64], z: Union[int, float, np.uint64, np.float64], vec, rounding: int = 4):
         if type(vec) == list or type(vec) == tuple or type(vec) == np.ndarray or type(vec) == np.matrix:
             vec = Vector3(vec)
         m = self.vec2matrix - vec.vec2matrix

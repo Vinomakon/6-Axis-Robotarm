@@ -16,9 +16,9 @@ def normalize(vec: np.array):
 x_pos = 300
 y_pos = 0
 z_pos = 0
-x_rot = 0
-y_rot = 90
-z_rot = 0
+x_rot = 45
+y_rot = 0
+z_rot = 45
 goal = Vector3(x_pos, y_pos, z_pos)
 
 d: dict
@@ -35,9 +35,9 @@ m5 = Vector3(d['motor5']['x'], d['motor5']['y'], d['motor5']['z'])
 
 nm5 = copy.copy(m5)
 
-# nm5.rotate(x_rot, y_rot, z_rot, mode='deg')
-nm5.rotate_axis(y_rot, 'y', mode='deg')
-nm5.rotate_axis(x_rot, 'x', mode='deg')
+nm5.rotate(x_rot, y_rot, z_rot, mode='deg')
+# nm5.rotate_axis(y_rot, 'y', mode='deg')
+# nm5.rotate_axis(x_rot, 'x', mode='deg')
 print(nm5)
 print(np.round(nm5.vec2matrix, 4))
 new_goal = copy.copy(goal)
