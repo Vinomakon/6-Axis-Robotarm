@@ -14,11 +14,11 @@ def normalize(vec: np.array):
 
 
 x_pos = 300
-y_pos = 0
-z_pos = 0
-x_rot = 45
+y_pos = 100
+z_pos = 000
+x_rot = 90
 y_rot = 0
-z_rot = 45
+z_rot = 70
 goal = Vector3(x_pos, y_pos, z_pos)
 
 d: dict
