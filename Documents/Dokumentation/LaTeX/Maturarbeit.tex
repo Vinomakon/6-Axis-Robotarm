@@ -1,0 +1,58 @@
+\documentclass[12pt]{report}
+
+\usepackage[ngerman]{babel}
+\usepackage{geometry}
+\usepackage{mathtools}
+\usepackage(pgfplots)
+\geometry{
+	a4paper,
+	left=25mm,
+	top=25mm,
+	right=25mm,
+	bottom=30mm
+}
+
+%opening
+\title{Konstruktion eines 6-achsigen Roboterarms}
+
+\author{
+	Vladimir Morozov\\
+	Gymnasium Bäumlihof\\
+	Betreuer: Dominik Rohner\\
+}
+
+\begin{document}
+
+
+\maketitle
+
+
+\begin{abstract}
+	Zusammenfassung
+\end{abstract}
+\clearpage
+
+\tableofcontents
+\cleardoublepage
+
+\section{Vorwort}
+\begin{equation}
+R(\psi) =
+\begin{bmatrix}
+	\cos{\psi} & -\sin{\psi} & 0 \\
+	\sin{\psi} & \cos{\psi} & 0 \\
+	0 & 0 & 1 \\
+\end{bmatrix};\\
+R(\theta) =
+\begin{bmatrix}
+	\cos{\theta} & 0 & \sin{\theta} \\
+	0 & 1 & 0 \\
+	-\sin{\theta} & 0 & \cos{\theta} \\
+\end{bmatrix};
+R(\phi) =
+\begin{bmatrix}
+	1 & 0 & 0 \\
+	0 & \cos{\theta} & -\sin{\theta} \\ 0 & \sin{\theta} & \cos{\theta} \\
+\end{bmatrix};
+\end{equation}
+\end{document}

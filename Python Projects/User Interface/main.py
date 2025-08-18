@@ -290,7 +290,8 @@ def start_movement(mot_angle0: int, mot_angle1: int, mot_angle2: int, mot_angle3
     asyncio.run(con(data))
 
 def home_motor(mot: int):
-    asyncio.run(con([f'{mot + 1}{c.ihomst}']))
+    print([f'{mot}{c.ihomst}'])
+    asyncio.run(con([f'{mot}{c.ihomst}']))
     pass
 
 def home_all_motors():

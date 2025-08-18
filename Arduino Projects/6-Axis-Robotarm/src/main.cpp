@@ -18,46 +18,46 @@ using namespace TMC2130_n;
 #define SDI_PIN 40
 
 // PINS FOR MOTOR 1
-#define DIR1_PIN 4
-#define STEP1_PIN 3
-#define EN1_PIN 1
-#define CS1_PIN 2
-#define SW1_PIN 13
+#define DIR0_PIN 4
+#define STEP0_PIN 3
+#define EN0_PIN 1
+#define CS0_PIN 2
+#define SW0_PIN 13
 
 // PINS FOR MOTOR 2
-#define DIR2_PIN 8
-#define STEP2_PIN 7
-#define EN2_PIN 5
-#define CS2_PIN 6
-#define SW2_PIN 14
+#define DIR1_PIN 8
+#define STEP1_PIN 7
+#define EN1_PIN 5
+#define CS1_PIN 6
+#define SW1_PIN 14
 
 //PINS FOR MOTOR 3
-#define DIR3_PIN 12
-#define STEP3_PIN 11
-#define EN3_PIN 9
-#define CS3_PIN 10
-#define SW3_PIN 15
+#define DIR2_PIN 12
+#define STEP2_PIN 11
+#define EN2_PIN 9
+#define CS2_PIN 10
+#define SW2_PIN 15
 
 //PINS FOR MOTOR 4
-#define DIR4_PIN 47
-#define STEP4_PIN 48
-#define EN4_PIN 20
-#define CS4_PIN 19
-#define SW4_PIN 16
+#define DIR3_PIN 47
+#define STEP3_PIN 48
+#define EN3_PIN 20
+#define CS3_PIN 19
+#define SW3_PIN 16
 
 //PINS FOR MOTOR 5
-#define DIR5_PIN 21
-#define STEP5_PIN 26
-#define EN5_PIN 34
-#define CS5_PIN 33
-#define SW5_PIN 17
+#define DIR4_PIN 21
+#define STEP4_PIN 26
+#define EN4_PIN 34
+#define CS4_PIN 33
+#define SW4_PIN 17
 
 //PINS FOR MOTOR 6
-#define DIR6_PIN 35
-#define STEP6_PIN 36
-#define EN6_PIN 38
-#define CS6_PIN 37
-#define SW6_PIN 18
+#define DIR5_PIN 35
+#define STEP5_PIN 36
+#define EN5_PIN 38
+#define CS5_PIN 37
+#define SW5_PIN 18
 
 // VALUES FOR TMC
 #define STALL_VALUE 15
@@ -80,8 +80,8 @@ float mot_reduction[6];
 int mot_home_speed[6];
 bool mot_home_inv[6];
 int mot_home_accel[6];
-float mot_home_offset[6];
-int mot_home_mult[6];
+int mot_home_offset[6];
+float mot_home_mult[6];
 
 int mot_mcrs[6];
 //int mot_rms[6];
@@ -169,14 +169,15 @@ bool home_slow5 = false;
 
 bool can_move = false;
 
-TMC5160Stepper driver[] = {TMC5160Stepper(CS1_PIN, R_SENSE), TMC5160Stepper(CS2_PIN, R_SENSE), TMC5160Stepper(CS3_PIN, R_SENSE), TMC5160Stepper(CS4_PIN, R_SENSE), TMC5160Stepper(CS5_PIN, R_SENSE), TMC5160Stepper(CS6_PIN, R_SENSE)};
+TMC5160Stepper driver[] = { TMC5160Stepper(CS0_PIN, R_SENSE), TMC5160Stepper(CS1_PIN, R_SENSE), TMC5160Stepper(CS2_PIN, R_SENSE), TMC5160Stepper(CS3_PIN, R_SENSE), TMC5160Stepper(CS4_PIN, R_SENSE), TMC5160Stepper(CS5_PIN, R_SENSE)};
 AccelStepper stepper[] = {
+  AccelStepper(1, STEP0_PIN, DIR0_PIN),
   AccelStepper(1, STEP1_PIN, DIR1_PIN),
   AccelStepper(1, STEP2_PIN, DIR2_PIN),
   AccelStepper(1, STEP3_PIN, DIR3_PIN),
   AccelStepper(1, STEP4_PIN, DIR4_PIN),
-  AccelStepper(1, STEP5_PIN, DIR5_PIN),
-  AccelStepper(1, STEP6_PIN, DIR6_PIN)};
+  AccelStepper(1, STEP5_PIN, DIR5_PIN)};
+  
 
 
 void initTMC5160(int mot){
@@ -201,7 +202,7 @@ void initStepper(int mot){
 void actionSwitcher(int mot, String msg){
   int str_len = msg.length();
   String act = msg.substring(1, 3);
-  Serial.println("after, action " + act + ", " + "msg");
+  Serial.println((String)mot + " action: " + act + ", " + msg.substring(3, str_len));
   switch (act.toInt()){
     case 02: //Set speed
       mot_speed[mot] = msg.substring(3, str_len).toInt();
@@ -228,7 +229,7 @@ void actionSwitcher(int mot, String msg){
       mot_home_offset[mot] = msg.substring(3, str_len).toInt();
       break;
     case 15: //Set second homing speed mult
-      mot_home_mult[mot] = msg.substring(3, str_len).toInt();
+      mot_home_mult[mot] = msg.substring(3, str_len).toFloat();
     case 20: //Initiate TMC Driver
       initTMC5160(mot);
       break;
@@ -250,16 +251,15 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
   if (info->final && info->index == 0 && info->len == len && info->opcode == WS_TEXT) {
     data[len] = 0;
     String msg = (char*)data;
-    Serial.println(msg);
     int str_len = msg.length();
     String mot = msg.substring(0, 1);
     String act = msg.substring(1, 3);
-    Serial.println("action " + act + ", " + "msg");
+    Serial.println((String)mot + "act : " + (String)act);
     switch (mot.toInt()){
       case 0:
         switch (act.toInt()){
           case 00: //Enable motor
-            digitalWrite(EN1_PIN, msg.charAt(3) == '1' ? LOW : HIGH);
+            digitalWrite(EN0_PIN, msg.charAt(3) == '1' ? LOW : HIGH);
             break;
           case 01: //Set angle to travel to
             stepper[0].setMaxSpeed(mot_speed[0]);
@@ -271,10 +271,10 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
             Serial.println("Speed: " + (String)mot_speed[0] + ", Acceleration: " + (String)mot_accel[0] + ", Position: " + msg.substring(3, str_len) + ", Steps: " + (String)move_to0);
             break;
           case 10: //Start homing
-            home_mot0 = true;
-            stepper[0].setSpeed(mot_home_speed[0] * (mot_home_inv[0] ? -1 : 1));
             stepper[0].setMaxSpeed(mot_home_speed[0]);
             stepper[0].setAcceleration(mot_home_accel[0]);
+            stepper[0].moveTo(int((default_steps * mot_reduction[0] * mot_mcrs[0] * (mot_home_inv[0] ? -1 : 1))));
+            home_mot0 = true;
             break;
           case 80: //Give current position
             ws.textAll((String)current_deg0);
@@ -287,7 +287,7 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
       case 1:
         switch (act.toInt()){
           case 00: //Enable motor
-            digitalWrite(EN2_PIN, msg.charAt(3) == '1' ? LOW : HIGH);
+            digitalWrite(EN1_PIN, msg.charAt(3) == '1' ? LOW : HIGH);
             break;
           case 01: //Set angle to travel to
             stepper[1].setMaxSpeed(mot_speed[1]);
@@ -298,10 +298,10 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
             current_deg1 = move_to_deg1;
             break;
           case 10: //Start homing
-            home_mot1 = true;
-            stepper[1].setSpeed(mot_home_speed[1] * (mot_home_inv[1] ? -1 : 1));
             stepper[1].setMaxSpeed(mot_home_speed[1]);
             stepper[1].setAcceleration(mot_home_accel[1]);
+            stepper[1].moveTo(int((default_steps * mot_reduction[1] * mot_mcrs[1] * (mot_home_inv[1] ? -1 : 1))));
+            home_mot1 = true;
             break;
           case 80: //Give current position
             ws.textAll((String)current_deg1);
@@ -314,7 +314,7 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
       case 2:
         switch (act.toInt()){
           case 00: //Enable motor
-            digitalWrite(EN3_PIN, msg.charAt(3) == '1' ? LOW : HIGH);
+            digitalWrite(EN2_PIN, msg.charAt(3) == '1' ? LOW : HIGH);
             break;
           case 01: //Set angle to travel to
             stepper[2].setMaxSpeed(mot_speed[2]);
@@ -325,10 +325,10 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
             current_deg2 = move_to_deg2;
             break;
           case 10: //Start homing
-            home_mot2 = true;
-            stepper[2].setSpeed(mot_home_speed[2] * (mot_home_inv[2] ? -1 : 1));
             stepper[2].setMaxSpeed(mot_home_speed[2]);
             stepper[2].setAcceleration(mot_home_accel[2]);
+            stepper[2].moveTo(int((default_steps * mot_reduction[2] * mot_mcrs[2] * (mot_home_inv[2] ? -1 : 1))));
+            home_mot2 = true;
             break;
           case 80: //Give current position
             //ws.textAll((String)current_deg2);
@@ -342,7 +342,7 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
       case 3:
         switch (act.toInt()){
           case 00: //Enable motor
-            digitalWrite(EN4_PIN, msg.charAt(3) == '1' ? LOW : HIGH);
+            digitalWrite(EN3_PIN, msg.charAt(3) == '1' ? LOW : HIGH);
             break;
           case 01: //Set angle to travel to
             stepper[3].setMaxSpeed(mot_speed[3]);
@@ -353,10 +353,10 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
             current_deg3 = move_to_deg3;
             break;
           case 10: //Start homing
-            home_mot3 = true;
-            stepper[3].setSpeed(mot_home_speed[3] * (mot_home_inv[3] ? -1 : 1));
             stepper[3].setMaxSpeed(mot_home_speed[3]);
             stepper[3].setAcceleration(mot_home_accel[3]);
+            stepper[3].moveTo(int((default_steps * mot_reduction[3] * mot_mcrs[3] * (mot_home_inv[3] ? -1 : 1))));
+            home_mot3 = true;
             break;
           case 80: //Give current position
             ws.textAll((String)current_deg3);
@@ -369,7 +369,7 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
       case 4:
         switch (act.toInt()){
           case 00: //Enable motor
-            digitalWrite(EN5_PIN, msg.charAt(3) == '1' ? LOW : HIGH);
+            digitalWrite(EN4_PIN, msg.charAt(3) == '1' ? LOW : HIGH);
             break;
           case 01: //Set angle to travel to
             stepper[4].setMaxSpeed(mot_speed[4]);
@@ -380,10 +380,10 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
             current_deg4 = move_to_deg4;
             break;
           case 10: //Start homing
-            home_mot4 = true;
-            stepper[4].setSpeed(mot_home_speed[4] * (mot_home_inv[4] ? -1 : 1));
             stepper[4].setMaxSpeed(mot_home_speed[4]);
             stepper[4].setAcceleration(mot_home_accel[4]);
+            stepper[4].moveTo(int((default_steps * mot_reduction[4] * mot_mcrs[4] * (mot_home_inv[4] ? -1 : 1))));
+            home_mot4 = true;
             break;
           case 80: //Give current position
             ws.textAll((String)current_deg4);
@@ -396,7 +396,7 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
       case 5:
         switch (act.toInt()){
           case 00: //Enable motor
-            digitalWrite(EN6_PIN, msg.charAt(3) == '1' ? LOW : HIGH);
+            digitalWrite(EN5_PIN, msg.charAt(3) == '1' ? LOW : HIGH);
             break;
           case 01: //Set angle to travel to
             stepper[5].setMaxSpeed(mot_speed[5]);
@@ -407,10 +407,10 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
             current_deg5 = move_to_deg5;
             break;
           case 10: //Start homing
-            home_mot1 = true;
-            stepper[5].setSpeed(mot_home_speed[5] * (mot_home_inv[5] ? -1 : 1));
             stepper[5].setMaxSpeed(mot_home_speed[5]);
             stepper[5].setAcceleration(mot_home_accel[5]);
+            stepper[5].moveTo(int((default_steps * mot_reduction[5] * mot_mcrs[5] * (mot_home_inv[5] ? -1 : 1))));
+            home_mot5 = true;
             break;
           case 80: //Give current position
             ws.textAll((String)current_deg5);
@@ -476,29 +476,30 @@ void setup() {
 
   server.begin();
 
+  pinMode(EN0_PIN, OUTPUT);
   pinMode(EN1_PIN, OUTPUT);
   pinMode(EN2_PIN, OUTPUT);
   pinMode(EN3_PIN, OUTPUT);
   pinMode(EN4_PIN, OUTPUT);
   pinMode(EN5_PIN, OUTPUT);
-  pinMode(EN6_PIN, OUTPUT);
 
+  pinMode(SW0_PIN, INPUT_PULLUP);
   pinMode(SW1_PIN, INPUT_PULLUP);
   pinMode(SW2_PIN, INPUT_PULLUP);
   pinMode(SW3_PIN, INPUT_PULLUP);
   pinMode(SW4_PIN, INPUT_PULLUP);
   pinMode(SW5_PIN, INPUT_PULLUP);
-  pinMode(SW6_PIN, INPUT_PULLUP);
+  
   
   SPI.begin(SCK_PIN, SDO_PIN, SDI_PIN);
   for(int i = 0; i < 6; i++)
   
+  digitalWrite(EN0_PIN, HIGH);
   digitalWrite(EN1_PIN, HIGH);
   digitalWrite(EN2_PIN, HIGH);
   digitalWrite(EN3_PIN, HIGH);
   digitalWrite(EN4_PIN, HIGH);
   digitalWrite(EN5_PIN, HIGH);
-  digitalWrite(EN6_PIN, HIGH);
 }
 
 void loop() {
@@ -508,6 +509,7 @@ void loop() {
   if(can_move){
     for(int i = 0; i < 6; i++){
       stepper[i].run();
+
     }
     //Serial.println("moving");
     
@@ -515,158 +517,185 @@ void loop() {
     for(int i = 0; i < 6; i++){
       //Serial.println((String)i + (stepper[i].distanceToGo() == 0 ? " stopped moving": " is moving") + "with current position " + (String)stepper[i].distanceToGo());
       stop_move = stop_move && (stepper[i].distanceToGo() == 0);
+      if(stepper[i].distanceToGo() == 0){
+        stepper[i].stop();
+      }
     }
     can_move = !stop_move;
 
   }
-  
   if(home_mot0){
     if(second_home0) {
       if (stepper[0].distanceToGo() == 0){
-        second_home1 = false;
-        stepper[0].setSpeed(mot_home_speed[0] * mot_home_mult[0] * (mot_home_inv ? 1 : -1));
+        Serial.println("Setting Back " + (String)(mot_home_speed[0] * mot_home_mult[0] * (mot_home_inv[0] ? 1 : -1)) + (String)(mot_home_mult[0]) + " " + (String)(mot_home_inv[0]));
+        second_home0 = false;
+        stepper[0].setMaxSpeed(mot_home_speed[0] * mot_home_mult[0]);
+        stepper[0].moveTo(int((default_steps * mot_reduction[0] * mot_mcrs[0] * (mot_home_inv[0] ? -1 : 1))));
+        Serial.println((String)(default_steps * mot_reduction[0] * mot_mcrs[0] * (mot_home_inv[0] ? -1 : 1)));
       } else {
         stepper[0].run();
       }
-    } else if(digitalRead(SW1_PIN) == 1) {
-        stepper[0].runSpeed();
-    } else {
+    } else if(digitalRead(SW0_PIN) == HIGH) {
       if(home_slow0){
+        Serial.println("Second Homing Complete");
         home_mot0 = false;
         home_slow0 = false;
         current_deg0 = 0;
         stepper[0].setCurrentPosition(0);
       } else {
+        Serial.println("First Home Complete");
         home_slow0 = true;
         second_home0 = true;
         stepper[0].setCurrentPosition(0);
-        stepper[0].moveTo(mot_home_offset[0]);
+        stepper[0].moveTo(mot_home_offset[0]* (mot_home_inv[0] ? 1 : -1));
       }
+    } else {
+      stepper[0].run();
     }
   }
-
   if(home_mot1){
     if(second_home1) {
       if (stepper[1].distanceToGo() == 0){
+        Serial.println("Setting Back " + (String)(mot_home_speed[1] * mot_home_mult[1] * (mot_home_inv[1] ? 1 : -1)) + (String)(mot_home_mult[1]) + " " + (String)(mot_home_inv[1]));
         second_home1 = false;
-        stepper[1].setSpeed(mot_home_speed[1] * mot_home_mult[1] * (mot_home_inv ? 1 : -1));
+        stepper[1].setMaxSpeed(mot_home_speed[1] * mot_home_mult[1]);
+        stepper[1].moveTo(int((default_steps * mot_reduction[1] * mot_mcrs[1] * (mot_home_inv[1] ? -1 : 1))));
+        Serial.println((String)(default_steps * mot_reduction[1] * mot_mcrs[1] * (mot_home_inv[1] ? -1 : 1)));
       } else {
         stepper[1].run();
       }
-    } else if(digitalRead(SW1_PIN) == 1) {
-        stepper[1].runSpeed();
-    } else {
+    } else if(digitalRead(SW1_PIN) == HIGH) {
       if(home_slow1){
+        Serial.println("Second Homing Complete");
         home_mot1 = false;
         home_slow1 = false;
-        current_deg1 = 1;
+        current_deg1 = 0;
         stepper[1].setCurrentPosition(0);
       } else {
+        Serial.println("First Home Complete");
         home_slow1 = true;
         second_home1 = true;
         stepper[1].setCurrentPosition(0);
-        stepper[1].moveTo(mot_home_offset[1]);
+        stepper[1].moveTo(mot_home_offset[1]* (mot_home_inv[1] ? 1 : -1));
       }
+    } else {
+      stepper[1].run();
     }
   }
-
   if(home_mot2){
     if(second_home2) {
       if (stepper[2].distanceToGo() == 0){
-        second_home1 = false;
-        stepper[2].setSpeed(mot_home_speed[2] * mot_home_mult[2] * (mot_home_inv ? 1 : -1));
+        Serial.println("Setting Back " + (String)(mot_home_speed[2] * mot_home_mult[2] * (mot_home_inv[2] ? 1 : -1)) + (String)(mot_home_mult[2]) + " " + (String)(mot_home_inv[2]));
+        second_home2 = false;
+        stepper[2].setMaxSpeed(mot_home_speed[2] * mot_home_mult[2]);
+        stepper[2].moveTo(int((default_steps * mot_reduction[2] * mot_mcrs[2] * (mot_home_inv[2] ? -1 : 1))));
+        Serial.println((String)(default_steps * mot_reduction[2] * mot_mcrs[2] * (mot_home_inv[2] ? -1 : 1)));
       } else {
         stepper[2].run();
       }
-    } else if(digitalRead(SW1_PIN) == 1) {
-        stepper[2].runSpeed();
-    } else {
+    } else if(digitalRead(SW2_PIN) == HIGH) {
       if(home_slow2){
+        Serial.println("Second Homing Complete");
         home_mot2 = false;
         home_slow2 = false;
-        current_deg2 = 2;
+        current_deg2 = 0;
         stepper[2].setCurrentPosition(0);
       } else {
+        Serial.println("First Home Complete");
         home_slow2 = true;
         second_home2 = true;
         stepper[2].setCurrentPosition(0);
-        stepper[2].moveTo(mot_home_offset[2]);
+        stepper[2].moveTo(mot_home_offset[2]* (mot_home_inv[2] ? 1 : -1));
       }
+    } else {
+      stepper[2].run();
     }
   }
-
   if(home_mot3){
     if(second_home3) {
       if (stepper[3].distanceToGo() == 0){
-        second_home1 = false;
-        stepper[3].setSpeed(mot_home_speed[3] * mot_home_mult[3] * (mot_home_inv ? 1 : -1));
+        Serial.println("Setting Back " + (String)(mot_home_speed[3] * mot_home_mult[3] * (mot_home_inv[3] ? 1 : -1)) + (String)(mot_home_mult[3]) + " " + (String)(mot_home_inv[3]));
+        second_home3 = false;
+        stepper[3].setMaxSpeed(mot_home_speed[3] * mot_home_mult[3]);
+        stepper[3].moveTo(int((default_steps * mot_reduction[3] * mot_mcrs[3] * (mot_home_inv[3] ? -1 : 1))));
+        Serial.println((String)(default_steps * mot_reduction[3] * mot_mcrs[3] * (mot_home_inv[3] ? -1 : 1)));
       } else {
         stepper[3].run();
       }
-    } else if(digitalRead(SW1_PIN) == 1) {
-        stepper[3].runSpeed();
-    } else {
+    } else if(digitalRead(SW3_PIN) == HIGH) {
       if(home_slow3){
+        Serial.println("Second Homing Complete");
         home_mot3 = false;
         home_slow3 = false;
-        current_deg3 = 3;
+        current_deg3 = 0;
         stepper[3].setCurrentPosition(0);
       } else {
+        Serial.println("First Home Complete");
         home_slow3 = true;
         second_home3 = true;
         stepper[3].setCurrentPosition(0);
-        stepper[3].moveTo(mot_home_offset[3]);
+        stepper[3].moveTo(mot_home_offset[3]* (mot_home_inv[3] ? 1 : -1));
       }
+    } else {
+      stepper[3].run();
     }
   }
-
   if(home_mot4){
     if(second_home4) {
       if (stepper[4].distanceToGo() == 0){
-        second_home1 = false;
-        stepper[4].setSpeed(mot_home_speed[4] * mot_home_mult[4] * (mot_home_inv ? 1 : -1));
+        Serial.println("Setting Back " + (String)(mot_home_speed[4] * mot_home_mult[4] * (mot_home_inv[4] ? 1 : -1)) + (String)(mot_home_mult[4]) + " " + (String)(mot_home_inv[4]));
+        second_home4 = false;
+        stepper[4].setMaxSpeed(mot_home_speed[4] * mot_home_mult[4]);
+        stepper[4].moveTo(int((default_steps * mot_reduction[4] * mot_mcrs[4] * (mot_home_inv[4] ? -1 : 1))));
+        Serial.println((String)(default_steps * mot_reduction[4] * mot_mcrs[4] * (mot_home_inv[4] ? -1 : 1)));
       } else {
         stepper[4].run();
       }
-    } else if(digitalRead(SW1_PIN) == 1) {
-        stepper[4].runSpeed();
-    } else {
+    } else if(digitalRead(SW4_PIN) == HIGH) {
       if(home_slow4){
+        Serial.println("Second Homing Complete");
         home_mot4 = false;
         home_slow4 = false;
-        current_deg4 = 4;
+        current_deg4 = 0;
         stepper[4].setCurrentPosition(0);
       } else {
+        Serial.println("First Home Complete");
         home_slow4 = true;
         second_home4 = true;
         stepper[4].setCurrentPosition(0);
-        stepper[4].moveTo(mot_home_offset[4]);
+        stepper[4].moveTo(mot_home_offset[4]* (mot_home_inv[4] ? 1 : -1));
       }
+    } else {
+      stepper[4].run();
     }
   }
-
   if(home_mot5){
     if(second_home5) {
       if (stepper[5].distanceToGo() == 0){
-        second_home1 = false;
-        stepper[5].setSpeed(mot_home_speed[5] * mot_home_mult[5] * (mot_home_inv ? 1 : -1));
+        Serial.println("Setting Back " + (String)(mot_home_speed[5] * mot_home_mult[5] * (mot_home_inv[5] ? 1 : -1)) + (String)(mot_home_mult[5]) + " " + (String)(mot_home_inv[5]));
+        second_home5 = false;
+        stepper[5].setMaxSpeed(mot_home_speed[5] * mot_home_mult[5]);
+        stepper[5].moveTo(int((default_steps * mot_reduction[5] * mot_mcrs[5] * (mot_home_inv[5] ? -1 : 1))));
+        Serial.println((String)(default_steps * mot_reduction[5] * mot_mcrs[5] * (mot_home_inv[5] ? -1 : 1)));
       } else {
         stepper[5].run();
       }
-    } else if(digitalRead(SW1_PIN) == 1) {
-        stepper[5].runSpeed();
-    } else {
+    } else if(digitalRead(SW5_PIN) == HIGH) {
       if(home_slow5){
+        Serial.println("Second Homing Complete");
         home_mot5 = false;
         home_slow5 = false;
-        current_deg5 = 5;
+        current_deg5 = 0;
         stepper[5].setCurrentPosition(0);
       } else {
+        Serial.println("First Home Complete");
         home_slow5 = true;
         second_home5 = true;
         stepper[5].setCurrentPosition(0);
-        stepper[5].moveTo(mot_home_offset[5]);
+        stepper[5].moveTo(mot_home_offset[5]* (mot_home_inv[5] ? 1 : -1));
       }
+    } else {
+      stepper[5].run();
     }
   }
 }
