@@ -80,8 +80,9 @@ float mot_reduction[6];
 int mot_home_speed[6];
 bool mot_home_inv[6];
 int mot_home_accel[6];
-int mot_home_offset[6];
+int mot_shome_offset[6];
 float mot_home_mult[6];
+int mot_home_offset[6];
 
 int mot_mcrs[6];
 //int mot_rms[6];
@@ -226,10 +227,13 @@ void actionSwitcher(int mot, String msg){
       mot_home_accel[mot] = msg.substring(3, str_len).toInt();
       break;
     case 14: //Set homing offset
-      mot_home_offset[mot] = msg.substring(3, str_len).toInt();
+      mot_shome_offset[mot] = msg.substring(3, str_len).toInt();
       break;
     case 15: //Set second homing speed mult
       mot_home_mult[mot] = msg.substring(3, str_len).toFloat();
+    case 16://Set homing offset
+      mot_home_offset[mot] = msg.substring(3, str_len).toInt();
+      break;
     case 20: //Initiate TMC Driver
       initTMC5160(mot);
       break;
@@ -241,6 +245,9 @@ void actionSwitcher(int mot, String msg){
       break;
     case 23: //Set IHOLD
       mot_ihold[mot] = msg.substring(3, str_len).toFloat();
+      break;
+    case 81:
+      stepper[mot].setCurrentPosition(int((default_steps * mot_reduction[mot] * mot_mcrs[mot]) * (msg.substring(3, str_len).toInt() / 360)));
       break;
   }
 }

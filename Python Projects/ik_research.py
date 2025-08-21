@@ -15,10 +15,10 @@ def normalize(vec: np.array):
 
 x_pos = 300
 y_pos = 100
-z_pos = 000
-x_rot = 90
+z_pos = 100
+x_rot = 45
 y_rot = 0
-z_rot = 70
+z_rot = 45
 goal = Vector3(x_pos, y_pos, z_pos)
 
 d: dict
@@ -54,12 +54,16 @@ q1 = np.atan2(new_goal.y, new_goal.x) - np.atan2(lj2 * np.sin(q2), lj1 + lj2 * n
 
 o1 = np.atan2(new_goal.z, new_goal.x)
 
+print(np.rad2deg(o1), np.rad2deg(q1), np.rad2deg(q2))
+
 j1 = Vector3([lj1, 0, 0])
 j1.rotate(0, o1, -q1)
 j2 = Vector3([lj2, 0, 0])
 j2.rotate(0, o1, -(q1 + q2))
 j2 = j1 + j2
 j3 = Vector3([x_pos, y_pos, z_pos])
+
+
 
 fig = plt.figure()
 ax = fig.add_subplot(projection='3d')
