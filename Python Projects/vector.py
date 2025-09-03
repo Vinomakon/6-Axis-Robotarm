@@ -4,22 +4,33 @@ from numpy import cos as c, sin as s, pow, sqrt
 from typing import Union
 
 
-def roll_rotation(roll):
+def roll_rotation(roll): # X-Rotation
     return np.matrix([[1, 0, 0], [0, c(roll), -s(roll)], [0, s(roll), c(roll)]])
 
-def pitch_rotation(pitch):
+def pitch_rotation(pitch): # Y-Rotation
     return np.matrix([[c(pitch), 0, s(pitch)], [0, 1, 0], [-s(pitch), 0, c(pitch)]])
 
-def yaw_rotation(yaw):
+def yaw_rotation(yaw): # Z-Rotation
     return np.matrix([[c(yaw), -s(yaw), 0], [s(yaw), c(yaw), 0], [0, 0, 1]])
 
 def euler_rotation(roll, pitch, yaw) -> np.matrix:
     # https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles#:~:text=heading%2C%20pitch%2C%20bank.-,Rotation%20matrices,-%5Bedit%5D
     return yaw_rotation(yaw) * pitch_rotation(pitch) * roll_rotation(roll)
 
+def normal(x, y, z):
+    return np.sqrt(np.pow(x, 2) + np.pow(y, 2) + np.pow(z, 2))
+
+def normalize(x, y, z):
+    m = max(x, y, z)
+    return x / m, y / m, z / m
+
+
 class Vector3:
 
     def __init__(self, *args: Union[int, float, list, tuple, np.float64, np.uint64, np.ndarray, np.matrix]):
+        self.x: float
+        self.y: float
+        self.z: float
         if len(args) == 1:
             if type(args[0]) == list or type(args[0]) == tuple or type(args[0]) == np.ndarray:
                 if len(args[0]) == 3:
@@ -126,3 +137,11 @@ class Vector3:
         m = self.vec2matrix - vec.vec2matrix
         v = m * euler_rotation(x, y, z)
         self.x, self.y, self.z = self.matrix2vec(np.round(v, rounding))
+
+    def align_to_lign(self, vec1, vec2, rounding: int = 4):
+        x = np.atan2(abs(vec2.z - vec1.z), np.sqrt(np.pow(abs(vec2.y - vec1.y), 2) + np.pow(abs(vec2.z - vec1.z), 2)))
+        y = np.atan2(abs(vec2.z - vec1.z), np.sqrt(np.pow(abs(vec2.x - vec1.x), 2) + np.pow(abs(vec2.y - vec1.y), 2)))
+        z = np.atan2(abs(vec2.y - vec1.y), np.sqrt(np.pow(abs(vec2.x - vec1.x), 2) + np.pow(abs(vec2.z - vec1.z), 2)))
+        v = np.matrix([[normal(self.x, self.y, self.z), 0, 0], [0, 0, 0], [0, 0, 0]]) * euler_rotation(x, y, z)
+        self.x, self.y, self.z = self.matrix2vec(np.round(v, rounding))
+        return x, y, z
