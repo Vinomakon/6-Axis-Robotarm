@@ -1,0 +1,157 @@
+\documentclass{article}
+\usepackage{tikz}
+\usepackage{tikz-3dplot} % 3D projections
+\usepackage{ifthen}
+\usetikzlibrary{calc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% main camera view for all pictures
+\tdplotsetmaincoords{70}{110}
+
+\begin{document}
+
+% === Common settings ===
+\def\radius{1.1}    % radius of circles/arcs
+\def\axlen{1.4}     % axis length
+
+% color setup
+\colorlet{Xcol}{red}
+\colorlet{Ycol}{blue}
+\colorlet{Zcol}{green}
+
+\begin{tikzpicture}[scale=2, thick]
+
+  % Parameter: link lengths
+  \def\lone{2.0}
+  \def\ltwo{2.0}
+
+  % Angles (in degrees for TikZ)
+  \def\thetaone{35}   % theta1
+  \def\thetatwo{40}   % theta2 (relative!)
+
+  % Coordinates of joint 1 (origin)
+  \coordinate (O) at (0,0);
+
+  % End of first link
+  \coordinate (A) at ({\lone*cos(\thetaone)}, {\lone*sin(\thetaone)});
+
+  % End of second link (theta1+theta2)
+  \coordinate (B) at ({\lone*cos(\thetaone) + \ltwo*cos(\thetaone+\thetatwo)},
+                      {\lone*sin(\thetaone) + \ltwo*sin(\thetaone+\thetatwo)});
+
+  % Draw base axes
+  \draw[->, gray!70] (-0.5,0) -- (3.5,0) node[right] {$x$};
+  \draw[->, gray!70] (0,-0.5) -- (0,3.5) node[above] {$y$};
+
+  \filldraw[black] (O) circle (1.2pt);
+  \filldraw[black] (A) circle (1.2pt);
+  \filldraw[black] (B) circle (1.2pt) node[above] {$X_\mathbf{D}$};
+  
+  % Draw links
+  \draw[very thick] (O) -- (A) node[midway, above left] {$l_1$};
+  \draw[very thick] (A) -- (B) node[midway, above left] {$l_2$};
+  
+
+
+  \draw[->, ultra thick, red, line cap=rect] (O) -- ({0.5*cos(\thetaone)},{0.5*sin(\thetaone)});
+  \draw[->, ultra thick, blue, line cap=rect] (O) -- ({0.5*cos(\thetaone + 90)},{0.5*sin(\thetaone + 90)});
+
+  \draw[->, ultra thick, red, line cap=rect]  (A) -- ++({0.5*cos(\thetaone + \thetatwo)},{0.5*sin(\thetaone + \thetatwo)});
+  \draw[->, ultra thick, blue, line cap=rect]  (A) --  ++({0.5*cos(\thetaone + \thetatwo + 90)},{0.5*sin(\thetaone + \thetatwo + 90)});
+
+  \filldraw[black] (O) circle (0.35pt);
+  \filldraw[black] (A) circle (0.35pt);
+
+  % Angle theta1 at origin
+  \draw[->] (0.8,0) arc[start angle=0, end angle=\thetaone, radius=0.8];
+  \node at (0.9,0.3) {$\theta_1$};
+
+  % Angle theta2 at joint A (relative!)
+  \draw[->] (A) ++({0.8*cos(\thetaone)},{0.8*sin(\thetaone)}) arc[start angle=\thetaone, end angle=\thetaone+\thetatwo, radius=0.8];
+  \draw[-, dashed] (A)++({0.8*cos(\thetaone)},{0.8*sin(\thetaone)}) -- (A);
+  \node at ({1*cos(\thetaone+0.5*\thetatwo) + \lone*cos(\thetaone)}, {1*sin(\thetaone+0.5*\thetatwo) + \lone*sin(\thetaone)}) {$\theta_2$};
+
+
+\end{tikzpicture}
+
+% ---------- Rotation about Z (in the XY-plane) ----------
+\begin{tikzpicture}[tdplot_main_coords, scale=2]
+  % axes
+  \draw[->] (0,0,0) -- (\axlen,0,0) node[below left] {\textcolor{Xcol}{$x$}};
+  \draw[->] (0,0,0) -- (0,\axlen,0) node[right]  {\textcolor{Ycol}{$y$}};
+  \draw[->] (0,0,0) -- (0,0,\axlen) node[above]  {\textcolor{Zcol}{$z$}};
+
+  % circle in XY-plane
+  \draw[thin, dashed] (0,0,0) ++(\radius,0,0) arc (0:360:\radius);
+
+  % original x-axis point
+  \coordinate (X0) at (\radius,0,0);
+  % rotated point (by alpha around z) (cos, sin, 0)
+  \coordinate (Xr) at ({\radius*cos(45)},{\radius*sin(45)},0);
+
+  % arc showing rotation
+  \draw[->, thick, Zcol] plot[domain=0:45, samples=50] ({\radius*cos(\x)},{\radius*sin(\x)},0);
+
+  % vectors
+  \draw[-, thick, Zcol] (0,0,0) -- (Xr) node[pos=1.3, below] {$\mathbf{R}_z(\psi)$};
+
+  % angle label
+  \node at ({0.55*\radius*cos(22.5)},{0.2*\radius*sin(22.5)},0) [right] {$\psi$};
+\end{tikzpicture}
+\vspace{20mm}
+\hspace{40mm}
+
+% ---------- Rotation about X (in the YZ-plane) ----------
+\begin{tikzpicture}[tdplot_main_coords, scale=2]
+  % axes
+  \draw[->] (0,0,0) -- (\axlen,0,0) node[below left] {\textcolor{Xcol}{$x$}};
+  \draw[->] (0,0,0) -- (0,\axlen,0) node[right]  {\textcolor{Ycol}{$y$}};
+  \draw[->] (0,0,0) -- (0,0,\axlen) node[above]        {\textcolor{Zcol}{$z$}};
+
+  % circle in YZ-plane (centered at origin, param: (0, cos t, sin t))
+  \draw[thin, dashed] plot[domain=0:360, samples=180] (0,{\radius*cos(\x)},{\radius*sin(\x)});
+
+  % original y-axis point
+  \coordinate (Y0) at (0,\radius,0);
+  % rotated point (by beta about x): (0, cos(beta), sin(beta))
+  \coordinate (Yr) at (0,{\radius*cos(45)},{\radius*sin(45)});
+
+  % arc showing rotation
+  \draw[->, thick, Xcol] plot[domain=0:45, samples=50] (0,{\radius*cos(\x)},{\radius*sin(\x)});
+
+  % vectors
+  \draw[-, thick, Xcol] (0,0,0) -- (Yr) node[pos=1.1, right ] {$\mathbf{R}_x(\varphi)$};
+
+  % angle label
+  \node at (0,{0.7*\radius*cos(22.5)},{0.6*\radius*sin(22.5)}) [left] {$\varphi$};
+
+\end{tikzpicture}
+\vspace{20mm}
+\hspace{40mm}
+
+
+% ---------- Rotation about Y (in the XZ-plane) ----------
+\begin{tikzpicture}[tdplot_main_coords, scale=2]
+  % axes
+  \draw[->] (0,0,0) -- (\axlen,0,0) node[below left] {\textcolor{Xcol}{$x$}};
+  \draw[->] (0,0,0) -- (0,\axlen,0) node[right]  {\textcolor{Ycol}{$y$}};
+  \draw[->] (0,0,0) -- (0,0,\axlen) node[above]        {\textcolor{Zcol}{$z$}};
+
+  % circle in XZ-plane (param: (cos t, 0, sin t))
+  \draw[thin, dashed] plot[domain=0:360, samples=180] ({\radius*cos(\x)},0,{\radius*sin(\x)});
+
+  % original x-axis point
+  \coordinate (X0b) at (\radius,0,0);
+  % rotated point (by gamma about y): (cos gamma, 0, sin gamma)
+  \coordinate (Xrb) at ({\radius*cos(45)},0,{\radius*sin(45)});
+
+  % arc showing rotation
+  \draw[->, thick, Ycol] plot[domain=0:45, samples=50] ({\radius*cos(\x)},0,{\radius*sin(\x)});
+
+  \draw[-, thick, Ycol] (0,0,0) -- (Xrb) node[pos=0.95, above left] {$\mathbf{R}_y(\theta)$};
+
+  % angle label
+  \node at ({0.6*\radius*cos(22.5)},0,{0.8*\radius*sin(22.5)}) [below] {$\gamma$};
+\end{tikzpicture}
+\end{document}
