@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1757702494.4903 "c:/Users/vovmo/Documents/GitHub/6-Axis-Robotarm/Documents/Dokumentation/LaTeX/graphics.tex" "graphics.pdf" "graphics" 1757702495.17351 0
+["pdflatex"] 1757872724.24584 "c:/Users/vovmo/Documents/GitHub/6-Axis-Robotarm/Documents/Dokumentation/LaTeX/graphics.tex" "graphics.pdf" "graphics" 1757872725.46327 0
   "C:/Users/vovmo/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1757698637 80909 eab91d9745dd2edfd62a31d53cd5fe15 ""
   "C:/Users/vovmo/AppData/Local/MiKTeX/miktex/data/le/pdftex/pdflatex.fmt" 1757336279 13257342 2d824e90c2a5dcfc6cd7dacea3490d1b ""
   "C:/Users/vovmo/AppData/Local/Programs/MiKTeX/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1233951848 1004 54797486969f23fa377b128694d548df ""
@@ -40,9 +40,13 @@
   "C:/Users/vovmo/AppData/Local/Programs/MiKTeX/tex/generic/pgf/frontendlayer/tikz/libraries/tikzlibrary3d.code.tex" 1756451144 3243 6b5dd28061d7ec441027f6593cd34b36 ""
   "C:/Users/vovmo/AppData/Local/Programs/MiKTeX/tex/generic/pgf/frontendlayer/tikz/libraries/tikzlibraryarrows.code.tex" 1756451144 319 225dfe354ba678ff3c194968db39d447 ""
   "C:/Users/vovmo/AppData/Local/Programs/MiKTeX/tex/generic/pgf/frontendlayer/tikz/libraries/tikzlibrarycalc.code.tex" 1756451144 15929 463535aa2c4268fead6674a75c0e8266 ""
+  "C:/Users/vovmo/AppData/Local/Programs/MiKTeX/tex/generic/pgf/frontendlayer/tikz/libraries/tikzlibrarydecorations.code.tex" 1756451144 5650 0ccd824135f363f45d6a97602e59d55a ""
+  "C:/Users/vovmo/AppData/Local/Programs/MiKTeX/tex/generic/pgf/frontendlayer/tikz/libraries/tikzlibrarydecorations.markings.code.tex" 1756451144 788 fb28645a91ec7448ebe79bee60965a88 ""
   "C:/Users/vovmo/AppData/Local/Programs/MiKTeX/tex/generic/pgf/frontendlayer/tikz/libraries/tikzlibrarytopaths.code.tex" 1756451144 11518 738408f795261b70ce8dd47459171309 ""
   "C:/Users/vovmo/AppData/Local/Programs/MiKTeX/tex/generic/pgf/frontendlayer/tikz/tikz.code.tex" 1756451144 186859 0445d9a41a87648b4723e04765409541 ""
+  "C:/Users/vovmo/AppData/Local/Programs/MiKTeX/tex/generic/pgf/libraries/decorations/pgflibrarydecorations.markings.code.tex" 1756451144 5220 c70346acb7ff99702098460fd6c18993 ""
   "C:/Users/vovmo/AppData/Local/Programs/MiKTeX/tex/generic/pgf/libraries/pgflibraryarrows.code.tex" 1756451144 31875 f74512d4f7a0bc3c98e4be01a7e9978f ""
+  "C:/Users/vovmo/AppData/Local/Programs/MiKTeX/tex/generic/pgf/libraries/pgflibraryarrows.meta.code.tex" 1756451144 58801 1e750fb0692eb99aaac45698bbec96b1 ""
   "C:/Users/vovmo/AppData/Local/Programs/MiKTeX/tex/generic/pgf/libraries/pgflibraryplothandlers.code.tex" 1756451144 32995 ac577023e12c0e4bd8aa420b2e852d1a ""
   "C:/Users/vovmo/AppData/Local/Programs/MiKTeX/tex/generic/pgf/math/pgfint.code.tex" 1756451144 3063 8c415c68a0f3394e45cfeca0b65f6ee6 ""
   "C:/Users/vovmo/AppData/Local/Programs/MiKTeX/tex/generic/pgf/math/pgfmath.code.tex" 1756451144 949 cea70942e7b7eddabfb3186befada2e6 ""
@@ -59,6 +63,7 @@
   "C:/Users/vovmo/AppData/Local/Programs/MiKTeX/tex/generic/pgf/math/pgfmathfunctions.trigonometric.code.tex" 1756451144 92405 f515f31275db273f97b9d8f52e1b0736 ""
   "C:/Users/vovmo/AppData/Local/Programs/MiKTeX/tex/generic/pgf/math/pgfmathparser.code.tex" 1756451144 37733 0fe471ac50324723cf6ab693e5c0916c ""
   "C:/Users/vovmo/AppData/Local/Programs/MiKTeX/tex/generic/pgf/math/pgfmathutil.code.tex" 1756451144 8471 c2883569d03f69e8e1cabfef4999cfd7 ""
+  "C:/Users/vovmo/AppData/Local/Programs/MiKTeX/tex/generic/pgf/modules/pgfmoduledecorations.code.tex" 1756451143 71742 3da44a8be6626eef1c400c68776c7a0f ""
   "C:/Users/vovmo/AppData/Local/Programs/MiKTeX/tex/generic/pgf/modules/pgfmodulematrix.code.tex" 1756451143 21211 1e73ec76bd73964d84197cc3d2685b01 ""
   "C:/Users/vovmo/AppData/Local/Programs/MiKTeX/tex/generic/pgf/modules/pgfmoduleplot.code.tex" 1756451143 16218 98503859deba28f16813029fd927ed8e ""
   "C:/Users/vovmo/AppData/Local/Programs/MiKTeX/tex/generic/pgf/modules/pgfmoduleshapes.code.tex" 1756451143 44792 c4a5a3feba777682c1d16420f2f01a5b ""
@@ -110,9 +115,9 @@
   "C:/Users/vovmo/AppData/Local/Programs/MiKTeX/tex/latex/pgf/utilities/pgfrcs.sty" 1756451144 325 f9f16d12354225b7dd52a3321f085955 ""
   "C:/Users/vovmo/AppData/Local/Programs/MiKTeX/tex/latex/tikz-3dplot/tikz-3dplot.sty" 1326310201 32488 0c21c95f67b6fe919f5892b4d3ac7813 ""
   "C:/Users/vovmo/AppData/Local/Programs/MiKTeX/tex/latex/xcolor/xcolor.sty" 1729265222 55384 b454dec21c2d9f45ec0b793f0995b992 ""
-  "c:/Users/vovmo/Documents/GitHub/6-Axis-Robotarm/Documents/Dokumentation/LaTeX/graphics.tex" 1757702494 5790 dfaa9d9c137e8952ea106b153f77f885 ""
-  "graphics.aux" 1757702495 32 044b7f8fc9779af7531264e0c5c84b6d "pdflatex"
-  "graphics.tex" 1757702494 5790 dfaa9d9c137e8952ea106b153f77f885 ""
+  "c:/Users/vovmo/Documents/GitHub/6-Axis-Robotarm/Documents/Dokumentation/LaTeX/graphics.tex" 1757872723 11214 aeaeca24afb6127ae7c0560034cc1500 ""
+  "graphics.aux" 1757872725 32 c81c40425fbb5e93b90fba65da0b5e61 "pdflatex"
+  "graphics.tex" 1757872723 11214 aeaeca24afb6127ae7c0560034cc1500 ""
   (generated)
   "graphics.aux"
   "graphics.log"
