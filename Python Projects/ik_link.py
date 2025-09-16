@@ -82,7 +82,6 @@ class Link:
 
     def set_rotation(self, x, y, z):
         self.rotation = Rotation(x, y, z)
-        print(np.round(self.rotation.rot_matrix, 5))
 
     def set_transform(self, *args: Union[int, float, list, tuple, np.float64, np.uint64, np.ndarray, np.matrix, Vector3]):
         if len(args) == 1:
@@ -111,7 +110,7 @@ class Link:
             last_system, last_offset = self.last_link.update_chain()
             self.system: np.matrix = last_system
             self.offset: np.matrix = last_offset
-            return last_system * self.rotation.rot_matrix, last_offset + self.end_effector
+            return self.rotation.rot_matrix * last_system, last_offset + self.end_effector
         return self.rotation.rot_matrix * self.system, self.end_effector
 
     def assign_last_link(self, last_link=None):
@@ -128,4 +127,6 @@ class Link:
         return m.flatten()
 
     def set_relative_vector(self, vec: Vector3):
-        return Vector3((vec.vec2matrix - self.offset) * self.system.transpose())
+        m = vec.vec2matrix - self.end_effector
+        j = m * (self.system * self.rotation.rot_matrix).transpose()
+        return Vector3(j)
