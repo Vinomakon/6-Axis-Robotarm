@@ -27,14 +27,14 @@ def ik_calculate(x_pos, y_pos, z_pos, x_rot, y_rot, z_rot, deg=False) -> tuple[f
     lj1 = abs(m2)
     lj2 = np.sqrt(np.pow(m5.x + m4.x + m3.x, 2) + np.pow(m5.y + m4.y + m3.y, 2))
 
-    q1 = np.atan2(new_goal.z, new_goal.x)
-    q3 = -np.arccos(
+    o1 = np.atan2(new_goal.z, new_goal.x)
+
+    q2 = -np.arccos(
         ((np.pow(new_goal.x, 2) + np.pow(new_goal.y, 2) + np.pow(new_goal.z, 2)) - np.pow(lj1, 2) - np.pow(lj2, 2))
         / (2 * lj1 * lj2))
-    q2 = np.atan2(new_goal.y, np.sqrt((np.pow(new_goal.x, 2) + (np.pow(new_goal.z, 2))))) - np.atan2(lj2 * np.sin(q3), lj1 + lj2 * np.cos(q3))
-
+    q1 = np.atan2(new_goal.y, np.sqrt(np.pow(new_goal.x, 2) + np.pow(new_goal.z, 2))) - np.atan2(lj2 * np.sin(q2), lj1 + lj2 * np.cos(q2))
 
     if deg:
-        return np.rad2deg(q1), np.rad2deg(q2), np.rad2deg(q3)
+        return np.rad2deg(o1), np.rad2deg(q1), np.rad2deg(q2)
     else:
-        return q1, q2, q3
+        return o1, q1, q2

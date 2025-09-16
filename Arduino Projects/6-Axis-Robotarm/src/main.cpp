@@ -82,7 +82,7 @@ bool mot_home_inv[6];
 int mot_home_accel[6];
 int mot_shome_offset[6];
 float mot_home_mult[6];
-int mot_home_offset[6];
+float mot_home_offset[6];
 
 int mot_mcrs[6];
 //int mot_rms[6];
@@ -232,7 +232,7 @@ void actionSwitcher(int mot, String msg){
     case 15: //Set second homing speed mult
       mot_home_mult[mot] = msg.substring(3, str_len).toFloat();
     case 16://Set homing offset
-      mot_home_offset[mot] = msg.substring(3, str_len).toInt();
+      mot_home_offset[mot] = msg.substring(3, str_len).toFloat();
       break;
     case 20: //Initiate TMC Driver
       initTMC5160(mot);
@@ -247,7 +247,8 @@ void actionSwitcher(int mot, String msg){
       mot_ihold[mot] = msg.substring(3, str_len).toFloat();
       break;
     case 81:
-      stepper[mot].setCurrentPosition(int((default_steps * mot_reduction[mot] * mot_mcrs[mot]) * (msg.substring(3, str_len).toInt() / 360)));
+      Serial.println((String)mot + " Set new current position " +  (String)msg.substring(3, str_len).toFloat() + " With Steps " + (String)int((default_steps * mot_reduction[mot] * mot_mcrs[mot]) * (msg.substring(3, str_len).toFloat() / 360)));
+      stepper[mot].setCurrentPosition(int((default_steps * mot_reduction[mot] * mot_mcrs[mot]) * (msg.substring(3, str_len).toFloat() / 360)));
       break;
   }
 }
@@ -547,14 +548,14 @@ void loop() {
         Serial.println("Second Homing Complete");
         home_mot0 = false;
         home_slow0 = false;
-        current_deg0 = 0;
-        stepper[0].setCurrentPosition(0);
+        current_deg0 = mot_home_offset[0];
+        stepper[0].setCurrentPosition(int((default_steps * mot_reduction[0] * mot_mcrs[0]) * (mot_home_offset[0] / 360)));
       } else {
         Serial.println("First Home Complete");
         home_slow0 = true;
         second_home0 = true;
         stepper[0].setCurrentPosition(0);
-        stepper[0].moveTo(mot_home_offset[0]* (mot_home_inv[0] ? 1 : -1));
+        stepper[0].moveTo(mot_shome_offset[0]* (mot_home_inv[0] ? 1 : -1));
       }
     } else {
       stepper[0].run();
@@ -576,14 +577,14 @@ void loop() {
         Serial.println("Second Homing Complete");
         home_mot1 = false;
         home_slow1 = false;
-        current_deg1 = 0;
-        stepper[1].setCurrentPosition(0);
+        current_deg1 = mot_home_offset[1];
+        stepper[1].setCurrentPosition(int((default_steps * mot_reduction[1] * mot_mcrs[1]) * (mot_home_offset[1] / 360)));
       } else {
         Serial.println("First Home Complete");
         home_slow1 = true;
         second_home1 = true;
         stepper[1].setCurrentPosition(0);
-        stepper[1].moveTo(mot_home_offset[1]* (mot_home_inv[1] ? 1 : -1));
+        stepper[1].moveTo(mot_shome_offset[1]* (mot_home_inv[1] ? 1 : -1));
       }
     } else {
       stepper[1].run();
@@ -605,14 +606,14 @@ void loop() {
         Serial.println("Second Homing Complete");
         home_mot2 = false;
         home_slow2 = false;
-        current_deg2 = 0;
-        stepper[2].setCurrentPosition(0);
+        current_deg2 = mot_home_offset[2];
+        stepper[2].setCurrentPosition(int((default_steps * mot_reduction[2] * mot_mcrs[2]) * (mot_home_offset[2] / 360)));
       } else {
         Serial.println("First Home Complete");
         home_slow2 = true;
         second_home2 = true;
         stepper[2].setCurrentPosition(0);
-        stepper[2].moveTo(mot_home_offset[2]* (mot_home_inv[2] ? 1 : -1));
+        stepper[2].moveTo(mot_shome_offset[2]* (mot_home_inv[2] ? 1 : -1));
       }
     } else {
       stepper[2].run();
@@ -634,14 +635,14 @@ void loop() {
         Serial.println("Second Homing Complete");
         home_mot3 = false;
         home_slow3 = false;
-        current_deg3 = 0;
-        stepper[3].setCurrentPosition(0);
+        current_deg3 = mot_home_offset[3];
+        stepper[3].setCurrentPosition(int((default_steps * mot_reduction[3] * mot_mcrs[3]) * (mot_home_offset[3] / 360)));
       } else {
         Serial.println("First Home Complete");
         home_slow3 = true;
         second_home3 = true;
         stepper[3].setCurrentPosition(0);
-        stepper[3].moveTo(mot_home_offset[3]* (mot_home_inv[3] ? 1 : -1));
+        stepper[3].moveTo(mot_shome_offset[3]* (mot_home_inv[3] ? 1 : -1));
       }
     } else {
       stepper[3].run();
@@ -663,14 +664,14 @@ void loop() {
         Serial.println("Second Homing Complete");
         home_mot4 = false;
         home_slow4 = false;
-        current_deg4 = 0;
-        stepper[4].setCurrentPosition(0);
+        current_deg4 = mot_home_offset[4];
+        stepper[4].setCurrentPosition(int((default_steps * mot_reduction[4] * mot_mcrs[4]) * (mot_home_offset[4] / 360)));
       } else {
         Serial.println("First Home Complete");
         home_slow4 = true;
         second_home4 = true;
         stepper[4].setCurrentPosition(0);
-        stepper[4].moveTo(mot_home_offset[4]* (mot_home_inv[4] ? 1 : -1));
+        stepper[4].moveTo(mot_shome_offset[4]* (mot_home_inv[4] ? 1 : -1));
       }
     } else {
       stepper[4].run();
@@ -692,14 +693,14 @@ void loop() {
         Serial.println("Second Homing Complete");
         home_mot5 = false;
         home_slow5 = false;
-        current_deg5 = 0;
-        stepper[5].setCurrentPosition(0);
+        current_deg5 = mot_home_offset[5];
+        stepper[5].setCurrentPosition(int((default_steps * mot_reduction[5] * mot_mcrs[5]) * (mot_home_offset[5] / 360)));
       } else {
         Serial.println("First Home Complete");
         home_slow5 = true;
         second_home5 = true;
         stepper[5].setCurrentPosition(0);
-        stepper[5].moveTo(mot_home_offset[5]* (mot_home_inv[5] ? 1 : -1));
+        stepper[5].moveTo(mot_shome_offset[5]* (mot_home_inv[5] ? 1 : -1));
       }
     } else {
       stepper[5].run();

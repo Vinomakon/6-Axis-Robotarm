@@ -1,6 +1,7 @@
 import numpy as np
 from numpy import cos as c, sin as s, pow, sqrt
 from typing import Union
+from vector import Vector3
 
 def roll_rotation(roll): # X-Rotation
     return np.matrix([[1, 0, 0], [0, c(roll), -s(roll)], [0, s(roll), c(roll)]])
@@ -31,10 +32,12 @@ class Rotation:
         self.y = y
         self.z = z
 
-
+    @property
+    def rot_matrix(self):
+        return euler_rotation(self.x, self.y, self.z)
 
 class Link:
-    def __init__(self, *args: Union[int, float, list, tuple, np.float64, np.uint64, np.ndarray, np.matrix]):
+    def __init__(self, *args: Union[int, float, list, tuple, np.float64, np.uint64, np.ndarray, np.matrix, Vector3]):
         self.system = def_matrix()
         self.transform: np.matrix
         self.offset: np.matrix = np.matrix([0, 0, 0])
@@ -49,6 +52,8 @@ class Link:
                         f'Length of list/tuple/numpy.ndarray/numpy.matrix is not valid. Expected length: 3, Received: {len(args[0])}')
             elif type(args[0]) == np.matrix:
                 self.transform = args[0]
+            elif type(args[0]) == Vector3:
+                self.transform = args[0].vec2matrix
             else:
                 raise AttributeError(
                     'Either a  list, tuple,  numpy.ndarray, numpy.matrix or 3 positional arguments (x, y, z) should be given')
@@ -59,33 +64,55 @@ class Link:
             raise ValueError(
                 'Either a  list, numpy.ndarray, numpy.matrix or 3 positional arguments (x, y, z) should be given')
 
-    def calc_rel_pos(self, transform, rotation):
-        pass
+    def __str__(self):
+        ef = self.end_effector
+        return f'Link-EF[X: {ef.item(0)}, Y: {ef.item(1)}, Z: {ef.item(2)}]'
 
     @property
     def x(self):
-        return self.transform.item(0)
+        return self.end_effector.item(0)
 
     @property
     def y(self):
-        return self.transform.item(1)
+        return self.end_effector.item(1)
 
     @property
     def z(self):
-        return self.transform.item(2)
+        return self.end_effector.item(2)
 
     def set_rotation(self, x, y, z):
-        self.rotation.x = x
-        self.rotation.y = y
-        self.rotation.z = z
+        self.rotation = Rotation(x, y, z)
+        print(np.round(self.rotation.rot_matrix, 5))
+
+    def set_transform(self, *args: Union[int, float, list, tuple, np.float64, np.uint64, np.ndarray, np.matrix, Vector3]):
+        if len(args) == 1:
+            if type(args[0]) == list or type(args[0]) == tuple or type(args[0]) == np.ndarray:
+                if len(args[0]) == 3:
+                    self.transform = np.matrix([args[0], args[1], args[2]])
+                else:
+                    raise AttributeError(
+                        f'Length of list/tuple/numpy.ndarray/numpy.matrix is not valid. Expected length: 3, Received: {len(args[0])}')
+            elif type(args[0]) == np.matrix:
+                self.transform = args[0]
+            elif type(args[0]) == Vector3:
+                self.transform = args[0].vec2matrix
+            else:
+                raise AttributeError(
+                    'Either a  list, tuple,  numpy.ndarray, numpy.matrix or 3 positional arguments (x, y, z) should be given')
+
+        elif len(args) == 3:
+            self.transform = np.matrix([args[0], args[1], args[2]])
+        else:
+            raise ValueError(
+                'Either a  list, numpy.ndarray, numpy.matrix or 3 positional arguments (x, y, z) should be given')
 
     def update_chain(self):
         if self.last_link is not None:
-            last_system, last_transform = self.last_link.update_chain()
+            last_system, last_offset = self.last_link.update_chain()
             self.system: np.matrix = last_system
-            self.offset: np.matrix = last_transform
-            return last_system * np.round(euler_rotation(self.rotation.x, self.rotation.y, self.rotation.z), 4), last_transform + self.transform * np.round(euler_rotation(self.rotation.x, self.rotation.y, self.rotation.z), 4)
-        return self.system * np.round(euler_rotation(self.rotation.x, self.rotation.y, self.rotation.z), 4), self.transform * np.round(euler_rotation(self.rotation.x, self.rotation.y, self.rotation.z), 4)
+            self.offset: np.matrix = last_offset
+            return last_system * self.rotation.rot_matrix, last_offset + self.end_effector
+        return self.rotation.rot_matrix * self.system, self.end_effector
 
     def assign_last_link(self, last_link=None):
         if last_link is None:
@@ -97,12 +124,8 @@ class Link:
 
     @property
     def end_effector(self):
-        m: np.matrix = self.transform * np.round(euler_rotation(self.rotation.x, self.rotation.y, self.rotation.z), 4) + self.offset
+        m: np.matrix = self.transform * self.rotation.rot_matrix * self.system + self.offset
         return m.flatten()
 
-
-l1 = Link(100, 0, 0)
-l1.set_rotation(0, 0, np.pi/2)
-l2 = Link(100, 0, 0)
-l2.set_rotation(0, 0, np.pi/4)
-l2.assign_last_link(l1)
+    def set_relative_vector(self, vec: Vector3):
+        return Vector3((vec.vec2matrix - self.offset) * self.system.transpose())
