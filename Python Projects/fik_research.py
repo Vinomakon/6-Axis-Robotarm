@@ -10,10 +10,10 @@ cube_size = 300
 
 x_pos = 300
 y_pos = 200
-z_pos = 200
+z_pos = 0
 x_rot = 0
 y_rot = 0
-z_rot = 0
+z_rot = 90
 goal = Vector3(x_pos, y_pos, z_pos)
 
 d: dict
@@ -58,17 +58,16 @@ l3.assign_last_link(l2)
 l3.set_rotation(0, 0, -q2)
 
 j = l3.set_relative_vector(goal)
-print(j)
 j1 = np.atan2(j.y, j.x)
-print(j1)
-print(lj3)
+j2 = np.atan2(j.y, j.z)
+
+print(np.rad2deg(j1), np.rad2deg(j2))
+print(j)
 
 l4 = Link(Vector3(lj3, 0, 0))
 l4.assign_last_link(l3)
-l4.set_rotation(0, 0, np.pi)
-print(l4.offset)
-print(l4.transform)
-print(l4.system)
+l4.set_rotation(0, -j2, -j1)
+
 
 fig = plt.figure()
 ax = fig.add_subplot(projection='3d')

@@ -110,16 +110,21 @@ class Link:
             last_system, last_offset = self.last_link.update_chain()
             self.system: np.matrix = last_system
             self.offset: np.matrix = last_offset
-            return self.rotation.rot_matrix * last_system, last_offset + self.end_effector
+            return self.rotation.rot_matrix * last_system, last_offset + self.local_end_effector
         return self.rotation.rot_matrix * self.system, self.end_effector
 
     def assign_last_link(self, last_link=None):
         if last_link is None:
             return
         self.last_link: Link = last_link
-        last_system, last_transform = self.last_link.update_chain()
+        last_system, last_offset = self.last_link.update_chain()
         self.system: np.matrix = last_system
-        self.offset: np.matrix = last_transform
+        self.offset: np.matrix = last_offset
+
+    @property
+    def local_end_effector(self):
+        m: np.matrix = self.transform * self.rotation.rot_matrix * self.system
+        return m.flatten()
 
     @property
     def end_effector(self):
