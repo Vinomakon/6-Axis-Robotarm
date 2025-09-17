@@ -85,8 +85,6 @@ float mot_home_mult[6];
 float mot_home_offset[6];
 
 int mot_mcrs[6];
-//int mot_rms[6];
-//float mot_hcm[6];
 int mot_irun[6];
 int mot_ihold[6];
 
@@ -287,6 +285,9 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
           case 80: //Give current position
             ws.textAll((String)current_deg0);
             break;
+          case 81:
+            current_deg0 = msg.substring(3, str_len).toFloat();
+            stepper[0].setCurrentPosition(int((default_steps * mot_reduction[0] * mot_mcrs[0]) * (move_to_deg0 / 360)));
           default:
             actionSwitcher(0, msg);
             break;
@@ -314,6 +315,9 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
           case 80: //Give current position
             ws.textAll((String)current_deg1);
             break;
+          case 81:
+            current_deg1 = msg.substring(3, str_len).toFloat();
+            stepper[1].setCurrentPosition(int((default_steps * mot_reduction[1] * mot_mcrs[1]) * (move_to_deg1 / 360)));
           default:
             actionSwitcher(1, msg);
             break;
@@ -342,6 +346,9 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
             //ws.textAll((String)current_deg2);
             ws.textAll((String)current_deg2);
             break;
+          case 81:
+            current_deg2 = msg.substring(3, str_len).toFloat();
+            stepper[2].setCurrentPosition(int((default_steps * mot_reduction[2] * mot_mcrs[2]) * (move_to_deg2 / 360)));
           default:
             actionSwitcher(2, msg);
             break;
@@ -369,6 +376,9 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
           case 80: //Give current position
             ws.textAll((String)current_deg3);
             break;
+          case 81:
+            current_deg3 = msg.substring(3, str_len).toFloat();
+            stepper[3].setCurrentPosition(int((default_steps * mot_reduction[43] * mot_mcrs[3]) * (move_to_deg3 / 360)));
           default:
             actionSwitcher(3, msg);
             break;
@@ -396,6 +406,9 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
           case 80: //Give current position
             ws.textAll((String)current_deg4);
             break;
+          case 81:
+            current_deg4 = msg.substring(3, str_len).toFloat();
+            stepper[4].setCurrentPosition(int((default_steps * mot_reduction[4] * mot_mcrs[4]) * (move_to_deg4 / 360)));
           default:
             actionSwitcher(4, msg);
             break;
@@ -423,6 +436,9 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
           case 80: //Give current position
             ws.textAll((String)current_deg5);
             break;
+          case 81:
+            current_deg5 = msg.substring(3, str_len).toFloat();
+            stepper[5].setCurrentPosition(int((default_steps * mot_reduction[5] * mot_mcrs[5]) * (move_to_deg5 / 360)));
           default:
             actionSwitcher(5, msg);
             break;

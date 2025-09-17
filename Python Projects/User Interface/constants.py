@@ -22,7 +22,7 @@ imrstp = '21' # Set microstep resolution
 i_irun = '22' # Set peak RMS
 i_hold = '23' # Set Hold Current Multiplier
 icrpos = '80' # Get current Position
-istpos = '81'
+istpos = '81' # Set current Position (Emergency)
 
 # General Addresses ('6' or 'igener')
 idefst = '00' # Set default steps

@@ -190,7 +190,7 @@ def init_tmc(microsteps0: int, microsteps1: int, microsteps2: int, microsteps3: 
     asyncio.run(con(data))
 
 def set_motor_position(mot: int, pos: float):
-    # asyncio.run(con([f'{mot}{c.istpos}{pos}']))
+    asyncio.run(con([f'{mot}{c.istpos}{pos}']))
     print(f'{mot}{c.istpos}{pos}')
 
 def individual_movement(mot: int, deg_: float, speed_: int, inverse_: bool, mult_: float, accel_: int, reduc_: float):
@@ -474,7 +474,7 @@ with gr.Blocks() as iface:
                         mot_home_mult.append(
                             gr.Number(value=user_config[f"motor{i}"]["home_mult"], minimum=0, maximum=1,
                                       label="Second Homing Speed Multiplier", interactive=True))
-                        mot_home_offset.append(gr.Number(value=user_config[f"motor{i}"]["home_offset"], minimum=0,
+                        mot_home_offset.append(gr.Number(value=user_config[f"motor{i}"]["home_offset"],
                                                           label="Homing Offset", interactive=True))
 
 

@@ -61,19 +61,16 @@ l3.set_rotation(0, 0, -q2)
 j = l3.set_relative_vector(goal)
 j1 = np.atan2(j.y, j.x)
 j2 = np.atan2(j.y, j.z)
-
-print(np.rad2deg(j1), np.rad2deg(j2))
+print(l3)
 print(j)
-print(abs(j))
 
 l4 = Link(Vector3(lj3, 0, 0))
 l4.assign_last_link(l3)
 l4.system = ik_link.def_matrix()
 l4.set_rotation(0, 0, -j1)
+l4.update_chain()
+print(j)
 print(l4)
-print(l4.transform)
-print(goal)
-
 
 fig = plt.figure()
 ax = fig.add_subplot(projection='3d')
