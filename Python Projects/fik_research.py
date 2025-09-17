@@ -1,10 +1,11 @@
 import copy
-
 import numpy as np
 import json
 import matplotlib.pyplot as plt
 from vector import Vector3
+import vector
 from ik_link import Link
+import ik_link
 
 cube_size = 300
 
@@ -13,7 +14,7 @@ y_pos = 200
 z_pos = 0
 x_rot = 0
 y_rot = 0
-z_rot = 90
+z_rot = 0
 goal = Vector3(x_pos, y_pos, z_pos)
 
 d: dict
@@ -63,20 +64,25 @@ j2 = np.atan2(j.y, j.z)
 
 print(np.rad2deg(j1), np.rad2deg(j2))
 print(j)
+print(abs(j))
 
 l4 = Link(Vector3(lj3, 0, 0))
 l4.assign_last_link(l3)
-l4.set_rotation(0, -j2, -j1)
+l4.system = ik_link.def_matrix()
+l4.set_rotation(0, 0, -j1)
+print(l4)
+print(l4.transform)
+print(goal)
 
 
 fig = plt.figure()
 ax = fig.add_subplot(projection='3d')
-ax.plot([0, goal.x], [0, goal.y], [0, goal.z], c='#00ff00', linestyle='dashed')
-ax.plot([0,new_goal.x], [0, new_goal.y], [0, new_goal.z], c='#ff00ff', linestyle='dashed')
+ax.plot([0, goal.x], [0, goal.y], [0, goal.z], c='#00ff00')
+ax.plot([0,new_goal.x], [0, new_goal.y], [0, new_goal.z], c='#ff00ff')
 
 ax.plot([0, l1.x, l2.x, l3.x], [-50, l1.y, l2.y, l3.y], [0, l1.z, l2.z, l3.z], c='#fcba03')
 ax.plot([l3.x, l4.x], [l3.y, l4.y], [l3.z, l4.z], c='#434343')
-ax.scatter([l3.x, l4.x], [l3.y, l4.y], [l3.z, l4.z], marker='1')
+# ax.scatter([l3.x, l4.x], [l3.y, l4.y], [l3.z, l4.z], marker='1')
 # ax.plot([0, j1.x, j2.x], [0, j1.y, j2.y], [0, j1.z, j2.z], c='#fcba03')
 # ax.plot([j2.x, j3.x], [j2.y, j3.y], [j2.z, j3.z], c='#434343')
 # ax.scatter([j2.x, g3.x], [j2.y, g3.y], [j2.z, g3.z])

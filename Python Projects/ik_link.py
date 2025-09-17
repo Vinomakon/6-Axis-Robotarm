@@ -2,19 +2,7 @@ import numpy as np
 from numpy import cos as c, sin as s, pow, sqrt
 from typing import Union
 from vector import Vector3
-
-def roll_rotation(roll): # X-Rotation
-    return np.matrix([[1, 0, 0], [0, c(roll), -s(roll)], [0, s(roll), c(roll)]])
-
-def pitch_rotation(pitch): # Y-Rotation
-    return np.matrix([[c(pitch), 0, s(pitch)], [0, 1, 0], [-s(pitch), 0, c(pitch)]])
-
-def yaw_rotation(yaw): # Z-Rotation
-    return np.matrix([[c(yaw), -s(yaw), 0], [s(yaw), c(yaw), 0], [0, 0, 1]])
-
-def euler_rotation(roll, pitch, yaw) -> np.matrix:
-    # https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles#:~:text=heading%2C%20pitch%2C%20bank.-,Rotation%20matrices,-%5Bedit%5D
-    return yaw_rotation(yaw) * pitch_rotation(pitch) * roll_rotation(roll)
+from rotation import Rotation
 
 def normal(x, y, z):
     return np.sqrt(np.pow(x, 2) + np.pow(y, 2) + np.pow(z, 2))
@@ -26,15 +14,6 @@ def def_matrix() -> np.matrix:
         [0, 0, 1]
     ])
 
-class Rotation:
-    def __init__(self, x, y, z):
-        self.x = x
-        self.y = y
-        self.z = z
-
-    @property
-    def rot_matrix(self):
-        return euler_rotation(self.x, self.y, self.z)
 
 class Link:
     def __init__(self, *args: Union[int, float, list, tuple, np.float64, np.uint64, np.ndarray, np.matrix, Vector3]):

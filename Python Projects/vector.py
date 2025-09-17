@@ -105,7 +105,7 @@ class Vector3:
         z = matrix.item((0, 2))
         return x, y, z
 
-    def rotate(self, x: Union[int, float, np.uint64, np.float64], y: Union[int, float, np.uint64, np.float64], z: Union[int, float, np.uint64, np.float64], mode: str = 'rad', rounding: int = 4):
+    def rotate(self, x: Union[int, float, np.uint64, np.float64], y: Union[int, float, np.uint64, np.float64], z: Union[int, float, np.uint64, np.float64], mode: str = 'rad', order: str='yzx', rounding: int = 4):
         if mode == 'deg':
             x = np.deg2rad(x)
             y = np.deg2rad(y)
