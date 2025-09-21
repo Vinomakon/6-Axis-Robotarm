@@ -93,7 +93,7 @@ class Vector3:
             else:
                 raise Exception
         elif type(other) == np.matrix:
-            return Vector3(self.vec2matrix * np.matrix([[other.item(0, 0), 0, 0], [0, other.item(0, 1), 0], [0, 0, other.item(0, 2)]]))
+            return Vector3(self.vec2matrix * other)
 
     @property
     def vec2matrix(self):
@@ -105,17 +105,25 @@ class Vector3:
         z = matrix.item((0, 2))
         return x, y, z
 
-    def rotate(self, x: Union[int, float, np.uint64, np.float64], y: Union[int, float, np.uint64, np.float64], z: Union[int, float, np.uint64, np.float64], mode: str = 'rad', order: str='yzx', rounding: int = 4):
+    def rotate(self, x: Union[int, float, np.uint64, np.float64], y: Union[int, float, np.uint64, np.float64], z: Union[int, float, np.uint64, np.float64], mode: str = 'rad', order: str='yzx'):
         if mode == 'deg':
             x = np.deg2rad(x)
             y = np.deg2rad(y)
             z = np.deg2rad(z)
         elif mode != 'rad':
             raise Exception
-        vec = self.vec2matrix * euler_rotation(x, y, z)
-        self.x, self.y, self.z = self.matrix2vec(np.round(vec, rounding))
+        vec = self.vec2matrix
+        for r in list(order):
+            if r == 'x':
+                vec = vec * roll_rotation(x)
+            if r == 'y':
+                vec = vec * pitch_rotation(y)
+            if r == 'z':
+                vec = vec * yaw_rotation(z)
+        self.x, self.y, self.z = self.matrix2vec(vec)
+        return vec
 
-    def rotate_axis(self, rot: Union[int, float, np.uint64, np.float64], axis: str, mode: str = 'rad', rounding: int = 4):
+    def rotate_axis(self, rot: Union[int, float, np.uint64, np.float64], axis: str, mode: str = 'rad'):
         if mode == 'deg':
             rot = np.deg2rad(rot)
         elif mode != 'rad':
@@ -129,19 +137,19 @@ class Vector3:
             m = m * yaw_rotation(rot)
         else:
             raise Exception
-        self.x, self.y, self.z = self.matrix2vec(np.round(m, rounding))
+        self.x, self.y, self.z = self.matrix2vec(m)
 
-    def rotate_around(self, x: Union[int, float, np.uint64, np.float64], y: Union[int, float, np.uint64, np.float64], z: Union[int, float, np.uint64, np.float64], vec, rounding: int = 4):
+    def rotate_around(self, x: Union[int, float, np.uint64, np.float64], y: Union[int, float, np.uint64, np.float64], z: Union[int, float, np.uint64, np.float64], vec):
         if type(vec) == list or type(vec) == tuple or type(vec) == np.ndarray or type(vec) == np.matrix:
             vec = Vector3(vec)
         m = self.vec2matrix - vec.vec2matrix
         v = m * euler_rotation(x, y, z)
-        self.x, self.y, self.z = self.matrix2vec(np.round(v, rounding))
+        self.x, self.y, self.z = self.matrix2vec(v)
 
-    def align_to_lign(self, vec1, vec2, rounding: int = 4):
+    def align_to_lign(self, vec1, vec2):
         x = np.atan2(abs(vec2.z - vec1.z), np.sqrt(np.pow(abs(vec2.y - vec1.y), 2) + np.pow(abs(vec2.z - vec1.z), 2)))
         y = np.atan2(abs(vec2.z - vec1.z), np.sqrt(np.pow(abs(vec2.x - vec1.x), 2) + np.pow(abs(vec2.y - vec1.y), 2)))
         z = np.atan2(abs(vec2.y - vec1.y), np.sqrt(np.pow(abs(vec2.x - vec1.x), 2) + np.pow(abs(vec2.z - vec1.z), 2)))
         v = np.matrix([[normal(self.x, self.y, self.z), 0, 0], [0, 0, 0], [0, 0, 0]]) * euler_rotation(x, y, z)
-        self.x, self.y, self.z = self.matrix2vec(np.round(v, rounding))
+        self.x, self.y, self.z = self.matrix2vec(v)
         return x, y, z

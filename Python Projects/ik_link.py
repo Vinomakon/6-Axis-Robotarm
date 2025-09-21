@@ -7,20 +7,12 @@ from rotation import Rotation
 def normal(x, y, z):
     return np.sqrt(np.pow(x, 2) + np.pow(y, 2) + np.pow(z, 2))
 
-def def_matrix() -> np.matrix:
-    return np.matrix([
-        [1, 0, 0],
-        [0, 1, 0],
-        [0, 0, 1]
-    ])
-
-
 class Link:
     def __init__(self, *args: Union[int, float, list, tuple, np.float64, np.uint64, np.ndarray, np.matrix, Vector3]):
-        self.system = def_matrix()
         self.transform: np.matrix
         self.offset: np.matrix = np.matrix([0, 0, 0])
         self.rotation = Rotation(0, 0, 0)
+        self.system = self.rotation.def_matrix()
         self.last_link: Union[None, Link] = None
         if len(args) == 1:
             if type(args[0]) == list or type(args[0]) == tuple or type(args[0]) == np.ndarray:
@@ -59,8 +51,8 @@ class Link:
     def z(self):
         return self.end_effector.item(2)
 
-    def set_rotation(self, x, y, z):
-        self.rotation = Rotation(x, y, z)
+    def set_rotation(self, x, y, z, order:str='yzx'):
+        self.rotation = Rotation(x, y, z, order)
 
     def set_transform(self, *args: Union[int, float, list, tuple, np.float64, np.uint64, np.ndarray, np.matrix, Vector3]):
         if len(args) == 1:
