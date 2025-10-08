@@ -167,12 +167,12 @@
   \coordinate (Xrb) at ({\radius*cos(45)},0,{\radius*sin(45)});
 
   % arc showing rotation
-  \draw[->, thick, Ycol] plot[domain=0:45, samples=50] ({\radius*cos(\x)},0,{\radius*sin(\x)});
+  \draw[<-, thick, Ycol] plot[domain=45:90, samples=50] ({\radius*cos(\x)},0,{\radius*sin(\x)});
 
   \draw[-, thick, Ycol] (0,0,0) -- (Xrb) node[pos=0.95, above left] {$\mathbf{R}_y(\theta)$};
 
   % angle label
-  \node at ({0.6*\radius*cos(22.5)},0,{0.8*\radius*sin(22.5)}) [below] {$\gamma$};
+  \node at ({0.3*\radius*cos(22.5)},0,{2*\radius*sin(22.5)}) [below] {$\gamma$};
 \end{tikzpicture}
 
 % Forward Kinematics with objective angles

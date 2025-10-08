@@ -37,7 +37,7 @@ new_goal = copy.copy(goal)
 new_goal = new_goal - nm5
 
 lj1 = abs(m2)
-lj2 = np.sqrt(np.pow(m5.x + m4.x + m3.x, 2) + np.pow(m5.y + m4.y + m3.y, 2))
+lj2 = np.sqrt(np.pow(m4.x + m3.x, 2) + np.pow(m4.y + m3.y, 2))
 lj3 = abs(m5)
 
 q2 = -np.arccos(
@@ -48,6 +48,7 @@ q1 = np.atan2(new_goal.y, np.sqrt((np.pow(new_goal.x, 2) + (np.pow(new_goal.z, 2
 o1 = np.atan2(new_goal.z, new_goal.x)
 
 print(np.rad2deg(o1), np.rad2deg(q1), np.rad2deg(q2))
+print(lj2)
 
 l1 = Link(Vector3(0, 50, 0))
 l1.offset = np.matrix([0, -50, 0])

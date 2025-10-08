@@ -1,0 +1,688 @@
+\documentclass[12pt,oneside,headinclude,footinclude,BCOR=5mm]{scrreprt}
+
+% ===== Sprache, Kodierung & Schriften =====
+\usepackage[T1]{fontenc}       % europäische Schriftzeichen
+\usepackage[utf8]{inputenc}    % UTF-8 Kodierung
+\usepackage[ngerman]{babel}    % Deutsche Sprache
+\usepackage{lmodern}           % Latin Modern Schrift (modernisierte CM)
+\usepackage{microtype}         % bessere Typografie
+
+% ===== Seitenlayout =====
+\usepackage[a4paper,margin=25mm]{geometry}
+\usepackage{setspace}
+\onehalfspacing
+
+% ===== Mathe & Einheiten =====
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{siunitx}
+\sisetup{output-decimal-marker={,}}
+
+% ===== Grafiken & Tabellen =====
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{csquotes}
+\usepackage{multicol}
+\usepackage[many]{tcolorbox}
+\usepackage{tikz}
+\usepackage{tikz-3dplot}
+\usetikzlibrary{arrows.meta, decorations.markings}
+\usetikzlibrary{calc}
+\tdplotsetmaincoords{70}{110}
+
+% ===== Hyperlinks =====
+\usepackage[hidelinks]{hyperref}
+\usepackage[nameinlink,noabbrev]{cleveref}
+
+% ===== BibLaTeX =====
+\usepackage[backend=biber,style=alphabetic,doi=false,isbn=false,url=false,giveninits=true]{biblatex}
+\addbibresource{quellen.bib}
+
+\colorlet{Xcol}{red}
+\colorlet{Ycol}{blue}
+\colorlet{Zcol}{green}
+
+\newtcolorbox{OutBox}{
+    sharp corners,
+    boxrule = 1pt,
+    colframe = black,
+    colback = white
+}
+
+% ===== Meta =====
+\title{Konstruktion eines industriellen 6-DOF-Roboterarms}
+\author{Vladimir Morozov\\[2mm]\normalsize Gymnasium Bäumlihof\\\normalsize Begleitperson: Dominik Rohner}
+\date{13.\ Oktober 2025}
+
+% ===== Nützliche Makros =====
+\newcommand{\R}{\mathbb{R}}
+\DeclareMathOperator{\atan2}{atan2}
+
+\begin{document}
+
+% ===== Titelseite =====
+\begin{titlepage}
+ \begin{center}
+    \vspace*{3cm}
+
+    \huge
+    \textbf{Konstruktion eines \\industriellen 6-DOF-Roboterarms}\\
+    \vspace{1cm}
+    \large
+    Vladimir Morozov\\
+    Gymnasium Bäumlihof\\
+    Begleitperson: Dominik Rohner\\
+    \vspace{1cm}
+    13. Oktober 2025
+ \end{center}
+\end{titlepage}
+
+
+\chapter*{Vorwort}
+\addcontentsline{toc}{chapter}{Vorwort}
+Ich möchte mich herzlich bei allen Mitwirkenden bedanken, die mich bei diesem Projekt unterstützt haben.
+
+
+\tableofcontents
+\cleardoublepage
+
+
+\chapter{Einleitung}
+\section{Zielsetzung}
+\onehalfspacing
+Das Ziel dieser Arbeit ist, einen funktionstüchtigen industriellen Roboterarm mit 6 Freiheitsgraden, auf Englisch auf als die \textit{''Degrees of Freedom''} oder auch mit der Abkürzung \textit{''DOF''} bekannt. von Grund aus konstruieren zu können. 
+Dies bedeutet, dass der Roboterarm einen beliebigen Punkt 
+mit einer beliebigen Rotation in einem 3-dimensionalem Raum erreichen kann. Der Grund für die Auswahl stammt daraus, dass heutzutage die Automation von verschiedenste Aufgaben immer mehr wird und für diese jegliche Roboter eingesetzt werden. Dazu werden industrielle Roboterarme eingesetzt. Der konkrete Grund eines industriellen Roboterarms ist, dass heutzutage auch humane Roboterarme im Einsatz sind. Während humane Roboterarme gelähmte oder fehlende Arme ersetzen werden industrielle Roboterarme für \textcolor{red}{FINDE ETWAS} eingesetzt.
+Zusätzlich möchte ich unbedingt mich mit Themenbereichen auseinandersetzen, die mich interessieren oder ich in Zukunft gerne weiter erforschen würde. 
+\\
+Das Ziel ist jedoch nicht nur einen Roboterarm graphisch und theoretisch konstruieren zu können, sondern diesen auch physisch zusammensetzen und steuern zu können. 
+Dazu gehören Einsätze von elektrischen Aktoren, hauptsächlich Motoren, eine Systemsteuerung von allen Aktoren und Sensoren mit einer entsprechenden Benutzeroberfläche, mit der man den Roboterarm steuern und bewegen kann. 
+Deshalb werden in dieser Arbeit viele verschiedene Prinzipien aus diversen Themengebieten eingesetzt: 
+
+\begin{multicols}{2}
+  \begin{itemize}
+    \item[-] Elektronik
+    \item[-] Informatik
+    \item[-] Elektrotechnik
+    \item[-] Mechanik
+    \item[-] Robotik
+    \item[-] Konstruktionsmodellierung
+    \item[-] Systemsteuerung
+    \item[-] 3D-Druck
+  \end{itemize}
+\end{multicols}
+\noindent Ein industrieller Roboterarm mit 6 Freiheitsgraden besteht dementsprechend aus 6 verschiedenen Glieder. 
+Die Rotationen dieser 6 Glieder bestimmt die Endposition und Endrotation der Spitze des Roboterarms, auch als der Endeffektor genannt. 
+Durch das eine bestimmte Position und Rotation für den Endeffektor gesetzt wird, müssen die Konfigurationen jedes einzelnen Gliedes berechnet werden. 
+Dieser Prozess wird als die \textit{''Inverse Kinematik''}, ein Begriff aus der Robotik, benannt und ist deshalb für das Erreichen einer Position im 3-dimensionalem Raum von entscheidender Bedeutung. 
+Die Inverse Kinematik ist somit auch Teil dieser Arbeit.
+
+
+\section{Automatisierung durch Roboter}
+
+
+\chapter{Aufbau eines industriellen 6-DOF-Roboterarms}
+Unter einem Roboterarm mit sechs Freiheitsgraden versteht man, dass dessen Endeffektor in einem 3-dimensionalem Raum in jede Richtung bewegen (in $X$-, $Y$- oder $Z$-Richtung) und beliebig rotiert werden kann (auch in $X$-, $Y$- oder $Z$-Richtung).
+Es können somit drei Positionsargumente $\left(X , Y , Z\right)$ sowie drei Rotationsargumente $\left(\varphi,\theta,\psi\right)$ bestimmt werden, die dem Endeffektor entsprechend entsprechen müssen. Für eine Konstruktion eines 6-DOF-Roboterarms muss eine solche Konstruktion so gegliedert sein, dass der Endeffektor frei im 3-dimensionalem Raum bewegt und rotiert werden kann. Damit verständlich wird, welche Glieder gebraucht werden, damit der Endeffektor diese Bedingungen erfüllen kann, wird graphisch schrittweise vorgegangen.
+\\
+Vorerst wird in einem 2-dimensionales Koordinatensystem gearbeitet.\\
+\begin{center}
+\centering{
+\begin{tikzpicture}[scale=1.5, thick]
+  \draw[step=0.25, gray!30, thin] (-0.5, -0.5) grid (3.25, 3.25);
+  \draw[->, red] (-0.5,0) -- (3.5,0) node[right] {$x$};
+  \draw[->, blue] (0,-0.5) -- (0,3.5) node[above] {$y$};
+\end{tikzpicture}}
+\end{center}
+Durch das jetzt schrittweise Glied nach Glied vorgegangen wird, wird das erste Glied so in das Koordinatensystem hinzugefügt, dass deren Anfang am Nullpunkt angesetzt wird und dort orthogonal zur $X$- und $Y$-Achse rotiert wird (an der imaginären $Z$-Achse). Anhand dieses Gliedes wird es möglich jeden Punkt auf einem Kreis erreichen zu können, deren Radius der Länge des Glieds entspricht.
+\begin{center}
+    \centering{
+\begin{tikzpicture}[scale=1.5, thick]
+  \draw[step=0.25, gray!30, thin] (-0.5, -0.5) grid (3.25, 3.25);
+  \draw[->, gray!70] (-0.5,0) -- (3.5,0) node[right] {$x$};
+  \draw[->, gray!70] (0,-0.5) -- (0,3.5) node[above] {$y$};
+
+  \coordinate (O) at (0, 0);
+  \coordinate (A) at ({2 * cos(70)}, {2 * sin(70)});
+  
+  \draw[thin, dashed] plot[domain=-14.5:104.5, samples=180] ({2*cos(\x)},{2*sin(\x)});
+
+  %\draw[->, thin, thick, orange] plot[domain=0:70, samples=180] ({0.4*cos(\x)},{0.4*sin(\x)});
+  %\node[below left, orange] at ({0.39*cos(70/2)},{0.47*sin(70/2)}) {$\theta$};
+
+  \draw[-, orange, ultra thick, line cap=round] (O) -- (A) node[pos=0.5, below right] {$L_1$};
+\end{tikzpicture}}
+\end{center}
+\[X_D =\left[\begin{matrix}x\\y\\\end{matrix}\right]\]
+\begin{align*}
+|X_D| & =\sqrt{x_2 +  y^2}\\
+|X_D| & = L_1\\
+x_2 +  y^2 & = L_1^2
+\end{align*}
+
+
+\noindent Damit ein Punkt erreicht werden kann, der nicht nur auf einem Kreis liegt, muss ein weiteres Glied am Ende des ersten Gliedes hinzugefügt werden, welches der Konstruktion erlaubt den Endeffektor an eine beliebige Position zu stellen, die nicht an einen Kreis gebunden ist. Der Endeffektor kann somit jeden Punkt in einem 2-dimensionalem System erreichen, solange sich dieser Punkt innerhalb eines Kreises mit dem Radius der beiden Längen der Glieder befindet. Gesprochen
+\begin{center}
+    \centering{
+        \begin{tikzpicture}[scale=1.5, thick]
+  \draw[step=0.25, gray!30, thin] (-0.5, -0.5) grid (3.25, 3.25);
+  \draw[->, gray!70] (-0.5,0) -- (3.5,0) node[right] {$x$};
+  \draw[->, gray!70] (0,-0.5) -- (0,3.5) node[above] {$y$};
+
+  \coordinate (O) at (0, 0);
+  \coordinate (A) at ({2 * cos(70)}, {2 * sin(70)});
+  \path (A) +({1.5 * cos(-85 + 70)}, {1.5 * sin(-85 + 70)}) coordinate (B);
+
+  %\draw[dashed, black, semithick] (A) ++(0, 0) -- ++({0.4 * cos(70)}, {0.4* sin(70)});
+  %\draw[->, thick, orange] plot[domain=70 :{-85 + 70}, samples=180] ({2 * cos(70) + 0.4*cos(\x)},{2 * sin(70) + 0.4*sin(\x)});
+  %\node[below left, orange] at ({2 * cos(70) + 0.36*cos(70 + -85/2)},{2 * sin(70) + 0.50*sin(70 + -85/2)}) {$\theta$};
+  
+  \draw[-, black, very thick, line cap=round] (O) -- (A) node[pos=0.5, below right] {$L_1$};
+  \draw[-, orange, very thick, line cap=round] (A) -- (B) node[pos=0.5, above] {$L_2$};
+
+  \draw[<->, red]  (B)++(-0.2, 0)-- (B) -- ++(0.2, 0);
+  \draw[<->, blue]  (B)++(0, -0.2)-- (B) -- ++(0, 0.2);
+\end{tikzpicture}
+    }
+\end{center}
+\[|X_D| \le L_1 + L_2\]
+\\
+
+\noindent Jedoch ist diese Konstruktion darauf bedingt, dass der Endeffektor eine Position erreicht, deren Rotation von der Position $X_D$ und der Längen $L_1$ und $L_2$ der zwei Glieder entspricht. Damit eine bestimmte Rotation erreicht werden kann, muss ein weiteres Glied hinzugefügt werden, welches einen Punkt mit einer bestimmten Rotation erreichen kann.
+\\
+\begin{center}
+    \centering{
+\begin{tikzpicture}[scale=1.5, thick]
+  \draw[step=0.25, gray!30, thin] (-0.5, -0.5) grid (3.25, 3.25);
+  \draw[->, gray!70] (-0.5,0) -- (3.5,0) node[right] {$x$};
+  \draw[->, gray!70] (0,-0.5) -- (0,3.5) node[above] {$y$};
+
+  \coordinate (O) at (0, 0);
+  \coordinate (A) at ({2 * cos(70)}, {2 * sin(70)});
+  \path (A) +({1.5 * cos(-85 + 70)}, {1.5 * sin(-85 + 70)}) coordinate (B);
+  \path (B) +({0.5 * cos(-60 + -85 + 70)}, {0.5 * sin(-60 + -85 + 70)}) coordinate (C);
+  
+  \draw[-, black, very thick, line cap=round] (O) -- (A) node[pos=0.5, below right] {$L_1$};
+  \draw[-, black, very thick, line cap=round] (A) -- (B) node[pos=0.5, above] {$L_2$};
+  \draw[-, orange, very thick, line cap=round] (B) -- (C) node[pos=0.4, right] {$L_3$};
+
+  \draw[<->, red]  (C)++(-0.2, 0)-- (C) -- ++(0.2, 0);
+  \draw[<->, blue]  (C)++(0, -0.2)-- (C) -- ++(0, 0.2);
+  \draw[->, green] plot[domain=-180:-90, samples=180] ({0.5 * cos(-60 + -85 + 70) + 1.5 * cos(-85 + 70) + 2 * cos(70) + 0.3*cos(\x)}, {0.5 * sin(-60 + -85 + 70) + 1.5 * sin(-85 + 70) + 2 * sin(70) + 0.3*sin(\x)});
+\end{tikzpicture}}
+\end{center}
+Anhand von nur drei Glieder und deren Rotationsachsen kann im einem 2-dimensionalem Raum ein beliebiger Punkt mit einer bestimmten Rotation erreicht werden, bedingt davon, ob dieser Punkt mit der Rotation innerhalb der Greifweite der Konstruktion liegt. Von hier aus wird es möglich das gleiche in einem 3-dimensionalem Raum umsetzen zu können. 
+\\Um vorerst nur eine beliebige Position in einem 3-dimensionalem Raum erreichen zu können, wird die 2-gliedrige Konstruktion genommen und in die 3-dimensionale gestreckte, indem ein Glied am Anfang des ersten Gliedes befestigt die in $Y$-Richtung gestreckt wird und in die $Y$-Richtung rotiert wird. Dadurch wird Endposition des Endeffektors von der 2-dimensionalen in die 3-dimensionale gestreckt. Es kann dadurch jeder Punkt innerhalb einer Kugel erreicht werden, dessen Radius der Summer der Längen der letzten zwei Glieder entsprechen. Gesprochen
+\\
+\[X_D =\left[\begin{matrix}x\\y\\z\\\end{matrix}\right]\]
+\[X_N =\left[\begin{matrix}x\\y - L_1\\z\\\end{matrix}\right]\]
+\begin{equation}
+\begin{split}
+|X_N| & =\sqrt{x_2 +  (y - L_1)^2 + z^2}\\
+|X_N| & = L_2 + L_3\\
+\end{split}
+\end{equation}
+Durch dass das erste Glied die anderen zwei Glieder in die Y-Richtung versetzt, ist die eigentliche Endposition $X_N =\left[\begin{matrix}x\\y - L_1\\z\\\end{matrix}\right]$.\\
+%BILD
+\\Damit ebenfalls eine beliebige Rotation erreicht werden kann, werden 3 weitere Glieder am Ende hinzugefügt, die es erlauben, eine Position mit einer bestimmten Rotation erreichen zu können. Dies kann auch graphisch veranschaulicht werden.
+\\Zuerst wird ein Glied aufgebaut, die in die Y-Richtung gestreckt wird und in Y-Richtung rotiert wird. An das Ende des ersten Gliedes wird ein weiteres angesetzt, die auch in Y-Richtung gestreckt wird und in Z-Richtung rotiert wird. Somit wird das zweite Glied durch die Rotation des ersten Gliedes beeinflusst. Schlussendlich wird ein letztes Glied nochmals in Y-Richtung gestreckt und in Y-Richtung rotiert. Die ersten zwei Glieder sind somit dafür zuständig eine bestimmte Rotation zu erreichen und das Letzte nochmals für eine lokale Rotation.
+%BILD
+\
+Diese drei Glieder werden somit an die ersten drei angesetzt und es wird ein industrieller Roboterarm mit sechs Freiheitgraden (\textit{6DOF}) erzeugt, der aus insgesamt sechs Gliedern besteht.
+
+\chapter{Mechanische Umsetzung}
+\section{CAD-Software}
+
+\section{Material}
+
+\section{Aufbau}
+
+\section{Oberarm (2. Glied)}
+
+\section{Unterarm (3. Glied)}
+
+\section{Schluter und Halterung (1. Glied)}
+
+\section{Handgelenk Teil 1 (4. Glied)}
+
+\section{Handgelenk Teil 2 und 3 (5. und 6. Glied)}
+
+\section{Komplette Montage}
+
+\chapter{Elektrische Aktoren}
+\section{Motoren}
+
+\section{Sensoren}
+
+\chapter{Elektronik und Systemsteuerung}
+\section{Mikrokontroller}
+
+\section{Motortreiber}
+
+\section{PCB}
+
+\section{Code für Mikrokontroller}
+
+\section{Kontrolle über PC}
+
+\chapter{Robotik}
+\section{Direkte Kinematik}
+Der Begriff ''\textit{Direkte Kinematik}'', auch als ''\textit{Forward Kinematics}'' oder ''\textit{FK}''  bekannt, stammt aus der Robotik und ist dafür da, um aus Gelenkwinkeln der einzelnen Glieder einer gegliederten Konstruktion die Endposition in einem Koordinatensystem bestimmen zu können. Man spricht bei der Endposition des letzten Glieds von einem ''\textit{Endeffektor}''.
+\subsection{FK im 2-dimensionalem Raum}
+Um zu verstehen, was man unter der direkten Kinematik erreichen möchte, wird ein 2-dimensionales $XY$-Koordinatensystem dargestellt. In dem Koordinatensystem befindet sich eine Konstruktion aus 2 Gliedern. Das erste Glied $L_1$ dreht sich mit dem Anfang um den Nullpunkt, während das zweite Glied $L_2$ sich am Schluss des ersten Glieds dreht.
+\\
+%BILD
+\\
+Jedes von diesen Gliedern liegt unter einem Winkel relativ zur $X$-Achse. Der Winkel des ersten Gliedes wird als $\theta_1'$ bezeichnet und dies des zweiten Gliedes mit $\theta_2'$.
+Es muss die Position des Endeffektors berechnet werden, wo
+\[\theta_1' , \theta_2' \longrightarrow x_{EE}, y_{EE}\]
+das verallgemeinert werden kann zu
+\[f(\theta_1', \theta_2') = X_D = \left[\begin{matrix}x_{EE}\\y_{EE}\\\end{matrix}\right]\]
+wo $X_D$ die Endposition der Endeffektors entspricht.\\
+Anstatt alles auf einmal zu berechnen, wird zuerst die Endposition des ersten Gliedes berechnet:
+\[X_{D_1}=R\left(\theta_1'\right)\left[\begin{matrix}L_1\\0\\\end{matrix}\right]=\left[\begin{matrix}\cos{\theta_1'}&-\sin{\theta_1'}\\\sin{\theta_1'}&\cos{\theta_1'}\\\end{matrix}\right]\left[\begin{matrix}L_1\\0\\\end{matrix}\right]=\left[\begin{matrix}L_1\cos{\theta_1'}\\L_1\sin{\theta_1'}\\\end{matrix}\right]\rightarrow\left[\begin{matrix}L_1c_1\\L_1s_1\\\end{matrix}\right]\]
+Es wird die Rotationsmatrix $R\left(\theta\right)=\left[\begin{matrix}\cos{\theta}&-\sin{\theta}\\\sin{\theta}&\cos{\theta}\\\end{matrix}\right]$ benützt, die in einem 2-dimensionalen Koordinatensystem verwendet wird.\\
+Durch das die Endposition des Endes vom ersten Glied bekannt ist, wird diese eigesetzt, um die Endposition des Endes vom zweiten Glied herauszufinden:
+\[X_D=R\left(\theta_1'\right)\left[\begin{matrix}L_1\\0\\\end{matrix}\right]+R\left(\theta_2'\right)\left[\begin{matrix}L_2\\0\\\end{matrix}\right]=\left[\begin{matrix}L_1c_1\\L_1s_1\\\end{matrix}\right]+\left[\begin{matrix}L_2c_2\\L_2s_2\\\end{matrix}\right]\]
+Jedoch ist der Fall nicht so, dass bewusst ist, unter welchem Winkel das zweite Glied relativ zur $X$-Achse steht, sondern nur relativ zu dem ersten Glied.\\
+%GRAFIK
+\\
+Dies ist so, da sich das Koordinatensystem für ein anhängendes Glied relativ zum treibenden Glied verändert. Die Rotation $R(\theta_1)$ des ersten Gliedes entspricht somit zum neuen Koordinatensystem des zweiten Gliedes.
+Dadurch werden die beiden Rotationen $R(\theta_1)$ und $R(\theta_2)$ multipliziert. Aufgrund der Multiplikationsregeln von Rotationen kann $R(\theta_1) \cdot R(\theta_2)$ als eine Addition von beiden Winkeln $\theta_1$ und $\theta_2$ umgeformt werden.
+\begin{align*}
+    X_D & =R\left(\theta_1\right)\left[\begin{matrix}L_1\\0\\\end{matrix}\right]+R(\theta_1)\cdot R\left(\theta_2\right)\cdot\left[\begin{matrix}L_2\\0\\\end{matrix}\right]\\
+    X_D & =R\left(\theta_1\right)\left[\begin{matrix}L_1\\0\\\end{matrix}\right]\ +\ R\left(\theta_1+\theta_2\right)\left[\begin{matrix}L_2\\0\\\end{matrix}\right]
+\end{align*}
+Diese Multiplikation kann auch als eine rekursive Mulitplikation-Formel umgeformt werden:
+\begin{align*}
+    X_D & =R\left(\theta_1\right)\left[\begin{matrix}L_1\\0\\\end{matrix}\right]+R(\theta_1)\cdot R\left(\theta_2\right)\cdot\left[\begin{matrix}L_2\\0\\\end{matrix}\right]\\
+    X_D & =\left[\begin{matrix}c_1&-s_1\\s_1&c_1\\\end{matrix}\right]\left[\begin{matrix}L_1\\0\\\end{matrix}\right]+\left[\begin{matrix}c_1&-s_1\\s_1&c_1\\\end{matrix}\right]\left[\begin{matrix}c_2&-s_2\\s_2&c_2\\\end{matrix}\right]\left[\begin{matrix}L_2\\0\\\end{matrix}\right]\\
+    X_D & =\left[\begin{matrix}c_1&-s_1\\s_1&c_1\\\end{matrix}\right]\left(\left[\begin{matrix}L_1\\0\\\end{matrix}\right]+\left[\begin{matrix}c_2&-s_2\\s_2&c_2\\\end{matrix}\right]\left[\begin{matrix}L_2\\0\\\end{matrix}\right]\right)\\
+    X_D & =R\left(\theta_1\right)\left(\left[\begin{matrix}L_1\\0\\\end{matrix}\right]+R\left(\theta_2\right)\left[\begin{matrix}L_2\\0\\\end{matrix}\right]\right)
+\end{align*}
+Durch diese Umformung kann  für eine beliebige Anzahl Gliedern die Endposition des Endeffektors im 2-dimensionalen Raum berechnet werden. Hier noch ein Beispiel mit 3 Gliedern.
+\[\theta_1,\theta_2,\theta_3\longrightarrow x_{EE},y_{EE}\]
+Es kann jetzt entweder die Verkettungsformel benützt werden, oder die Reihenformel benützen.\\
+Mit der Reihenformel (explizit):
+\begin{equation}
+    X_D=R\left(\theta_1\right)\left[\begin{matrix}L_1\\0\\\end{matrix}\right]\ +R\left(\theta_1+\theta_2\right)\left[\begin{matrix}L_2\\0\\\end{matrix}\right]\ +R\left({\theta_1+\theta_2+\theta}_3\right)\left[\begin{matrix}L_3\\0\\\end{matrix}\right]
+\end{equation}
+Oder mit der Verkettungsformel (rekursiv):
+\begin{equation}
+    X_D=R\left(\theta_1\right)\left(\left[\begin{matrix}L_1\\0\\\end{matrix}\right]+R\left(\theta_2\right)\left(\left[\begin{matrix}L_2\\0\\\end{matrix}\right]+R\left(\theta_3\right)\left[\begin{matrix}L_3\\0\\\end{matrix}\right]\right)\right)
+\end{equation}
+
+\subsection{FK im 3-dimensionalem Raum}
+Dieses Vorgehen in der direkten Kinematik kann man auch in den 3-dimensionalen Raum umsetzen. Jedoch erscheinen durch das Hinzufügen von einer weiteren Achse zwei weitere Rotationsachsen. Somit sind neben den 3 verschiedenen Achsen entsprechend auch drei verschiedene Rotationsachsen vorhanden.
+\\
+% 3 Rotationsachsen Grafiken
+\begin{center}
+\centering{
+\begin{multicols}{3}
+\begin{tikzpicture}[tdplot_main_coords, scale=1.5]
+  % axes
+  \draw[->] (0,0,0) -- (1.4,0,0) node[below left] {\textcolor{Xcol}{$x$}};
+  \draw[->] (0,0,0) -- (0,1.4,0) node[right]  {\textcolor{Ycol}{$y$}};
+  \draw[->] (0,0,0) -- (0,0,1.4) node[above]        {\textcolor{Zcol}{$z$}};
+
+  % circle in YZ-plane (centered at origin, param: (0, cos t, sin t))
+  \draw[thin, dashed] plot[domain=0:360, samples=180] (0,{1.1*cos(\x)},{1.1*sin(\x)});
+
+  % original y-axis point
+  \coordinate (Y0) at (0,1.1,0);
+  % rotated point (by beta about x): (0, cos(beta), sin(beta))
+  \coordinate (Yr) at (0,{1.1*cos(45)},{1.1*sin(45)});
+
+  % arc showing rotation
+  \draw[-, thick, Xcol] plot[domain=0:45, samples=50] (0,{1.1*cos(\x)},{1.1*sin(\x)});
+
+  % vectors
+  \draw[-, thick, Xcol] (0,0,0) -- (Yr) node[pos=1.1, right ] {$\mathbf{R}_x(\varphi)$};
+
+  % angle label
+  \node at (0,{0.7*1.1*cos(22.5)},{0.6*1.1*sin(22.5)}) [left] {$\varphi$};
+\end{tikzpicture}
+
+\begin{tikzpicture}[tdplot_main_coords, scale=1.5]
+  % axes
+  \draw[->] (0,0,0) -- (1.4,0,0) node[below left] {\textcolor{Xcol}{$x$}};
+  \draw[->] (0,0,0) -- (0,1.4,0) node[right]  {\textcolor{Ycol}{$y$}};
+  \draw[->] (0,0,0) -- (0,0,1.4) node[above]        {\textcolor{Zcol}{$z$}};
+
+  % circle in XZ-plane (param: (cos t, 0, sin t))
+  \draw[thin, dashed] plot[domain=0:360, samples=180] ({1.1*cos(\x)},0,{1.1*sin(\x)});
+
+  % original x-axis point
+  \coordinate (X0b) at (1.1,0,0);
+  % rotated point (by gamma about y): (cos gamma, 0, sin gamma)
+  \coordinate (Xrb) at ({1.1*cos(45)},0,{1.1*sin(45)});
+
+  % arc showing rotation
+  \draw[-, thick, Ycol] plot[domain=45:90, samples=50] ({1.1*cos(\x)},0,{1.1*sin(\x)});
+
+  \draw[-, thick, Ycol] (0,0,0) -- (Xrb) node[pos=0.95, above left] {$\mathbf{R}_y(\theta)$};
+
+  % angle label
+  \node at ({0.3*1.1*cos(22.5)},0,{2*1.1*sin(22.5)}) [below] {$\theta$};
+\end{tikzpicture}
+
+\begin{tikzpicture}[tdplot_main_coords, scale=1.5]
+  % axes
+  \draw[->] (0,0,0) -- (1.4,0,0) node[below left] {\textcolor{Xcol}{$x$}};
+  \draw[->] (0,0,0) -- (0,1.4,0) node[right]  {\textcolor{Ycol}{$y$}};
+  \draw[->] (0,0,0) -- (0,0,1.4) node[above]  {\textcolor{Zcol}{$z$}};
+
+  % circle in XY-plane
+  \draw[thin, dashed] (0,0,0) ++(1.1,0,0) arc (0:360:1.1);
+
+  % original x-axis point
+  \coordinate (X0) at (1.1,0,0);
+  % rotated point (by alpha around z) (cos, sin, 0)
+  \coordinate (Xr) at ({1.1*cos(45)},{1.1*sin(45)},0);
+
+  % arc showing rotation
+  \draw[-, thick, Zcol] plot[domain=0:45, samples=50] ({1.1*cos(\x)},{1.1*sin(\x)},0);
+
+  % vectors
+  \draw[-, thick, Zcol] (0,0,0) -- (Xr) node[pos=1.3, below] {$\mathbf{R}_z(\psi)$};
+
+  % angle label
+  \node at ({0.6*1.1*cos(22.5)},{0.1*1.1*sin(22.5)},0) [right] {$\psi$};
+\end{tikzpicture}
+\end{multicols}}
+\end{center}
+
+Jede von diesen Rotationsachsen verfügt über einer eigenen Winkelrotation.
+\begin{center}
+\begin{tabular}{c c c}
+    $X$-Rotation: $\varphi$ &\hspace{1cm} $Y$-Rotation: $\theta$ &\hspace{1cm} $Z$-Rotation: $\psi$
+\end{tabular}
+\end{center}
+Dementsprechend verfügt jede Rotationsachse über eine Rotationsmatrix im 3-dimensionalem Raum.
+\begin{align}
+    R_x\left(\varphi\right) & =\left[\begin{matrix}1&0&0\\0&\cos{\varphi}&-\sin{\varphi}\\0&\sin{\varphi}&\cos{\varphi}\\\end{matrix}\right]\\
+    R_y\left(\theta\right) & =\left[\begin{matrix}\cos{\theta}&0&\sin{\theta}\\0&1&0\\-\sin{\theta}&0&\cos{\theta}\\\end{matrix}\right]\\
+    R_z\left(\psi\right) & =\left[\begin{matrix}\cos{\psi}&-\sin{\psi}&0\\\sin{\psi}&\cos{\psi}&0\\0&0&1\\\end{matrix}\right] 
+\end{align}
+Um diese Rotationsmatrizen übersichtlich zu behalten, werden diese mit vereinfachten Begriffen geschrieben:
+\begin{align}
+    R_x\left(\varphi\right) & =\left[\begin{matrix}1&0&0\\0&c_x&-s_x\\0&s_x&c_x\\\end{matrix}\right]\\
+    R_y\left(\theta\right) & =\left[\begin{matrix}c_y&0&s_y\\0&1&0\\-s_y&0&c_y\\\end{matrix}\right]\\
+    R_z\left(\psi\right) & =\left[\begin{matrix}c_z&-s_z&0\\s_z&c_z&0\\0&0&1\\\end{matrix}\right]
+\end{align}
+Diese drei Rotationsmatrizen können zu einer allgemeinen Rotationsmatrix zusammengesetzt werden.
+\begin{align}
+    R\left(\varphi,\theta,\psi\right) & =R_z\left(\psi\right)\times R_y\left(\theta\right)\times R_x\left(\varphi\right)\\ & =\left[\begin{matrix}c_z&-s_z&0\\s_z&c_z&0\\0&0&1\\\end{matrix}\right]\left[\begin{matrix}c_y&0&s_y\\0&1&0\\-s_y&0&c_y\\\end{matrix}\right]\left[\begin{matrix}1&0&0\\0&c_x&-s_x\\0&s_x&c_x\\\end{matrix}\right]\\
+    R\left(\varphi,\theta,\psi\right) & =\left[\begin{matrix}c_zc_y&c_zs_ys_x-s_zc_x&c_zs_yc_x+s_zs_x\\s_zc_y&s_zs_ys_x+c_zc_x&s_zs_yc_x-c_zs_x\\-s_y&c_ys_x&c_yc_x\\\end{matrix}\right]
+\end{align}
+\begin{OutBox}
+Wichtig zu beachten ist, dass die Reihenfolge der Multiplikation der Rotationsmatrizen dementsprechend eine andere Rotation ergibt. Es können Phänomene wie «Gimble-Locking» entstehen.\\
+Dementsprechend wirkt die Rotationmatrize auch anders, wenn eine andere Reihenfolge gewählt wird. In diesem Beispiel wird eine $ZYX$-Rotationsmatrize angewendet, welche ein anderes Resultat geben würde als eine $XYZ$-Rotationsmatrize.
+\end{OutBox}
+\noindent Diese kann somit gleich angewendet werden wie bei einer 2-dimensionellen Konstruktion. In diesem Fall werden die Glieder nur an bestimmten Rotationsachsen gedreht. Als Beispiel nimmt man ein Glied, das parallel zur $Y$-Achse vom Nullpunkt ausgestreckt wird und um die Rotationsachse $Y$ rotiert wird:
+\begin{equation}
+    X_D=R\left(0,\theta_{1},0\right)\left[\begin{matrix}0\\L_1\\0\\\end{matrix}\right]=\left[\begin{matrix}c_{y_1}&0&s_{y_1}\\0&1&0\\-s_{y_1}&0&c_{y_1}\\\end{matrix}\right]\left[\begin{matrix}0\\L_1\\0\\\end{matrix}\right]=\left[\begin{matrix}0\\L_1\\0\\\end{matrix}\right]
+\end{equation}
+Da jetzt dieses Glied vom Nullpunkt auf der $Y$-Achse gestreckt wird, wirkt die Rotation in $Y$-Richtung nichts aus. Jedoch hat diese Rotation einen Einfluss auf die darauffolgenden angehängten Glieder. Um das besser zu visualisieren, wird ein zweites Glied genommen, das an der $X$-Achse angelegt wird und an das Ende des ersten Gliedes angesetzt wird. Die Rotation des zweiten Gliedes erfolgt anhand der $Z$-Achse.
+\begin{align}
+    X_D & =R\left(0,\theta_{1,}0\right)\left(\left[\begin{matrix}0\\L_1\\0\\\end{matrix}\right]+R\left(0,0,\psi_2\right)\left[\begin{matrix}L_2\\0\\0\\\end{matrix}\right]\right)\\
+    X_D & =\left[\begin{matrix}c_{y_1}&0&s_{y_1}\\0&1&0\\-s_{y_1}&0&c_{y_1}\\\end{matrix}\right]\left(\left[\begin{matrix}0\\L_1\\0\\\end{matrix}\right]+\left[\begin{matrix}c_{z_2}&-s_{z_2}&0\\s_{z_2}&c_{z_2}&0\\0&0&1\\\end{matrix}\right]\left[\begin{matrix}0\\L_2\\0\\\end{matrix}\right]\right)\\
+    X_D & =\left[\begin{matrix}c_{y_1}&0&s_{y_1}\\0&1&0\\-s_{y_1}&0&c_{y_1}\\\end{matrix}\right]\left[\begin{matrix}-s_{z_2}L_2\\c_{z_2}L_2\ +L_1\ \\0\\\end{matrix}\right]\\
+    X_D & =\left[\begin{matrix}-c_{y_1}s_{z_2}L_2\\c_{z_2}L_2+L_1\\s_{y_1}s_{z_2}L_2\\\end{matrix}\right]
+\end{align}
+Somit beeinflusst wie bei einer 2-dimensionalen Konstruktion jede Rotation des vorherigen Gliedes diese der Folgenden.
+{\scriptsize
+\begin{align}
+    X_D = R_x(\theta_1)\left(\left[\begin{matrix}
+        L_1 \\ 0 \\ 0\\
+    \end{matrix}\right] + R_z(\theta_2)\left(\left[\begin{matrix}
+        L_2 \\ 0 \\ 0\\
+    \end{matrix}\right] + R_z(\theta_3)\left(\left[\begin{matrix}
+        L_3 \\ 0 \\ 0\\
+    \end{matrix}\right] + R_z(\theta_4)\left(\left[\begin{matrix}
+        L_4 \\ 0 \\ 0\\
+    \end{matrix}\right] + R_z(\theta_5)\left(\left[\begin{matrix}
+        L_5 \\ 0 \\ 0\\
+    \end{matrix}\right] + R_z(\theta_6)\left[\begin{matrix}
+        L_6 \\ 0 \\ 0\\
+    \end{matrix}\right]\right)\right)\right)\right)\right)
+\end{align}}
+\begin{OutBox}
+Wichtig zu beachten ist, dass in dieser Darstellung ein Glied immer in $X$-Richtung ausgespannt wird. Grundsätzlich kann ein Glied nicht nur in $X$-Richtung ausgespannt werden, sondern auch in $Y$- oder $Z$-Richtung, sowie aus Kombination aus allen drei. Deshalb wäre folgende Darstellung eines Gliedes korrekter:
+\[\left[\begin{matrix}L_{n,x}\\L_{n,y}\\L_{n,z}\\\end{matrix}\right]\]
+wo $n$ das entsprechende Glied ist.
+Aufgrund visueller Darstellung der Formeln, ist in der Erklärung jedes Glied in X-Richtung gestreckt worden.
+\end{OutBox}
+\newpage
+\section{Inverse Kinematik}
+Das Grundprinzip der inversen Kinematik, im Englischen auch bekannt als ''Inverse Kinematics'' oder ''IK'', besteht darin, dass wird eine Position und Rotation vorgegeben wird die vom Endeffektor erreicht werden muss, wodurch die verschiedenen Gelenkwinkel der einzelnen Glieder berechnet werden. 
+Die inverse Kinematik ist deshalb sehr hilfreich, vor allem wenn man anhand einer Konstruktion einen Punkt $A$ erreichen möchte und von diesem Punkt zu einem Punkt $B$ bewegen möchte. Die Inverse Kinematik kann jedoch nicht nur auf Roboterarme limitiert werden, sondern werden auch in CAD-Softwares für die Simulation von verschiedenen Konstruktionen häufig benützt.
+\subsection{1R-Manipulator}
+Um die Funktionsweise der inversen Kinematik richtig verstehen zu können, ist es am besten zuerst zu verstehen, wenn es nur ein Glied zu Verfügung hat, die um eine Rotationsachse rotiert wird.
+Bei einem 1R-Manipulatoren wird von einer Konstruktion aus einem Glied gesprochen, dass auf einer Achse rotiert wird. Für solch eine Konstruktion aus einem Glied in einem 2-dimensionalem, ist dies ziemlich einfach zu berechnen, indem die Rotation relativ zur Endposition $x_D=\left(x_D,y_D\right)$ zum Nullpunkt anhand des Pythagoras-Theorems berechnet wird.
+\[\theta=\atan2\left(y_D,x_D\right)={tan}^{-1}{\frac{y_D}{x_D}}\]
+Dies führt zu einer einzigen Limitation, dass der Betrag der Endposition gleich zur Länge des Gliedes ist:
+\[L_1=\left|x_D\right|=\sqrt{x_D^2+y_D^2}\]
+Grundsätzlich gehört dieser Prozess nicht direkt zur inversen Kinematik, jedoch ist dies ein Grundsatz für jedes Problem in der inversen Kinematik.
+\subsection{2R-Manipulator}
+Bei einem 2R-Manipulator wird über einer Konstruktion gesprochen, die aus 2 Gliedern besteht. Das erste Glied wird am Nullpunkt rotiert, während das zweite Glied um die Länge des zweiten Gliedes $L_1$ versetzt wird, wodurch der Endeffektor um die Länge des zweiten Gliedes $L_2$ versetzt wird. Es wird über einem 2R-Manipulator im 2-dimensionalem Raum gesprochen.
+Hingegen zum 1R-Manipulator sind 2 verschiedene Glieder vorhanden, die sich unabhängig voneinander drehen können. Somit verfügt das erste Glied über eine Rotation $\theta_1$ und das zweite Glied über eine Rotation $\theta_2$. Durch das 2 einzelne Winkel vorhanden sind, ist deren Berechnung anhand einer gewünschten Position nicht mehr übersichtlich. Deshalb wird der Prozess der inversen Kinematik angewandt. 
+Um die Winkel $\theta_1$ und $\theta_2$ berechnen zu können, wird zuerst von der Gleichung aus der direkten Kinematik ausgegangen:
+\[X_D=R\left(\theta_1\right)\left(\left[\begin{matrix}L_1\\0\\\end{matrix}\right]+R\left(\theta_2\right)\left[\begin{matrix}L_2\\0\\\end{matrix}\right]\right).\]
+Anstatt den Winkel der einzelnen Glieder auf einmal zu berechnen, wird schrittweise vorgegangen. Um dies zu verwirklichen, stellt man das erste Glied unter keinem Winkel, also $\theta_1=0$. Dadurch dass das erste Glied stationär ist, wird davon ausgegangen, dass das zweite Glied so positioniert werden sollte, dass sich der Endeffektor auf einem Kreis mit dem Radius der Länge des Betrags der Endposition befinden müsste. Sobald dies erfüllt wäre, könnte man das erste Glied entsprechend so rotieren, dass der Endeffektor die Endposition erreicht.\\
+% GRAFIK
+\\
+Somit entsteht eine neue Gleichung:
+\begin{align*}
+    X_D & =R\left(0\right)\left(\left[\begin{matrix}L_1\\0\\\end{matrix}\right]+R\left(\theta_2\right)\left[\begin{matrix}L_2\\0\\\end{matrix}\right]\right)\\
+    X_D & =\left[\begin{matrix}1&0\\0&1\\\end{matrix}\right]\left(\left[\begin{matrix}L_1\\0\\\end{matrix}\right]+\left[\begin{matrix}c_2&-s_2\\s_2&c_2\\\end{matrix}\right]\left[\begin{matrix}L_2\\0\\\end{matrix}\right]\right)\\
+    X_D & =\left[\begin{matrix}c_2L_2+L_1\\s_2L_2\\\end{matrix}\right]
+\end{align*}
+\begin{OutBox}
+\noindent
+\begin{align*}
+    c_n & =\cos{q_n}\\
+    s_n & =\sin{q_n}
+\end{align*}
+\end{OutBox}
+Durch das jetzt den Winkel $\theta_1$ berechnet werden muss, wird der Betrag von $X_D$ genommen und nach $\theta_1$ aufgelöst:
+\begin{align*}
+    \left|X_D\right| & =\sqrt{\left(c_2L_2+L_1\right)^2+\left(s_2L_2\right)^2}\\
+    \left|X_D\right|^2 & =\left(c_2L_2+L_1\right)^2+\left(s_2L_2\right)^2\\
+    \left|X_D\right|^2 & =c_2^2L_2^2+2c_2L_2L_1+L_1^2+s_2^2L_2^2
+\end{align*}
+\begin{OutBox}
+\noindent
+\begin{align*}
+    &\cos{\alpha}\cdot \cos{\beta}\mp \sin{\alpha}\cdot \sin{\beta}=\cos{\left(\alpha\pm\beta\right)}\\
+\Rightarrow &\cos{\alpha}\cdot \cos{\alpha}+\sin{\alpha}\cdot \sin{\alpha}=\cos{\left(\alpha-\alpha\right)}=1
+\end{align*}
+\end{OutBox}
+\begin{align*}
+    \left|X_D\right|^2 & =L_2^2\left(c_2^2+s_2^2\right)+L_1^2+2c_2L_2L_1\\
+    \left|X_D\right|^2 & =L_2^2+L_1^2+2c_2L_2L_1\\
+    2c_2L_2L_1 & =\left|X_D\right|^2-L_2^2-L_1^2\\
+    c_2 & =\frac{\left|X_D\right|^2-L_2^2-L_1^2}{2L_2L_1}\\
+    \theta_2 & =\pm cos^{-1}\left(\frac{\left|X_D\right|^2-L_2^2-L_1^2}{2L_2L_1}\right)
+\end{align*}
+Da durch die umgekehrte Kosinus-Funktion an zwei verschiedenen Stellen den gleichen Wert herausgeben wird, werden auch zwei Werte für $\theta_2$ erhalten
+\begin{align*}
+    q_{2,1} & =cos^{-1}\left(\frac{\left|X_D\right|^2-L_2^2-L_1^2}{2L_2L_1}\right)\\
+    q_{2,2} & =-cos^{-1}\left(\frac{\left|X_D\right|^2-L_2^2-L_1^2}{2L_2L_1}\right)
+\end{align*}
+Durch das $\theta_2$ bekannt ist, kann $\theta_1$ dementsprechend auch berechnet werden, indem zuerst der Winkel vom Ursprung zum jetzigen Endeffektor berechnet wird und dieser vom Winkel vom Ursprung zur Endposition subtrahiert wird. 
+\begin{align*}
+\theta & =atan2\left(X_y,X_x\right)={tan}^{-1}{\left(\frac{X_y}{X_x}\right)}\\
+\theta_k & =atan2\left(s_2L_2,c_2L_2+L_1\right)={tan}^{-1}{\left(\frac{s_2L_2}{c_2L_2+L_1}\right)}
+\end{align*}
+\[q_{1,k}=\theta-\theta_k\]
+Da es zwei Lösungen für $\theta_2$ gibt, entstehen zwei weitere Lösungen für $\theta_1$. Somit entstehen die Lösungspaare $\{q_{1,1},q_{2,1}\}$ und $\{q_{1,2},q_{2,2}\}$\\[5pt]
+Da es zwei verschiedene Lösungen gibt, kann die eine oder andere für den Lösungsansatz verwendet werden. Jedoch ist für den Prozess der inversen Kinematik die Berechnung aller möglichen Lösungen kritisch.
+Entsprechend ergeben sich Limitation für die Berechnung der Winkel $\theta_1$ und $\theta_2$.
+Der erste Fall, in dem keine Lösung auffallen würde, wäre, wenn in der Berechnung von $\theta_2$ die Berechnung $\frac{\left|X_D\right|^2-L_2^2-L_1^2}{2L_2L_1} > 1$ wäre, somit $\left|X_D\right|^2-L_2^2-L_1^2\ >2L_2L_1$ oder anders gesagt:
+\[\left|X_D\right|^2>L_1^2+2L_2L_1+L_2^2=\left(L_1+L_2\right)^2\]
+was bestimmt, dass der zu erreichende Punkt ausserhalb der Reichweite des Manipulators ist.
+Der zweite Fall wäre, wo die Berechnung von $\theta_2 < -1$ wäre, somit $\left|X_D\right|^2-L_2^2-L_1^2\ <2L_2L_1$, oder anders gesagt:
+\[\left|X_D\right|^2>L_1^2-2L_2L_1+L_2^2=\left(L_1-L_2\right)^2\]
+Damit dies möglich sein kann, müssen die Längen der beiden Glieder ungleich sein, wo der Endpunkt innerhalb eines Kreises mit einem Radius von $\left|L_1-L_2\right|$ am Ursprungspunkt wäre.
+\subsection{3R-Manipulator}
+Wenn man diesen Vorgang in die 3-dimensionale umsetzen würde, wäre der Prozess der indirekten Kinematik ähnlich zu der 2-dimensionalen. Um einen Punkt im 3-dimensionalen Raum erreichen zu können, bräuchte es mindestens ein weiteres Glied, das sich um die $Y$-Achse rotieren würde. Somit würde die optimale Konstruktion aus 3 Gliedern bestehen.
+Bei einem 3R Manipulatoren wird das erste Glied um die $Z$-Achse rotiert, das zweite Glied um die $Y$-Achse rotiert mit einer Versetzung von $L_1$ in die Z-Richtung und das dritte Glied nochmals um die $Y$-Achse mit einer Versetzung von $L_2$ in die $X$-Richtung. Der Endeffektor wird vom dritten Glied über eine Distanz von $L_3$ in die $X$-Richtung versetzt.
+Mit dieser Definition können die Koordinaten des Endeffektors festgestellt werden:
+\begin{align*}
+    x\left(q\right) & =R_z\left(\theta_1\right)\left(\left[\begin{matrix}0\\0\\L_1\\\end{matrix}\right]+R_y\left(\theta_2\right)\left(\left[\begin{matrix}L_2\\0\\0\\\end{matrix}\right]+R_y\left(\theta_3\right)\left[\begin{matrix}L_3\\0\\0\\\end{matrix}\right]\right)\right)\\
+    x\left(q\right) & =\left[\begin{matrix}c_1\left(c_2\left(L_2+c_3l_3\right)-s_2s_3L_3\right)\\s_1\left(c_2\left(L_2+c_3L_3\right)-s_2s_3L_3\right)\\L_1-s_2\left(L_2+c_3L_3\right)-c_2s_3L_3\\\end{matrix}\right]
+\end{align*}
+Ziel ist es diesen Endeffektor zu der Koordinate $X_D = \left[\begin{matrix}x_D\\y_D\\z_D\\\end{matrix}\right]$ zu bringen.\\
+% GRAFIK
+\\
+Das Vorgehen bei einem Arm mit drei Rotationselementen ist sehr ähnlich, ausser, dass vorerst die Rotation des ersten Gliedes bestimmt werden muss. Anhand der Rotation des ersten Gliedes wird es möglich die Endposition auf eine Fläche projektieren zu können, die entlang zu der Rotation der Konstruktion verläuft. Somit ist die Rotation des ersten Gliedes
+\[\theta_1={tan}^{-1}{\left(\frac{y_D}{x_D}\right)}\]
+Durch die Rotation des ersten Gliedes werden die zwei weiteren Glieder mitrotiert, wodurch die Endposition $X_D$ relativ zum ersten Glied auch mitrotiert wird. Somit erfolgt eine neue Endposition
+\[R\left(0,0,\theta_1\right)x_D=\left[\begin{matrix}c_1&-s_2&0\\s_2&c_2&0\\0&0&1\\\end{matrix}\right]\left[\begin{matrix}x_D\\y_D\\z_D\\\end{matrix}\right]=\left[\begin{matrix}c_1x_D\\s_1y_D\\z_D\\\end{matrix}\right].\]
+Anhand dieser neuen Endposition wird der Winkel der letzten zwei Glieder berechnen, genauso wie bei einem 2R Manipulator. Somit ist die Endposition $X_G$ für die zwei Glieder auf einer 2-dimensionalen Ebene
+\[X_G=\left[\begin{matrix}\sqrt{\left(c_1x_N\right)^2+\left(s_1y_N\right)^2}\\z_N\\\end{matrix}\right]\]
+Diese neue Endposition wird in die folgende Formel einsetzen:
+\[\theta_3=cos^{-1}\left(\frac{\left|X_G\right|^2-L_2^2-L_1^2}{2L_2L_1}\right)\]
+Dadurch wird dann auch der Winkel $\theta_2$ berechnet:
+\begin{align*}
+    \theta& =\tan^{-1}{\left(\frac{y_D-L_1}{\sqrt{{x_D}^2+{z_D}^2}}\right)}\\
+    \theta_k & =\tan^{-1}{\left(\frac{s_2L_2}{c_2L_2+L_1}\right)}
+\end{align*}
+\[q_{2, k}=\theta-\theta_k\]
+\subsection{6R-Manipulator}
+Die meisten industriellen 6R Manipulatoren sind aus einem Ellbogengelenk (Rotation um die $Z$-Achse), einer Schulter bestehend aus 2 sich orthogonal auftreffenden Achsen und einem Handgelenk mit weiteren 3 sich orthogonal auftreffenden Achsen. In dieser Ordnung ist die Konstruktion des Roboterarms in dieser Arbeit gegliedert\\
+% GRAFIK
+Der Endeffektor für einen industriellen Manipulatoren wird auch als ein Werkzeugmittelpunkt oder ''Tool Center Point'' genannt. Da der Ursprung des letzten Gliedes innerhalb des Handgelenks ist, wird von der Werkzeugmittelpunkt durch eine lokale Koordinate $X_6$ mit der entsprechenden Verstezung zum letzten Glied definiert. Dadurch wird es möglich die Weltkoordinaten vom Wekzeugmittelpunkt zu ermitteln\\
+\[X_{tcp}\left(q\right)=T_6\left(q\right)X_6\]
+wo $X_{tcp}$ der Werkzeugmittelpunkt in den Weltkoordinaten ist und $T_6$ die entsprechende Rotation Versetzungen der verschiedenen Glieder sind. In diesem Fall wird verlangt, dass der Werkzeugmittelpunkt $X_{tcp}$ zu der verlangten Position $X_D$ gestellt wird und das letzte Glied über eine Rotation $R_D$ verfügen sollte.\\
+Von hier aus kann klargestellt werden, dass man mit der Rotation von allen sechs Gliedern schlussendlich die entsprechende Rotation erreichen muss
+\[R_6\left(q\right)=R_D\]
+Dadurch entsteht die Gleichung 
+\[X_D=X_{tcp}\left(q\right)=R_6\left(q\right)X_6+T_6\left(q\right)\]
+wo $T_6(q)$ die Position des Handgelenks ist. Somit also $T_6\left(q\right)=X_D-R_DX_6$.\\[5pt]
+Schlussendlich kann festgestellt werden, dass das Handgelenk nur durch die ersten drei Glieder und deren Rotationen beeinflusst wird: $\theta_1$, $\theta_2$ und $\theta_3$. Dadurch wird ersichtlich, dass grunsätzlich nur ein 3R-IK problem gelöst wird und dann schlussendlich nach $x_D-R_Dx_6$ gesucht wird. Es werden somit 4 Lösungen für $\left(\theta_1,\theta_2,\theta_3\right)$ zusammengestellt. Entsprechend zu wie der Roboterarm aufgebaut wird, wird nur eine Lösungsvariante angewandt.
+Durch das jetzt die 3 Rotationen für die ersten drei Glieder vorhanden sind, wird die Rotation vom dritten Glied bestimmt
+\begin{align*}
+    R_3 & =R_y\left(\theta_1\right)R_z\left(\theta_2\right)R_z\left(\theta_3\right)\\ 
+    & =\left[\begin{matrix}c_1&0&-s_1\\0&1&0\\s_1&0&c_1\\\end{matrix}\right]\left[\begin{matrix}c_2&-s_2&0\\s_2&c_2&0\\0&0&1\\\end{matrix}\right]\left[\begin{matrix}c_3&0&-s_3\\0&1&0\\s_3&0&c_3\\\end{matrix}\right]\\
+    R_3 & =\left[\begin{matrix}c_1c_2c_3-c_1s_2s_3&-c_1c_2s_3-c_1s_2c_3&-s_1\\s_2c_3+c_2s_3&-s_2s_3+c_2c_3&0\\s_1c_2c_3-s_1s_2s_3&-s_1c_2s_3-s_1s_2c_3&c_1\\\end{matrix}\right]
+\end{align*}
+\[R_6=R_3\left(\theta_1,\theta_2,\theta_3\right)R_x\left(\theta_4\right)R_y\left(\theta_5\right)R_x\left(\theta_6\right)=R_D\]
+Durch das, dass die Rotation von $R_3$ vorhanden, kann festgestellt werden, dass die Endrotation $R_D$ durch das transposierte $R_3^T$ zurückgedreht werden kann um dann die Rotation $R_3^6$ der letzten drei Glieder herausfinden zu können.
+\[R_3^6=R_x\left(\theta_4\right)R_y\left(\theta_5\right)R_x\left(\theta_6\right)=R_3^T\left(\theta_1,\theta_2,\theta_3\right)R_D\]
+Somit entsteht eine $XYX$-Konversionsproblem der Eulerschen Winkel, da die Rotationen der letzten drei Winkel anhand der $X$-Achse, $Y$-Achse und nochmals der $X$-Achse erfolgen
+\[R_3^6=R_x\left(\theta_4\right)R_y\left(\theta_5\right)R_x\left(\theta_6\right)\]
+
+\begin{OutBox}
+    Transponierte Matrizen
+    \begin{align*}
+        A & =\left[\begin{matrix}a_{11}&\cdots&a_{1n}\\\vdots&\ &\vdots\\a_{m1}&\cdots&a_{mn}\\\end{matrix}\right]\in K^{m\times n}\\
+        A^T & =\left[\begin{matrix}a_{11}&\cdots&a_{m1}\\\vdots&\ &\vdots\\a_{1n}&\cdots&a_{mn}\\\end{matrix}\right]\in K^{n\times m}
+    \end{align*}
+    Transposierte Rotationsmatrizen
+    \begin{align*}
+        R_z\left(\theta\right) & =\left[\begin{matrix}c&-s&0\\s&c&0\\0&0&1\\\end{matrix}\right]\\
+        R_z^T\left(\theta\right) & =\left[\begin{matrix}c&s&0\\-s&c&0\\0&0&1\\\end{matrix}\right]
+    \end{align*}
+    \[R_z^T\left(\theta\right)R_z\left(\theta\right) =\left[\begin{matrix}c^2+s^2&cs-cs&0\\cs-cs&c^2+s^2&0\\0&0&1\\\end{matrix}\right]=\left[\begin{matrix}1&0&0\\0&1&0\\0&0&1\\\end{matrix}\right]\]
+    \[\cos^2\left(\theta\right)+\sin^2\left(\theta\right)=1\]
+\end{OutBox}
+Durch die Vormultiplikation von $R_3^6$ wird eine folgende Rotationsmatrize geformt
+\begin{align*}
+    R_3^6&=R_x\left(\theta_4\right)R_y\left(\theta_5\right)R_x\left(\theta_6\right)\\ &=\left[\begin{matrix}1&0&0\\0&c_4&-s_4\\0&s_4&c_4\\\end{matrix}\right]\left[\begin{matrix}c_5&0&s_5\\0&1&0\\-s_5&0&c_5\\\end{matrix}\right]\left[\begin{matrix}1&0&0\\0&c_6&-s_6\\0&s_6&c_6\\\end{matrix}\right]\\
+    R_3^6&=\left[\begin{matrix}c_5&s_5s_6&s_5c_6\\s_4s_5&c_4c_6-s_4c_5s_6&-c4s_6-s_4c_5c_6\\-c_4s_5&s_4c_6+c_4c_5s_6&-s_4s_6+c_4c_5c_6\\\end{matrix}\right]
+\end{align*}
+Zusätzlich wird die Rotationsmatrize der Endrotation folgenderweise bezeichnet
+\[R_3^T\left(\theta_1,\theta_2,\theta_3\right)R_D=\left[\begin{matrix}r_{11}&r_{12}&r_{13}\\r_{21}&r_{22}&r_{23}\\r_{31}&r_{32}&r_{33}\\\end{matrix}\right]\]
+Durch das jetzt bewusst ist, wie die Rotation der letzten 3 Glieder aufgebaut werden sollte und wie die Rotationsmatrize der Endrotation mit der transposierten Rotationsmatrize der ersten drei Glieder aussieht, können diese gleichgesetzt werden
+\[\left[\begin{matrix}r_{11}&r_{12}&r_{13}\\r_{21}&r_{22}&r_{23}\\r_{31}&r_{32}&r_{33}\\\end{matrix}\right]=\left[\begin{matrix}c_5&s_5s_6&s_5c_6\\s_4s_5&c_4c_6-s_4c_5s_6&-c4s_6-s_4c_5c_6\\-c_4s_5&s_4c_6+c_4c_5s_6&-s_4s_6+c_4c_5c_6\\\end{matrix}\right]\]
+Somit stellt sich heraus, dass der Winkel $\theta_5$ durch $r_{11}=c_5$ bestimmt werden kann
+\[\theta_5=\pm\cos^{-1}{\left(r_{11}\right)}\]
+Mit einem bekannten Wert für $\theta_5$ können zusätzlich $\theta_4$ und $\theta_6$ festgestellt werden
+\begin{align*}
+    \theta_4&=\atan2\left(r_{21},-r_{31}\right)=\tan^{-1}{\left(\frac{r_{21}}{-r_{31}}\right)}\\
+    \theta_6&=\atan2\left(r_{12},r_{13}\right)=\tan^{-1}{\left(\frac{r_{12}}{r_{13}}\right)}
+\end{align*}
+\begin{OutBox}
+Es gibt eine einzige Ausnahme in dieser Situation, die zu einer Singularität entspricht. Diese entsteht, wenn $r_{11}=1$ entspricht. Da
+\[r_{11}=1\Rightarrow\cos^{-1}{1}=0\Rightarrow \theta_5=0\]
+Somit ist der Fall, dass die Winkel $\theta_4$ und $\theta_6$ nicht berechenbar sind, da
+\[\sin{\theta_5}=0\]
+Dadurch ergibt sich eine unendliche Anzahl Lösungen für
+\[\theta_4+\theta_6=\tan^{-1}{\frac{r_{23}}{r_{22}}}\]
+Durch das aber die Rotation $\theta_4$ und $\theta_6$ auf der $X$-Achse erfolgt, kann bestimmt werden, dass nur das letzte Glied rotiert wird, somit also $\theta_4=0$. Dadurch ergibt sich:
+\begin{align*}
+    \theta_4&=0\\
+    \theta_5&=0\\
+    \theta_6&=\cos^{-1}r_{22}
+\end{align*}
+\end{OutBox}
+\section{Theoretische Umsetzung eines 6R-Manipulatoren mit IK}
+Durch das die Funktionsweise der Inversen Kinematik bekannt ist, wird es möglich den ganzen Prozess zur Berechnung der Gelenkweinkel eines 6R-Manipulaotren zu verallgemeinern.
+Für die Berechnung von $\{\theta_1,\theta_2,\theta_3,\theta_4,\theta_5, \theta_6\}$ werden die Eingaben $\{x,y,z,\varphi,\theta,\psi,\\ L_1,L_2,L_3, L_4\}$ wo $L_1$ die Länge der Schulter, $L_2$ die Länge des Oberarms, $L_3$ die gesamte Länge vom Anstzpunkt des Oberarms bis zu Handgelenk und $L_4$ die Länge des Handgelenks ist. Somit ist definiert:
+\\[10pt]
+\indent Eingaben:
+\[x,y,z,\varphi,\theta,\psi,\ L_1,L_2,L_3,L_4\]
+\indent Ausgaben:
+\[\theta_1,\theta_2,\theta_3,\theta_4,\theta_5,\theta_6\]
+\\
+Durch die Eingaben wird zuerst eine zu erreichende Rotationsmatrix $R_D$ geformt
+\[R_D=R_z\left(\psi\right)R_y\left(\theta\right)R_x\left(\varphi\right)\]
+Danach wird festgesetzt, was die Endposition $X_D$ ist
+\[X_D=\left[\begin{matrix}x_D\\y_D\\z_D\\\end{matrix}\right]=\left[\begin{matrix}x\\y\\z\\\end{matrix}\right]-R_D\left[\begin{matrix}L_4\\0\\0\\\end{matrix}\right].\]
+Dadurch können die jeglichen Berechnungen der Gelenkwinkel folgende Werte berechnet werden:
+
+\begin{align*}
+    \theta_1 & =\tan^{-1}{\left(\frac{y_D}{x_D}\right)}=atan2\left(y_D,x_D\right)\\
+    \theta_2 & =\tan^{-1}{\left(\frac{y_D-L_1}{\sqrt{{x_D}^2+{z_D}^2}}\right)}-{tan}^{-1}{\left(\frac{L_2\sin{\theta_2}}{L_1+L_2\cos{\theta_2}}\right)}\\
+    & =\atan2\left(y_D-L_1,\sqrt{{x_D}^2+{z_D}^2}\right)-\atan2\left(L_2\sin{\theta_2},L_1+L_2\cos{\theta_2}\right)\\
+    \theta_3 & =\pm\cos^{-1}{\left(\frac{\left({x_D}^2+{z_D}^2+\left(z_D-L_1\right)^2\right)-L_1^2-L_2^2}{2L_1L_2}\right)}
+\end{align*}
+\begin{align*}
+    R_3 & =R_y\left(\theta_1\right)R_z\left(\theta_2\right)R_z\left(\theta_3\right)\\
+    R_3^TR_D & =\left[\begin{matrix}r_{11}&r_{12}&r_{13}\\r_{21}&r_{22}&r_{23}\\r_{31}&r_{32}&r_{33}\\\end{matrix}\right]
+\end{align*}
+\begin{align*}
+    \theta_4 & = \atan2{(r_{21}, -r_{31})} = \tan^{-1}{\frac{r_{21}}{-r_{31}}}\\
+    \theta_5 & =\pm\cos^{-1}{r_{11}}\\
+    \theta_6 & = \atan2{(r_{12}, r_{13})} =\tan^{-1}{\frac{r_{12}}{r_{13}}}
+\end{align*}
+\begin{OutBox}
+    Im Fall einer Singularität mit $r_{11} = 1$ bzw. $\theta_5 = 0$, dann
+    \begin{align*}
+        \theta_4 & =0\\
+        \theta_5 & =0\\
+        \theta_6 & =\cos^{-1}r_{22}
+    \end{align*}
+\end{OutBox}
+\section{Praktische Umsetzung eines 6R-Manipulatoren mit IK}
+\chapter{Resultate und Diskussion}
+\section{Komplette Konstruktion}
+
+\section{Auswertung}
+
+\subsection{Geschwindigkeit}
+
+\subsection{Genauigkeit und Wiederholbarkeit}
+
+\subsection{Stromverbrauch}
+
+
+
+\chapter{Zusammenfassung und Ausblicke}
+\section{Zukünftige Ergänzungen}
+\subsection{Zusätzliche Funktionalitäten}
+\subsection{Interpolation}
+\subsection{FPGA}
+\subsection{Einbettung von KI}
+\section{Reflexion}
+\chapter{Quellenverzeichnis}
+\chapter{Redlichkeitserklärung}
+
+\appendix
+\chapter{Anhang}
+
+
+\end{document}

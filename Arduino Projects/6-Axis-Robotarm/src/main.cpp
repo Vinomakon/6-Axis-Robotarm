@@ -168,14 +168,22 @@ bool home_slow5 = false;
 
 bool can_move = false;
 
-TMC5160Stepper driver[] = { TMC5160Stepper(CS0_PIN, R_SENSE), TMC5160Stepper(CS1_PIN, R_SENSE), TMC5160Stepper(CS2_PIN, R_SENSE), TMC5160Stepper(CS3_PIN, R_SENSE), TMC5160Stepper(CS4_PIN, R_SENSE), TMC5160Stepper(CS5_PIN, R_SENSE)};
+TMC5160Stepper driver[] = { 
+  TMC5160Stepper(CS0_PIN, R_SENSE), 
+  TMC5160Stepper(CS1_PIN, R_SENSE), 
+  TMC5160Stepper(CS2_PIN, R_SENSE), 
+  TMC5160Stepper(CS3_PIN, R_SENSE), 
+  TMC5160Stepper(CS4_PIN, R_SENSE), 
+  TMC5160Stepper(CS5_PIN, R_SENSE)
+};
 AccelStepper stepper[] = {
   AccelStepper(1, STEP0_PIN, DIR0_PIN),
   AccelStepper(1, STEP1_PIN, DIR1_PIN),
   AccelStepper(1, STEP2_PIN, DIR2_PIN),
   AccelStepper(1, STEP3_PIN, DIR3_PIN),
   AccelStepper(1, STEP4_PIN, DIR4_PIN),
-  AccelStepper(1, STEP5_PIN, DIR5_PIN)};
+  AccelStepper(1, STEP5_PIN, DIR5_PIN)
+};
   
 
 
@@ -561,7 +569,7 @@ void loop() {
       }
     } else if(digitalRead(SW0_PIN) == HIGH) {
       if(home_slow0){
-        Serial.println("Second Homing Complete");
+        Serial.println("Second Homing Complete"); 
         home_mot0 = false;
         home_slow0 = false;
         current_deg0 = mot_home_offset[0];
