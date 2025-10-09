@@ -44,12 +44,14 @@ def ik_calculate(x_pos, y_pos, z_pos, x_rot, y_rot, z_rot, l1, l2, l3, l4, deg=F
         q3 = np.pi
     else:
         print("normal case")
-        q3 = np.arccos(c3)
+        q3 = -np.arccos(c3)
         print(np.atan2(nyd, np.hypot(nxd, nzd)))
         print(np.atan2(abs(l3) * np.sin(q3), abs(l2) + abs(l3) * np.cos(q3)))
         q2 = np.atan2(nyd, np.hypot(nxd, nzd)) - np.atan2(abs(l3) * np.sin(q3), abs(l2) + abs(l3) * np.cos(q3))
 
-    R_3 = yaw_rotation(q3) * yaw_rotation(q2) * pitch_rotation(q3)
+    o3 = np.atan2(l3.y, l3.x)
+
+    R_3 = pitch_rotation(q1) * yaw_rotation(q2) * yaw_rotation(q3 - o3)
     R_N = R_D * R_3.transpose()
     if R_N.item(0, 0) == 1:
         q4 = 0
@@ -58,9 +60,9 @@ def ik_calculate(x_pos, y_pos, z_pos, x_rot, y_rot, z_rot, l1, l2, l3, l4, deg=F
     else:
         q4 = np.atan2(R_N.item(1, 0), -np.float64(R_N.item(2, 0)))
         q5 = np.arccos(R_N.item(0, 0))
-        q6 = np.atan2(R_N.item(0, 1), -np.float64(R_N.item(0, 2)))
+        q6 = np.atan2(R_N.item(0, 1), np.float64(R_N.item(0, 2)))
 
-    return q1, q2, q3, q4, q5, q6
+    return [q1, q2, q3, q4, q5, q6]
 
 with open('data/ik_config.json') as f:
     d = json.load(f)
@@ -83,9 +85,9 @@ print(_l1, _l2, _l3, _l4)
 pot = _l1 + Vector3(0, _l2.x, 0) + _l3 + _l4
 print(pot)
 print(abs(Vector3(0, _l2.x, 0) + _l3))
-ik = ik_calculate(pot.x, pot.y, 0, 0, 0, 0, _l1, _l2, _l3, _l4)
+ik = ik_calculate(pot.x, pot.y, 1, 0, 0, 0, _l1, _l2, _l3, _l4)
 o3 = np.atan2(_l3.y, _l3.x)
-print(np.rad2deg(o3), "aaa")
+ik[2] -= o3
 for i in range(len(ik)):
     print(np.rad2deg(ik[i]), f"q{i + 1}")
     pass
