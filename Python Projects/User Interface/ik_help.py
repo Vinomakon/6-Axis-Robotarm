@@ -27,7 +27,6 @@ def ik_calculate(x_pos, y_pos, z_pos, x_rot, y_rot, z_rot):
     y_rot = np.deg2rad(y_rot)
     z_rot = np.deg2rad(z_rot)
     R_D = vector.euler_rotation(x_rot, y_rot, z_rot)
-    print(R_D)
 
     nm5.rotate(-x_rot, -y_rot, -z_rot, mode='rad')
     X_N = copy.copy(X_D)
@@ -52,7 +51,6 @@ def ik_calculate(x_pos, y_pos, z_pos, x_rot, y_rot, z_rot):
         q2 = 0
         q3 = np.pi
     else:
-        print("Normal case")
         q3 = -np.arccos(c3)
         q2 = np.atan2(nyd, np.hypot(nxd, nzd)) - np.atan2(abs(l3) * np.sin(q3), abs(l2) + abs(l3) * np.cos(q3))
 
@@ -60,9 +58,7 @@ def ik_calculate(x_pos, y_pos, z_pos, x_rot, y_rot, z_rot):
 
     R_3 = pitch_rotation(-q1) * yaw_rotation(q2) * yaw_rotation(q3 - o3)
     R_N = R_D * R_3.transpose()
-    print(R_N)
     if R_N.item(0, 0) == 1:
-        print("special")
         q4 = 0
         q5 = 0
         q6 = np.arccos(R_N.item(1, 1))
@@ -89,17 +85,11 @@ _l2 = m2
 _l3 = m3 + m4
 _l4 = m5
 
-print(_l1, _l2, _l3, _l4)
-
 pot = _l1 + Vector3(0, _l2.x, 0) + _l3 + _l4
 print(pot)
-print(abs(Vector3(0, _l2.x, 0) + _l3))
-ik = ik_calculate(pot.x-40, pot.y, 0, 0, 0, 90, _l1, _l2, _l3, _l4)
+ik = ik_calculate(pot.x-40, pot.y, 0, 0, 0, 90)
 o3 = np.atan2(_l3.y, _l3.x)
 ik[1] -= np.pi / 2
 ik[2] -= -np.pi / 2 + o3
-for i in range(len(ik)):
-    print(np.rad2deg(ik[i]), f"q{i + 1}")
-    pass
 
 
