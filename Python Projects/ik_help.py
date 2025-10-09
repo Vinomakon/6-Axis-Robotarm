@@ -13,19 +13,28 @@ def ik_calculate(x_pos, y_pos, z_pos, x_rot, y_rot, z_rot, l1, l2, l3, l4, deg=F
     nm5.rotate(x_rot, y_rot, z_rot, mode='deg')
     X_N = copy.copy(X_D)
     X_N = X_N - nm5
+    print(X_N)
     xd, yd, zd = X_N.vec2matrix.tolist()[0]
 
     nX_N = X_N - l1
+    print(nX_N)
+    print(abs(nX_N))
     nxd, nyd, nzd = nX_N.vec2matrix.tolist()[0]
 
     q1 = np.arctan2(zd, xd)
+    print(np.pow(abs(nX_N), 2))
+    print(l2)
+    print(np.pow(abs(l2), 2))
+    print(l3)
+    print(np.pow(abs(l3), 2))
+    print(np.pow(abs(nX_N), 2) - np.pow(abs(l2), 2) - np.pow(abs(l3), 2))
     c3 = (np.pow(abs(nX_N), 2) - np.pow(abs(l2), 2) - np.pow(abs(l3), 2))/(2 * abs(l2) * abs(l3))
     print(c3)
     if c3 > 1:
         print('fuckyou')
         return None
     elif c3 == 1:
-        q2 = np.atan2(yd - l1.y, np.hypot(xd - l1.x, zd))
+        q2 = np.atan2(nyd - l1.y, np.hypot(xd - l1.x, zd))
         q3 = 0
     elif c3 == -1 and abs(nX_N) != 0:
         q2 = np.atan2(nyd, np.hypot(nxd, nzd))
@@ -34,7 +43,10 @@ def ik_calculate(x_pos, y_pos, z_pos, x_rot, y_rot, z_rot, l1, l2, l3, l4, deg=F
         q2 = 0
         q3 = np.pi
     else:
+        print("normal case")
         q3 = np.arccos(c3)
+        print(np.atan2(nyd, np.hypot(nxd, nzd)))
+        print(np.atan2(abs(l3) * np.sin(q3), abs(l2) + abs(l3) * np.cos(q3)))
         q2 = np.atan2(nyd, np.hypot(nxd, nzd)) - np.atan2(abs(l3) * np.sin(q3), abs(l2) + abs(l3) * np.cos(q3))
 
     R_3 = yaw_rotation(q3) * yaw_rotation(q2) * pitch_rotation(q3)
@@ -63,17 +75,19 @@ m5 = Vector3(d['motor5']['x'], d['motor5']['y'], d['motor5']['z'])
 
 _l1 = m0 + m1
 _l2 = m2
-_l3 = m2 + m4
+_l3 = m3 + m4
 _l4 = m5
 
 print(_l1, _l2, _l3, _l4)
 
-pot = _l1 + _l2 + _l3 + _l4
+pot = _l1 + Vector3(0, _l2.x, 0) + _l3 + _l4
 print(pot)
-ik = ik_calculate(pot.x - 1, pot.y, 0, 0, 0, 0, _l1, _l2, _l3, _l4)
+print(abs(Vector3(0, _l2.x, 0) + _l3))
+ik = ik_calculate(pot.x, pot.y, 0, 0, 0, 0, _l1, _l2, _l3, _l4)
 o3 = np.atan2(_l3.y, _l3.x)
-print(o3)
-for q in ik:
-    print(np.rad2deg(q))
+print(np.rad2deg(o3), "aaa")
+for i in range(len(ik)):
+    print(np.rad2deg(ik[i]), f"q{i + 1}")
+    pass
 
 
