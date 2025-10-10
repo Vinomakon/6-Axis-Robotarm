@@ -381,17 +381,18 @@ def ik_movement(x_pos_: float, y_pos_: float, z_pos_: float, x_rot_: float, y_ro
 
     pot = _l1 + Vector3(0, _l2.x, 0) + _l3 + _l4
     print(pot)
-    ik = ik_calculate(pot.x - 40, pot.y, 0, 0, 0, 90)
     o3 = np.atan2(_l3.y, _l3.x)
 
-    ik = ik_calculate(x_pos_, y_pos_, z_pos_, x_rot_, z_rot_, y_rot_)
+    ik = ik_calculate(x_pos_, y_pos_, z_pos_, x_rot_, y_rot_, z_rot_)
 
     ik[1] -= np.pi / 2
     ik[2] -= -np.pi / 2 + o3
+    for i in range(6):
+        ik[i] = np.rad2deg(ik[i])
     ik = np.asarray(ik)
     np.round(ik, 6)
 
-    mot_angle_ = ik.asarray()
+    mot_angle_ = ik.tolist()
 
     values = []
     highest_reduc = 0
@@ -402,7 +403,7 @@ def ik_movement(x_pos_: float, y_pos_: float, z_pos_: float, x_rot_: float, y_ro
             if highest_reduc < temp_.reduc:
                 highest_reduc = temp_.reduc
     if len(values) == 0:
-        print("no more values")
+        # print("no more values")
         return
     values.sort(reverse=True)
     main_val = values[0]
@@ -424,17 +425,17 @@ def ik_movement(x_pos_: float, y_pos_: float, z_pos_: float, x_rot_: float, y_ro
                 global_mot_speed_ = overdrive[0] / (overdrive[4] / main_val.a_deg)
                 overdrive_accel = overdrive[3]
                 global_mot_accel_ = overdrive[2] / (overdrive[4] / main_val.a_deg)
-                print(f"overdrive at {n} with speed now being {global_mot_speed_} and acceleration {global_mot_accel_}")
-                print(f"overdriven speed {overdrive[0]} or acceleration {overdrive[2]}")
+                # print(f"overdrive at {n} with speed now being {global_mot_speed_} and acceleration {global_mot_accel_}")
+                # print(f"overdriven speed {overdrive[0]} or acceleration {overdrive[2]}")
 
         if overdrive_speed <= 0 and overdrive_accel <= 0:
             not_satisfied = False
-        print("not satisfied")
+        # print("not satisfied")
     data = []
     for n in range(len(values)):
         data = data + values[n].get_msg()
     data.append(c.istart)
-    print(data)
+    # print(data)
     asyncio.run(con(data))
 
 

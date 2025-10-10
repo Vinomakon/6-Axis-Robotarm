@@ -15,7 +15,7 @@ def yaw_rotation(yaw): # Z-Rotation
 
 def euler_rotation(roll, pitch, yaw) -> np.matrix:
     # https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles#:~:text=heading%2C%20pitch%2C%20bank.-,Rotation%20matrices,-%5Bedit%5D
-    return yaw_rotation(yaw) * pitch_rotation(pitch) * roll_rotation(roll)
+    return roll_rotation(roll) * pitch_rotation(pitch) * yaw_rotation(yaw)
 
 def normal(x, y, z):
     return np.sqrt(np.pow(x, 2) + np.pow(y, 2) + np.pow(z, 2))
@@ -105,21 +105,15 @@ class Vector3:
         z = matrix.item((0, 2))
         return x, y, z
 
-    def rotate(self, x: Union[int, float, np.uint64, np.float64], y: Union[int, float, np.uint64, np.float64], z: Union[int, float, np.uint64, np.float64], mode: str = 'rad', order: str='yzx'):
+    def rotate(self, x: Union[int, float, np.uint64, np.float64], y: Union[int, float, np.uint64, np.float64], z: Union[int, float, np.uint64, np.float64], mode: str = 'rad'):
         if mode == 'deg':
             x = np.deg2rad(x)
             y = np.deg2rad(y)
             z = np.deg2rad(z)
         elif mode != 'rad':
             raise Exception
-        vec = self.vec2matrix
-        for r in list(order):
-            if r == 'x':
-                vec = vec * roll_rotation(x)
-            if r == 'y':
-                vec = vec * pitch_rotation(y)
-            if r == 'z':
-                vec = vec * yaw_rotation(z)
+        vec = self.vec2matrix * roll_rotation(x) * pitch_rotation(y) * yaw_rotation(z)
+
         self.x, self.y, self.z = self.matrix2vec(vec)
         return vec
 

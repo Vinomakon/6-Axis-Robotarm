@@ -26,14 +26,17 @@ def ik_calculate(x_pos, y_pos, z_pos, x_rot, y_rot, z_rot):
     x_rot = np.deg2rad(x_rot)
     y_rot = np.deg2rad(y_rot)
     z_rot = np.deg2rad(z_rot)
-    R_D = vector.euler_rotation(x_rot, y_rot, z_rot)
-
-    nm5.rotate(-x_rot, -y_rot, -z_rot, mode='rad')
+    R_D = roll_rotation(x_rot) * pitch_rotation(y_rot) * yaw_rotation(z_rot)
+    print("NEW OPERATION")
+    nm5 = Vector3(nm5.vec2matrix * roll_rotation(x_rot) * pitch_rotation(y_rot) * yaw_rotation(-z_rot))
+    print(nm5, "nm5")
     X_N = copy.copy(X_D)
     X_N = X_N - nm5
+    print(X_N, "X_N")
     xd, yd, zd = X_N.vec2matrix.tolist()[0]
 
     nX_N = X_N - l1
+    print(nX_N, l1)
     nxd, nyd, nzd = nX_N.vec2matrix.tolist()[0]
 
     q1 = np.arctan2(zd, xd)
@@ -56,16 +59,16 @@ def ik_calculate(x_pos, y_pos, z_pos, x_rot, y_rot, z_rot):
 
     o3 = np.atan2(l3.y, l3.x)
 
-    R_3 = pitch_rotation(-q1) * yaw_rotation(q2) * yaw_rotation(q3 - o3)
+    R_3 = yaw_rotation(q3 - o3) * yaw_rotation(q2) * pitch_rotation(q1)
     R_N = R_D * R_3.transpose()
     if R_N.item(0, 0) == 1:
         q4 = 0
         q5 = 0
         q6 = np.arccos(R_N.item(1, 1))
     else:
-        q4 = np.atan2(R_N.item(1, 0), -np.float64(R_N.item(2, 0)))
-        q5 = np.arccos(R_N.item(0, 0))
-        q6 = np.atan2(R_N.item(0, 1), np.float64(R_N.item(0, 2)))
+        q6 = np.atan2(R_N.item(1, 0), -np.float64(R_N.item(2, 0)))
+        q5 = -np.arccos(R_N.item(0, 0))
+        q4 = np.atan2(R_N.item(0, 1), np.float64(R_N.item(0, 2)))
 
     return [q1, q2, q3, q4, q5, q6]
 
