@@ -1,0 +1,66 @@
+
+\definecolor{light-gray}{gray}{0.97}
+\definecolor{dark-gray}{gray}{0.5}
+\definecolor{gd-keyword}{RGB}{220,50,47}    % red-ish keywords
+\definecolor{gd-type}{RGB}{38,139,210}      % cyan/light blue
+\definecolor{gd-string}{RGB}{181,137,0}     % yellow/brown
+\definecolor{gd-comment}{RGB}{88,110,117}   % gray
+\definecolor{gd-builtin}{RGB}{38,139,210}   % same as type
+
+% Define Language
+\lstdefinelanguage{pyython} %
+{   
+    morecomment=[l]{\#}, %  l is for line comment
+    morecomment=[s]{"""}{"""}, % s is for start and end delimiter
+    backgroundcolor=\color{light-gray}, % Bachground color
+    basicstyle=\footnotesize\ttfamily\color{black}, % Global Code Style
+    captionpos=t, % Position of the Caption (t for top, b for bottom)
+    extendedchars=true, % Allows 256 instead of 128 ASCII characters
+    tabsize=2, % number of spaces indented when discovering a tab 
+    columns=flexible, % make all characters equal width
+    keepspaces=true, % does not ignore spaces to fit width, convert tabs to spaces
+    aboveskip=10pt,
+    belowskip=15pt,    
+    belowcaptionskip=1\baselineskip,    
+    showstringspaces=false, % lets spaces in strings appear as real spaces
+    breaklines=true, % wrap lines if they don't fit
+    frame=tb, % draw a frame at the top, right, left and bottom of the listing
+    numbers=left, % show line numbers at the left
+    xleftmargin=0.03\textwidth, % left margin for numbers to fit into textwidth site of document
+    upquote=false, % use stright quotes instead curly ones
+    % Code coloring
+	identifierstyle=\color{black},
+    numberstyle={\tiny\color{black}}, % style of the line numbers
+    numbersep=9pt, % this defines how far the numbers are from the text 
+    commentstyle=\color{dark-gray} % style for comments
+    % emph=[1]{for,end,break},emphstyle=[1]\color{red}, %some words to emphasise
+    %emph=[2]{word1,word2}, emphstyle=[2]{style}, 
+} %
+
+% Define GDScript
+\lstdefinelanguage{cppp}{
+    morecomment=[l]{//}, %  l is for line comment
+    backgroundcolor=\color{light-gray}, % Bachground color
+    basicstyle=\footnotesize\ttfamily\color{black}, % Global Code Style
+    captionpos=t, % Position of the Caption (t for top, b for bottom)
+    extendedchars=true, % Allows 256 instead of 128 ASCII characters
+    tabsize=2, % number of spaces indented when discovering a tab 
+    columns=flexible, % make all characters equal width
+    keepspaces=true, % does not ignore spaces to fit width, convert tabs to spaces
+    aboveskip=10pt,
+    belowskip=15pt,    
+    belowcaptionskip=1\baselineskip,    
+    showstringspaces=false, % lets spaces in strings appear as real spaces
+    breaklines=true, % wrap lines if they don't fit
+    frame=tb, % draw a frame at the top, right, left and bottom of the listing
+    numbers=left, % show line numbers at the left
+    xleftmargin=0.03\textwidth, % left margin for numbers to fit into textwidth site of document
+    upquote=false, % use stright quotes instead curly ones
+    % Code coloring
+	identifierstyle=\color{black},
+    numberstyle={\tiny\color{black}}, % style of the line numbers
+    numbersep=9pt, % this defines how far the numbers are from the text 
+    commentstyle=\color{dark-gray} % style for comments
+    % emph=[1]{for,end,break},emphstyle=[1]\color{red}, %some words to emphasise
+    %emph=[2]{word1,word2}, emphstyle=[2]{style}, 
+}

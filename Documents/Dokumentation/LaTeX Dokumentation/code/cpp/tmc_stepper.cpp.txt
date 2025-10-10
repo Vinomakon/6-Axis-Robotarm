@@ -1,0 +1,8 @@
+TMC5160Stepper driver[] = {
+    TMC5160Stepper(CS0_PIN, R_SENSE),
+    TMC5160Stepper(CS1_PIN, R_SENSE),
+    TMC5160Stepper(CS2_PIN, R_SENSE),
+    TMC5160Stepper(CS3_PIN, R_SENSE),
+    TMC5160Stepper(CS4_PIN, R_SENSE),
+    TMC5160Stepper(CS5_PIN, R_SENSE)
+};

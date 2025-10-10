@@ -31,6 +31,20 @@
 \usetikzlibrary{calc}
 \tdplotsetmaincoords{70}{110}
 
+\usepackage{listings}
+\lstset{literate=%
+    {Ö}{{\"O}}1
+    {Ä}{{\"A}}1
+    {Ü}{{\"U}}1
+    {ß}{{\ss}}1
+    {ü}{{\"u}}1
+    {ä}{{\"a}}1
+    {ö}{{\"o}}1
+    {~}{{\textasciitilde}}1
+}
+\renewcommand{\lstlistingname}{Code}% Sprachformatierung für Listings
+\input{code.tex}
+
 % ===== Hyperlinks =====
 \usepackage[hidelinks]{hyperref}
 \usepackage[nameinlink,noabbrev]{cleveref}
@@ -52,7 +66,7 @@
 
 % ===== Meta =====
 \title{Konstruktion eines industriellen 6-DOF-Roboterarms}
-\author{Vladimir Morozov\\[2mm]\normalsize Gymnasium Bäumlihof\\\normalsize Begleitperson: Dominik Rohner}
+\author{Vladimir Morozov\\[2mm]\normalsize Gymnasium Bäumlihof\\\normalsize Begleitperson: Herr Dr. Dominik Rohner}
 \date{13.\ Oktober 2025}
 
 % ===== Nützliche Makros =====
@@ -68,11 +82,14 @@
 
     \huge
     \textbf{Konstruktion eines \\industriellen 6-DOF-Roboterarms}\\
-    \vspace{1cm}
+    \vspace{0.5cm}
+    \LARGE
+    Maturaarbeit\\
+    \vspace{0.5cm}
     \large
     Vladimir Morozov\\
-    Gymnasium Bäumlihof\\
-    Begleitperson: Dominik Rohner\\
+    \textit{Gymnasium Bäumlihof}\\
+    Begleitperson: Herr Dr. Dominik Rohner\\
     \vspace{1cm}
     13. Oktober 2025
  \end{center}
@@ -135,7 +152,7 @@ Vorerst wird in einem 2-dimensionales Koordinatensystem gearbeitet.\\
   \draw[->, blue] (0,-0.5) -- (0,3.5) node[above] {$y$};
 \end{tikzpicture}}
 \end{center}
-Durch das jetzt schrittweise Glied nach Glied vorgegangen wird, wird das erste Glied so in das Koordinatensystem hinzugefügt, dass deren Anfang am Nullpunkt angesetzt wird und dort orthogonal zur $X$- und $Y$-Achse rotiert wird (an der imaginären $Z$-Achse). Anhand dieses Gliedes wird es möglich jeden Punkt auf einem Kreis erreichen zu können, deren Radius der Länge des Glieds entspricht.
+Durch das jetzt schrittweise Glied nach Glied vorgegangen wird, wird das erste Glied so in das Koordinatensystem hinzugefügt, dass deren Anfang am Nullpunkt angesetzt wird und dort orthogonal zur $X$- und $Y$-Achse rotiert wird (an der imaginären $Z$-Achse). Anhand dieses Gliedes wird es möglich jeden Punkt auf einem Kreis erreichen zu können, deren Radius der Länge des Glieds entspricht. 
 \begin{center}
     \centering{
 \begin{tikzpicture}[scale=1.5, thick]
@@ -233,11 +250,49 @@ Diese drei Glieder werden somit an die ersten drei angesetzt und es wird ein ind
 
 \chapter{Mechanische Umsetzung}
 \section{CAD-Software}
-
+Um das physische Produkt verwirklichen zu können, wurden verschiedene CAD-Softwares (Computer-Aided Design) während des Projektes eingesetzt. CAD-Software sind vor allem hilfreich, dass man digitale Konstruktionen fertigen kann, mit denen man zusätzlich Bewegungs- oder Stresssimulationen durchführen kann. Dadurch wird der Arbeitsprozess zur Konstruktion eines Roboterarm rasant beschleunigt. Genauer gesagt wurden 3D-CAD-Software benutzt. 
+\\Zum Anfang des Projekts wurde Fusion 360, eine von Autodesk entwickelte Applikation, als die gewählte CAD-Software eingesetzt, da ich mich darin schon gut auskannte und über eine aktive Schülerlizenz verfügte. Fusion 360 ist sehr benutzerfreundlich und übersichtlich und somit sehr gut für Neuanfänger, wird aber auch sehr viel von Professionellen eingesetzt, da auch für extremere Konstruktionen diverse Funktionalitäten vorhanden sind. Jedoch tauchten über die Zeit viele Probleme auf, die den Arbeitsprozess verschlechterten. Ich suchte somit nach einer neuen Alternative für Fusion 360, mit der ich meine Arbeit weiterführen könnte.
+\\SolidWorks, eine von Dassault Systems entwickelte Applikation, Wurde schlussendlich der Ersatz für Fusion 360 bis zum Ende des Projektes, mit dem jedes Teil des Roboterarms modelliert worden ist. Durch das ein paar Teile schon in Fusion 360 modelliert worden sind, mussten diese in SolidWorks erneut modelliert werden, wodurch ich mich damit besser auseinandersetzen konnte. Mit dem Umstieg zu SolidWorks war es möglich kompliziertere Teile modellieren zu können und diese in eine grosse und bewegliche Konstruktion stellen zu können. Grundsätzlich unterscheiden sich die zwei CAD-Software nicht viel voneinander, jedoch ist SolidWorks viel optimierter, was beim Arbeitsprozess deutlich spürbar ist.
+\newpage
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\linewidth]{images/Screenshots/Fusion360.png}
+    \caption{Screenshot von einem Workflow in Fusion 360}
+    \label{fig:fusion}
+    \vspace{1.5cm}
+    \includegraphics[width=\linewidth]{images/Screenshots/SolidWorks.png}
+    \caption{Screenshot von einem Workflow in SOlidWorks}
+    \label{fig:sldwrks}
+\end{figure}
+\newpage
 \section{Material}
-
+Um die jegliche Teile des Roboterarms fertigen zu können, habe ich mich auf das 3D-Drucken verlassen. Diese Auswahl war entscheidend, da das Fertigen an Teilen, sowie auch Prototypen, schneller und günstiger wäre, als diese aus Holz oder Metall zu fertigen. Durch das 3D-Drucken entsteht zusätzlich eine viel grössere geometrische Freiheit, wo diese bei traditionell CNC-gefertigten Teilen fehlt. Durch das mit Plastik ausgedruckt wird, was grundsätzlich ziemlich billig ist, fallen keine grossen Kosten auf, vor allem wenn Prototypteile gefertigt werden, die im Nachhinein in der Endkonstruktion nicht benützt werden. 
+Als verwendetes Material wurde vor allem PLA eingesetzt, welches sehr einfach zu drucken und zu verarbeiten ist. Jedoch ist PLA nicht sehr Hitzeresistent, was kritisch ist, wenn Motore daran angehängt werden, die durch deren Stromverbrauch Hitze erzeugen und das Plastik einfach deformieren können. An den Stellen, wo die Motoren angesetzt werden, werden Scheiben oder sogar ganze Teile aus PCCF (Polycarbonate Blend Carbon Fiber) von Prusament eingesetzt, da dieses Plastik viel hitzeresistenter ist. Durch das die Zugfestigkeit des PCCFs auch viel grösser ist als diese des PLAs, werden auch manche mechanisch beanspruchenden Teile damit ausgedruckt.
+Um das alles auszudrucken, wurde ein von Prusa Research entwickelter 3D-Drucker eingesetzt. Am Anfang des Projekts wurde der Prusa MK4S eingesetzt, wurde aber zum Ende noch aufgewertet auf einen Prusa Core ONE, mit dem es möglich wurde, Teile aus PCCF ausdrucken zu können. Diese 3D-Drucker entsprechen zu einem FDM-Drucker  (Fused Deposition Modeling), der Schicht nach Schicht ein Filament erhitzt und verlegt, aus dem ein gedrucktes Teil erfolgt.
+\begin{figure}[h!]
+    \centering
+    \begin{subfigure}[b]{0.4\linewidth}
+        \includegraphics[width=\linewidth]{images/Online/PrusaMK4S.png}
+        \caption{Prusa MK4S}
+    \end{subfigure}
+    \hspace{0.5cm}
+    \begin{subfigure}[b]{0.4\linewidth}
+        \includegraphics[width=\linewidth]{images/Online/PrusaCoreONE.png}
+        \caption{Prusa Core ONE}
+    \end{subfigure}
+    \caption{Abbildungen von zwei 3D-Druckern, die während des Projektes eingesetzt worden sind.}
+    \label{fig:prusa}
+\end{figure}
 \section{Aufbau}
-
+Der ganze Roboterarm besteht aus insgesamt 6 verschiedenen Gliedern. Jedes Glied verfügt über eine eigene Rotationsachse, sowie ein Fertigungspunkt, wo das weitere Glied befestigt und rotiert wird. Die verschiedenen Glieder und deren Rotationen sind in der folgenden Abbildung zu sehen:\\
+\begin{itemize}
+    \item 1. Glied: Schulter (und Halterung)
+    \item 2. Glied: Oberarm
+    \item 3. Glied: Unterarm
+    \item 4. Glied: Handgelenk 1
+    \item 5. Glied: Handgelenk 2
+    \item 6. Glied: Handgelenk 3
+\end{itemize}
 \section{Oberarm (2. Glied)}
 
 \section{Unterarm (3. Glied)}
@@ -252,19 +307,181 @@ Diese drei Glieder werden somit an die ersten drei angesetzt und es wird ein ind
 
 \chapter{Elektrische Aktoren}
 \section{Motoren}
-
+Für die Bewegung eines Roboterarms sind Motoren benötigt. Die traditionellen DC-Motoren, die heutzutage meistverbreitet sind, würden nicht direkt passen, da diese keine Kontrolle über deren Rotation haben, sondern sich mit einer Stromversorgung kontinuierlich drehen. Für eine präzise Kontrolle des Roboterarms werden Motore gebraucht, deren Bewegungen präzise, wiederholbar und vorhersehbar sind. Dazu könnten Servo-Motoren eingesetzt werden, die auch aus einem DC-Motoren bestehen, aber noch zusätzlich über einem Potentiometer verfügen, um deren Rotation zu ermitteln. Mithilfe des Potentiometers und eines eingebauten PID-Controllers   wird es ermöglicht eine bestimmte Rotation erreichen zu können, mit der einzigen Limitation, dass diese Rotation auf einen bestimmten Winkel limitiert wird, meist auf 180°. Sobald eine grössere Rotation als diese der Reichweite des Servomotors benötigt wird, können die Servomotoren nicht mehr richtig eingesetzt werden.
+\\Schrittmotoren vermeiden diese kontinuierliche Bewegung, indem sie schrittweise rotiert werden können. Somit wird es nicht mehr nötig deren Rotation anhand von aktiven Sensoren bestimmen zu müssen, da es bekannt ist, was für eine Rotation mit einer bestimmten Anzahl Schritte erreicht werden kann. Für die Grösse des Roboterarms orientierte ich mich vor allem an der Standardgrösse NEMA-17 (42mm x 42mm) eines Schrittmotors. Es wurden insgesamt drei verschiedene Längen von Schrittmotoren in diesem Projekt eingesetzt worden.
+\begin{figure}[!h]
+    \centering
+    \begin{subfigure}{0.3\linewidth}
+        \includegraphics[width=\linewidth]{images/Online/NEMA17_25.jpg}
+        \caption{NEMA-17 25mm}
+    \end{subfigure}
+    \begin{subfigure}{0.3\linewidth}
+        \includegraphics[width=\linewidth]{images/Online/NEMA17_48.jpg}
+        \caption{NEMA-17 48mm}
+    \end{subfigure}
+    \begin{subfigure}{0.3\linewidth}
+        \includegraphics[width=\linewidth]{images/Online/NEMA17_60.jpg}
+        \caption{NEMA-17 60mm}
+    \end{subfigure}
+    \caption{Im Roboterarm eingesetzte Schrittmotoren mit verschiedenen Längen}
+    \label{fig:steppers}
+\end{figure}
+Jedoch braucht es für verschiedene Anwendungen auch verschiedene Drehgeschwindigkeiten Drehmomente, die von der Länge eines Schrittmotors abhängig sind. Dementsprechend verfügt jeder Schrittmotor einer anderen Länge über eine Drehmoment-Kurve, bei dem ersichtlich ist, bei was die maximale Geschwindigkeit ist und welches Drehmoment bei einer bestimmter Drehgeschwindigkeit erreicht wird. Somit werden für Einsätze, wo mehr Drehmoment verlangt, wird als Geschwindigkeit, längere Schrittmotoren eingesetzt, wobei bei Einsätzen, wo weniger Drehmoment verlangt wird als Geschwindigkeit, werden kürzere Schrittmotoren eingesetzt. Auf der nächsten Seite sind die Drehmomentkurven der einzelnen Schrittmotoren zu sehen.
+\newpage
+\begin{figure}[h!]\
+    \centering
+    \begin{subfigure}{0.9\linewidth}
+        \includegraphics[width=0.9\linewidth]{images/Screenshots/NEMA17_25mm_TC.png}
+        \caption{Drehmomentkurve von NEMA-17 25mm Schrittmotor}
+    \end{subfigure}
+    \begin{subfigure}{0.9\linewidth}
+        \includegraphics[width=0.9\linewidth]{images/Screenshots/NEMA17_48mm_TC.png}
+        \caption{Drehmomentkurve von NEMA-17 48mm Schrittmotor}
+    \end{subfigure}
+    \begin{subfigure}{0.9\linewidth}
+        \includegraphics[width=0.9\linewidth]{images/Screenshots/NEMA17_60mm_TC.png}
+        \caption{Drehmomentkurve von NEMA-17 60mm Schrittmotor}
+    \end{subfigure}
+    \vspace{0.5cm}
+    \caption{Drehmomentkurven aller Schrittmotoren, wo $KPPS$ = ''kilopulses per second'' , $Ncm$ = ''Newton centimeter'' und $RPM$ = ''revolutions per minute''}
+\end{figure}
+\newpage
+\noindent Ein typischer Schrittmotor kann schrittweise funktionieren, indem das Innere aus zwei Spulen besteht. An einen Schrittmotor können somit 4 Kabel verbunden werden, wo jedes Kabelpaar zu einer Spule zugehört. Durch das die Kabelpaare mit Strom versorgt werden wird ein dementsprechend ein Magnetfeld induziert. Im Inneren des Schrittmotors befindet sich ein Rotor, der so verbaut ist, dass diese an ein Magnetfeld gerichtet werden kann. Somit kann durch eine Reihenfolge von Umschaltungen der Polaritäten der Spulen eine Rotation errichtet werden.
+\begin{figure}[h!]
+    \centering
+    \begin{subfigure}{0.35\linewidth}
+        \includegraphics[width=\linewidth]{images/Online/Phase SteppingTP.png}
+        \caption{Zweiphasige Ganzschritte}
+    \end{subfigure}
+    \hspace{1cm}
+    \begin{subfigure}{0.35\linewidth}
+        \includegraphics[width=\linewidth]{images/Online/Phase SteppingOP.png}
+        \caption{Einphasige Ganzschritte}
+    \end{subfigure}
+    \caption{Phasenweise Schrittaufteilung eines Schrittmotors}
+    \label{fig:step_phases}
+\end{figure}
+Ein NEMA-17 Schrittmotor besteht aus der Regel aus 8 solcher Spulen, pro Kabelpaar insgesamt 4 Spulen. Diese Spulengruppen werden als Phasen bezeichnet. Der Rotor besteht jedoch nicht nur aus einem Stück gerichtetem Magneten, sondern aus einer runden gezackten Achse, welche von den Zacken an den Spulen angezogen werden, welche feinere Schritte erzeugt. Dadurch kann eine Umpolung einer Spule zu einer kleinen Rotationsbewegung übermittelt werden. Ein NEMA-17 Motor benötigt 200 Schritte, um eine ganze Umdrehung durchzuführen.
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.4\linewidth]{images/Online/Inner_NEMA17.jpg}
+    \caption{Innerer Aufbau eines typischen NEMA-17 Schrittmotoren}
+    \label{fig:step_guts}
+\end{figure}
+\newpage
 \section{Sensoren}
-
+Damit die Positionierung des Roboterarms bekannt ist, werden Sensoren eingesetzt, die dazu dienen zu bestimmen, in welcher Orientation jedes Glied sich befindet. Es können entweder aktive Sensoren, die ständig die Orientation eines Gliedes abmessen (Motor-Encoder) oder passive Sensoren, die nur durch deren Aktivierung eine Abmessung geben (Knöpfe, Schalter), verwendet werden.
+\\Für diese Arbeit wurden Grenzschalter eingesetzt, die wie ein Knopf funktionieren, indem sie betätigt werden können. Solche Grenzschalter werden als passive Sensoren bezeichnet. Diese Grenzschalter werden an gefertigten Orten an den modellierten Gliedern befestigt, wo diese durch die Rotation der Glieder betätigt werden. Durch die Betätigung des Grenzschalter bei dem entsprechenden Glied kann die genaue Position bekannt gegeben werden. Dieser Prozess wird auch als "Homing" bezeichnet, indem die Standardposition erreicht wird. Der Grenzschalter verfügt über drei Verbindungen: NC (Normally Closed), NO (Normally Open) und wo C (Common Terminal) der Verbindungsterminal ist. Aus Sicherheitsgründen wird der Grenzschalter mit C und NC verbunden, da dadurch bekannt ist, wenn der Grenzschalter nicht betätigt wird, dass es einen geschlossenen Schaltkreis gibt. 
+\begin{figure}[!h]
+    \centering
+    \begin{subfigure}{0.3\linewidth}
+        \includegraphics[width=\linewidth]{images/Online/LimitSwitch.jpg}
+        \caption{Eingesetzter Grenschalter}
+        \label{fig:limit_switch_img}
+    \end{subfigure}
+    \begin{subfigure}{0.6\linewidth}
+        \includegraphics[width=\linewidth]{images/Online/LimitSwitchSchematic.png}
+        \caption{Elektrisches Schema eines Grenzschalters}
+        \label{fig:limit_switch_schm}
+    \end{subfigure}
+    \caption{Abbildung des eingesetzten Grenschalters mit einem dazu entsprechendem elektrischen Schema.}
+    \label{fig:limit_switch}
+\end{figure}
 \chapter{Elektronik und Systemsteuerung}
 \section{Mikrokontroller}
-
+Für die Kontrolle eines Roboterarms wird ein Verarbeitungsterminal für die Lesung aller Zustände der Sensoren und die Steuerung der Motortreiber benötigt. Für solche Verarbeitungen werden meist grosse Computer eingesetzt, die solche Aufgaben einfach erledigen können. Jedoch können nicht immer grosse Computer eingesetzt werden, da diese meistens zu Energieaufwendig sind und gross sind. Deshalb werden in solchen Situationen Mikrokontroller eingesetzt, die klein, kompakt und meist sehr energieeffizient sind. Solche Mikrokontroller werden deshalb öfters für kleine DIY-Projekte eingesetzt und sind damit die passende Auswahl für einen kompakten Roboterarm.
+\\Der benutzte Mikrokontroller für diesen Roboterarm ist ein ESP32-S3-DevKitM-1 vom Hersteller Espressif aus der ESP32-Reihe. Insgesamt verfügt dieser Mikrokontroller über 48 I/O-Pins, welche die vielen Verbindungen zwischen den Treibern und Sensoren gewährleisten können. Durch einen schnellen Mikroprozessor, einer grossen Speicherkapazität und einer WiFi- und Bluetooth-Funktionalität, die für die Kommunikation zwischen dem Mikrokontroller und einem PC/Laptop eingesetzt werden können, damit der Roboter entsprechend gesteuert werden kann.
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.5\linewidth]{images/Online/ESP32-S3-DevKitM-1.png}
+    \caption{Isometrische Darstellung des Mikrokontrollers ESP32-S3-DevKitM-1}
+    \label{fig:microcontroller}
+\end{figure}
 \section{Motortreiber}
-
+Für die Steuerung der Schrittmotoren werden TMC5160-Treiber von Analog Devices verwendet, um die Motoren phasenweise steuern zu können. Sie dienen nicht nur dazu Motoren zu steuern, sondern auch deren Stromversorgung an die Motore zu regeln. Ein NEMA-17 Schrittmotor verbraucht etwa 800mA (maximal 1500mA) bei 24V, was sich zu etwa 19.2W ergibt (maximal 36W). Da die Treiber über einen ESP32-Mikrokontroller gesteuert werden und dieser Mikrokontroller durch einen USB-Kabel verbunden wird, können nur etwa 500mA bei 5V geliefert werden, was zu 2.5W entspricht. Mit dieser Leistung wäre es nicht richtig möglich die Motore antreiben zu können, noch weniger sechs auf einmal. Deshalb kann eine externe Stromversorgung an die Treiber angeschlossen werden, die die Motore mit einer genügend grossen Leistung angetrieben werden können. Zusätzlich verfügen die TMC5160-Treiber über einem IC (Integrated Circuit), das die ganzen Schrittphasen eines Schrittmotors steuert und dadurch durch zwei Pins kontrolliert werden kann. (STEP: Schritt, DIR: Drehrichtung). Ein weiterer Pin dient dazu den Treiber zu aktivieren oder zu deaktivieren (EN: Aktivieren).
+\begin{figure}[h!]
+    \centering
+    \begin{subfigure}{0.4\linewidth}
+        \centering
+        \includegraphics[width=0.7\linewidth]{images/Online/TMC5160.jpg}
+        \caption{Darstellung des TMC5160-IC integriert auf einem PCB mit Anschlusspins}
+    \end{subfigure}
+    \hspace{1cm}
+    \begin{subfigure}{0.4\linewidth}
+        \includegraphics[width=\linewidth]{images/Online/TMC51260-Schematic.png}
+        \caption{Pinaufteilung des TMC5160-PCBs}
+    \end{subfigure}
+    \caption{Da der TMC5160 ein IC ist, wird es auf eine PCB integriert, die dann als eine Daughterboard in anderen Applikationen eingesetzt und einfach ausgewechselt werden kann.}
+    \label{fig:tmc5160}
+\end{figure}
+\newpage
 \section{PCB}
 
 \section{Code für Mikrokontroller}
+\subsubsection{Parameter- und Variablenaufbau}
+\lstinputlisting[language=cppp, caption={Definierung der I/O-Pins am Mikrokontroller für die Treiber \label{lst:cpp_pins}}]{code/cpp/pins.cpp.txt}
 
+\lstinputlisting[language=cppp, caption={Definierung der Parameter und Variablen für die Kontroller der Motoren \label{lst:cpp_params}}]{code/cpp/parameters.cpp.txt}
+\subsubsection{Initialisierung der Treiber- und Motorsteuerung}
+\lstinputlisting[language=cppp, caption={Definierung der Treiber durch {\footnotesize\ttfamily\color{black}\normalsize TMCStepper.h} \label{lst:cpp_tmc}}]{code/cpp/tmc_stepper.cpp.txt}
+
+\lstinputlisting[language=cppp, caption={Definierung der Motoren durch {\footnotesize\ttfamily\color{black}\normalsize AccelStepper.h} \label{lst:cpp_accel}}]{code/cpp/accel_stepper.cpp.txt}
+
+\lstinputlisting[language=cppp, caption={Vordefinierte Kontrollfunktionen der Bibliotheken  {\footnotesize\ttfamily\color{black}\normalsize AccelStepper.h} und {\footnotesize\ttfamily\color{black}\normalsize TMCStepper.h} \label{lst:cpp_pins}}]{code/cpp/tmc_stepper.cpp.txt}
+\subsubsection{Kommunikationsstruktur}
+Durch die eingebaute WiFi-Funktionalität, durch die eine kabellose Verbindung zu einem Gerät
+hergestellt werden kann, könnte jedes Gerät sich mit dem ESP32 verbinden und es kontrollieren.
+Beim Starten des Programms erstellt der ESP32 ein eigenes WLAN-Netzwerk, einen Access Point
+oder "AP", mit dem sich ein Computer oder Smartphone verbinden kann. Über dieses Netzwerk läuft
+eine Kommunikation mithilfe des WebSocket-Protokolls, das eine schnelle und bidirektionale
+Übertragung von Daten erlaubt.
+\\Die Kommunikation zwischen dem Computer und dem Mikrokontroller erfolgt über Textnachrichten
+(Strings), wo jede Nachricht über eine definierte Struktur besitzt:
+\begin{center}
+    \centering{{\footnotesize\ttfamily\color{black}\normalsize \{MOTOR\}\{AKTION\}\{WERT\}}}
+\end{center}
+\begin{itemize}
+    \item {\footnotesize\ttfamily\color{black}\normalsize MOTOR}: Ein Integer von 0 bis 5, wo jede Zahl einer Rotationsachse entspricht.
+    \item {\footnotesize\ttfamily\color{black}\normalsize AKTION}: Eine zweistellige Zahl, die beschreibt, welcher Parameter verändert oder was ausgeführt werden sollte.
+    \item {\footnotesize\ttfamily\color{black}\normalsize WERT}: Ein Zahlenwert, entweder ein Integer oder Float, z.B. ein Winkel in Grad oder ein Parameterwert.
+\end{itemize}
+Beispielsweise entspricht der Befehl {\footnotesize\ttfamily\color{black}\normalsize 10190} für den Motor {\footnotesize\ttfamily\color{black}\normalsize 1}, Aktion {\footnotesize\ttfamily\color{black}\normalsize 01} und dem Wert {\footnotesize\ttfamily\color{black}\normalsize 90}, also "Drehe Motor 1 auf 90 Grad".
+Damit diese Nachrichten vom ESP32 verarbeitet werden können, werden zwei Abschnitte der Textnachricht aufgenommen 
+\begin{lstlisting}[language=cppp]
+String mot = msg.substring(0, 1);
+String act = msg.substring(1, 3);
+\end{lstlisting}
+wo {\footnotesize\ttfamily\color{black}\normalsize msg} die erhaltene Textnachricht ist.
+Durch ein Switch-Case-Block wird entschieden, welche Aktion bei welchem Motor durchgeführt
+werden sollte
+\lstinputlisting[language=cppp, caption={Switch-Case-Block für die Kontrolle des entsprechenden Motors \label{lst:cpp_switch}}]{code/cpp/switch.cpp.txt}
+\subsubsection{Bewegungssteuerung}
+\lstinputlisting[language=cppp, caption={for-Loop für das Antreiben jedes Motors \label{lst:cpp_can_move_for}}]{code/cpp/can_move_for.cpp.txt}
+\newpage
 \section{Kontrolle über PC}
+\subsubsection{Benutzeroberfläche}
+Die Benutzeroberfläche, die auf dem PC läuft und dadurch mit dem Mikrokontroller kommuniziert, mit dem der Roboterarm kontrolliert werden kann, wurde in Python geschrieben, da diese am besten ist, um Applikationen zu schreiben, egal ob mit oder ohne UI. Für die Kontrolle des Roboterarms wurde jedoch wichtig, einen Überblick von allen Parametern zu haben, sowie den Roboterarm steuern zu können. Für die Benutzeroberfläche benützte ich die {\footnotesize\ttfamily\color{black}\normalsize gradio.py} Bibliothek, mit der einfach eine lokale Website gehostet werden kann und UI-Elemente einfach hinzugefügt werden können. Dadurch wurde möglich eine UI zu designen, die einem einen guten Überblick von allen Einstellungen schaffen kann.
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\linewidth]{images/Screenshots/Gradio.png}
+    \caption{Screenshot von der Benutzeroberfläche mithilfe der Bibliothek {\footnotesize\ttfamily\color{black}\normalsize gradio.py}}
+    \label{fig:scr_gradio}
+\end{figure}
+\newpage
+\subsubsection{Kommunikation mit dem Mikrokontroller}
+Die Kommunikation mit dem ESP32 erfolgt über einer {\footnotesize\ttfamily\color{black}\normalsize websockets.py} Bibliothek für die WebSockets Kommunikation, sowie {\footnotesize\ttfamily\color{black}\normalsize asyncio.py}, welches erlaubt, eine Aufgabe ausserhalb der normalen Programmausführung asynchron ausführen zu können. Es wird von einer asynchroner Aufgabenerledigung. Es wird somit zu der lokalen IP des ESP32 verbunden und die entsprechenden Textnachrichten verschickt.
+\lstinputlisting[language=pyython, caption={Senden von Textnachrichten durch WebSockets \textit{(Python)}\label{lst:send_websockets}}]{code/python/send_websockets.py}
+Sobald Daten vom Mikrokontroller benötigt werden, werden diese auch anhand von WebSockets angefragt.
+\lstinputlisting[language=pyython, caption={Erhalten von Textnachrichten durch WebSockets \textit{(Python)}\label{lst:receive_websockets}}]{code/python/receive_websockets.py}
+\newpage
+\subsubsection{JSON-Konfigurationen}
+Dadurch, dass alle Parameter durch den PC angegeben werden und nicht lokal auf dem Mikrokontroller gespeichert werden und diese immer verändert werden müssen, wird lokal auf dem PC eine {\footnotesize\ttfamily\color{black}\normalsize JSON}-Datei erstellt, auf der alle Daten für die Einstellungen und Parameter gespeichert werden und bei dem Starten der Website aufgerufen werden.
+\lstinputlisting[language=pyython, caption={JSON-Loading der Konfigurationen \textit{(Python)}\label{lst:json_loading}}]{code/python/json_load.py}
+\subsubsection{Geschwindigkeitsplanung der Motoren}
+Es wird erwartet, dass die Bewegung aller Motoren gleichzeitig anfangen und gleichzeitig enden, eine synchrone Bewegung. Dabei muss Um diese erreichen zu können, müssen die Limitationen aller Motoren festgesetzt werden. Jeder Motor hat eine andere mechanische Reduktion, und somit auch eine eigene maximale Geschwindigkeit, bei der es operieren kann. Diese werden bei den Parametern der Motore festgestellt wird.
+Danach wird berechnet, welcher Motor die längste Rotation abschliessen sollte, da dieser schlussendlich am schnellsten bewegt werden sollte. Die maximale Geschwindigkeit von diesen Motoren wird übernommen, wo jeder Motor diese maximale Geschwindigkeit übernimmt und diese mit dem Verhältnis der Rotation von dem Motor mit der längsten Rotation, zu der der eigenen multipliziert. Sobald die vorgegebene maximale Geschwindigkeit diese der eigenen überschreitet, wird dessen maximale Geschwindigkeit übernommen und der Prozess wird erneut auf alle Motoren angewandt, bis alle Geschwindigkeiten befriedigend sind.
+\newpage
+\lstinputlisting[language=pyython, caption={Geschwindigkeitsplanung der Motoren \textit{(Python)}}\label{lst:speed_reg}]{code/python/speed_reg.py}
 
 \chapter{Robotik}
 \section{Direkte Kinematik}
@@ -278,45 +495,49 @@ Jedes von diesen Gliedern liegt unter einem Winkel relativ zur $X$-Achse. Der Wi
 Es muss die Position des Endeffektors berechnet werden, wo
 \[\theta_1' , \theta_2' \longrightarrow x_{EE}, y_{EE}\]
 das verallgemeinert werden kann zu
-\[f(\theta_1', \theta_2') = X_D = \left[\begin{matrix}x_{EE}\\y_{EE}\\\end{matrix}\right]\]
+\[f(\theta_1', \theta_2') = X_D = \left(\begin{matrix}x_{EE}\\y_{EE}\\\end{matrix}\right)\]
 wo $X_D$ die Endposition der Endeffektors entspricht.\\
-Anstatt alles auf einmal zu berechnen, wird zuerst die Endposition des ersten Gliedes berechnet:
-\[X_{D_1}=R\left(\theta_1'\right)\left[\begin{matrix}L_1\\0\\\end{matrix}\right]=\left[\begin{matrix}\cos{\theta_1'}&-\sin{\theta_1'}\\\sin{\theta_1'}&\cos{\theta_1'}\\\end{matrix}\right]\left[\begin{matrix}L_1\\0\\\end{matrix}\right]=\left[\begin{matrix}L_1\cos{\theta_1'}\\L_1\sin{\theta_1'}\\\end{matrix}\right]\rightarrow\left[\begin{matrix}L_1c_1\\L_1s_1\\\end{matrix}\right]\]
-Es wird die Rotationsmatrix $R\left(\theta\right)=\left[\begin{matrix}\cos{\theta}&-\sin{\theta}\\\sin{\theta}&\cos{\theta}\\\end{matrix}\right]$ benützt, die in einem 2-dimensionalen Koordinatensystem verwendet wird.\\
+Anstatt alles auf einmal zu berechnen, wird zuerst die Endposition des ersten Gliedes berechnet. Es wird eine Vektorrotation $R\left(\theta\right)=\left(\begin{matrix}\cos{\theta}\\\sin{\theta}\\\end{matrix}\right)$ angewenden für die Rotation der einzelnen Glieder verwendet.\\
+\[X_{D_1}=R\left(\theta_1'\right)L_1=\left(\begin{matrix}\cos{\theta_1'}\\\sin{\theta_1'}\\\end{matrix}\right)L_1=\left(\begin{matrix}\cos{\theta_1'}\cdot L_1\\\sin{\theta_1'}\cdot L_1\\\end{matrix}\right)=\left(\begin{matrix}c_1L_1\\s_1L_1\\\end{matrix}\right)\]
+\begin{OutBox}
+    Von diesem Punkt aus werden $\cos{\theta_n}$ und $\sin{\theta_n}$ als $c_n$ und $s_n$ vereinfacht.
+\begin{align*}
+    \cos{\theta_n} & = c_n \\
+    \sin{\theta_n} & = s_n
+\end{align*}
+\end{OutBox}
+
 Durch das die Endposition des Endes vom ersten Glied bekannt ist, wird diese eigesetzt, um die Endposition des Endes vom zweiten Glied herauszufinden:
-\[X_D=R\left(\theta_1'\right)\left[\begin{matrix}L_1\\0\\\end{matrix}\right]+R\left(\theta_2'\right)\left[\begin{matrix}L_2\\0\\\end{matrix}\right]=\left[\begin{matrix}L_1c_1\\L_1s_1\\\end{matrix}\right]+\left[\begin{matrix}L_2c_2\\L_2s_2\\\end{matrix}\right]\]
+\[X_D=R\left(\theta_1'\right)L_1+R\left(\theta_2'\right)L_2=\left(\begin{matrix}c_1L_1\\s_1L_1\\\end{matrix}\right)+\left(\begin{matrix}c_2L_2\\s_2L_2\\\end{matrix}\right)\]
 Jedoch ist der Fall nicht so, dass bewusst ist, unter welchem Winkel das zweite Glied relativ zur $X$-Achse steht, sondern nur relativ zu dem ersten Glied.\\
 %GRAFIK
 \\
 Dies ist so, da sich das Koordinatensystem für ein anhängendes Glied relativ zum treibenden Glied verändert. Die Rotation $R(\theta_1)$ des ersten Gliedes entspricht somit zum neuen Koordinatensystem des zweiten Gliedes.
 Dadurch werden die beiden Rotationen $R(\theta_1)$ und $R(\theta_2)$ multipliziert. Aufgrund der Multiplikationsregeln von Rotationen kann $R(\theta_1) \cdot R(\theta_2)$ als eine Addition von beiden Winkeln $\theta_1$ und $\theta_2$ umgeformt werden.
 \begin{align*}
-    X_D & =R\left(\theta_1\right)\left[\begin{matrix}L_1\\0\\\end{matrix}\right]+R(\theta_1)\cdot R\left(\theta_2\right)\cdot\left[\begin{matrix}L_2\\0\\\end{matrix}\right]\\
-    X_D & =R\left(\theta_1\right)\left[\begin{matrix}L_1\\0\\\end{matrix}\right]\ +\ R\left(\theta_1+\theta_2\right)\left[\begin{matrix}L_2\\0\\\end{matrix}\right]
+    X_D & =R\left(\theta_1\right)L_1+R(\theta_1)\cdot R\left(\theta_2\right)L_2\\
+    X_D & =R\left(\theta_1\right)L_1 + R\left(\theta_1+\theta_2\right)L_2
 \end{align*}
 Diese Multiplikation kann auch als eine rekursive Mulitplikation-Formel umgeformt werden:
 \begin{align*}
-    X_D & =R\left(\theta_1\right)\left[\begin{matrix}L_1\\0\\\end{matrix}\right]+R(\theta_1)\cdot R\left(\theta_2\right)\cdot\left[\begin{matrix}L_2\\0\\\end{matrix}\right]\\
-    X_D & =\left[\begin{matrix}c_1&-s_1\\s_1&c_1\\\end{matrix}\right]\left[\begin{matrix}L_1\\0\\\end{matrix}\right]+\left[\begin{matrix}c_1&-s_1\\s_1&c_1\\\end{matrix}\right]\left[\begin{matrix}c_2&-s_2\\s_2&c_2\\\end{matrix}\right]\left[\begin{matrix}L_2\\0\\\end{matrix}\right]\\
-    X_D & =\left[\begin{matrix}c_1&-s_1\\s_1&c_1\\\end{matrix}\right]\left(\left[\begin{matrix}L_1\\0\\\end{matrix}\right]+\left[\begin{matrix}c_2&-s_2\\s_2&c_2\\\end{matrix}\right]\left[\begin{matrix}L_2\\0\\\end{matrix}\right]\right)\\
-    X_D & =R\left(\theta_1\right)\left(\left[\begin{matrix}L_1\\0\\\end{matrix}\right]+R\left(\theta_2\right)\left[\begin{matrix}L_2\\0\\\end{matrix}\right]\right)
+    X_D & =R\left(\theta_1\right)L_1+R(\theta_1)\cdot R\left(\theta_2\right)L_2\\
+    X_D & =R\left(\theta_1\right)\left(L_1 + R\left(\theta_2\right)L_2\right)
 \end{align*}
 Durch diese Umformung kann  für eine beliebige Anzahl Gliedern die Endposition des Endeffektors im 2-dimensionalen Raum berechnet werden. Hier noch ein Beispiel mit 3 Gliedern.
 \[\theta_1,\theta_2,\theta_3\longrightarrow x_{EE},y_{EE}\]
 Es kann jetzt entweder die Verkettungsformel benützt werden, oder die Reihenformel benützen.\\
 Mit der Reihenformel (explizit):
 \begin{equation}
-    X_D=R\left(\theta_1\right)\left[\begin{matrix}L_1\\0\\\end{matrix}\right]\ +R\left(\theta_1+\theta_2\right)\left[\begin{matrix}L_2\\0\\\end{matrix}\right]\ +R\left({\theta_1+\theta_2+\theta}_3\right)\left[\begin{matrix}L_3\\0\\\end{matrix}\right]
+    X_D=R\left(\theta_1\right)L_1 +R\left(\theta_1+\theta_2\right)L_2 +R\left({\theta_1+\theta_2+\theta}_3\right)L_3
 \end{equation}
 Oder mit der Verkettungsformel (rekursiv):
 \begin{equation}
-    X_D=R\left(\theta_1\right)\left(\left[\begin{matrix}L_1\\0\\\end{matrix}\right]+R\left(\theta_2\right)\left(\left[\begin{matrix}L_2\\0\\\end{matrix}\right]+R\left(\theta_3\right)\left[\begin{matrix}L_3\\0\\\end{matrix}\right]\right)\right)
+    X_D=R\left(\theta_1\right)\left(L_1+R\left(\theta_2\right)\left(L_2+R\left(\theta_3\right)L_3\right)\right)
 \end{equation}
 
 \subsection{FK im 3-dimensionalem Raum}
 Dieses Vorgehen in der direkten Kinematik kann man auch in den 3-dimensionalen Raum umsetzen. Jedoch erscheinen durch das Hinzufügen von einer weiteren Achse zwei weitere Rotationsachsen. Somit sind neben den 3 verschiedenen Achsen entsprechend auch drei verschiedene Rotationsachsen vorhanden.
 \\
-% 3 Rotationsachsen Grafiken
 \begin{center}
 \centering{
 \begin{multicols}{3}
@@ -405,22 +626,23 @@ Dementsprechend verfügt jede Rotationsachse über eine Rotationsmatrix im 3-dim
     R_y\left(\theta\right) & =\left[\begin{matrix}\cos{\theta}&0&\sin{\theta}\\0&1&0\\-\sin{\theta}&0&\cos{\theta}\\\end{matrix}\right]\\
     R_z\left(\psi\right) & =\left[\begin{matrix}\cos{\psi}&-\sin{\psi}&0\\\sin{\psi}&\cos{\psi}&0\\0&0&1\\\end{matrix}\right] 
 \end{align}
-Um diese Rotationsmatrizen übersichtlich zu behalten, werden diese mit vereinfachten Begriffen geschrieben:
+Mit den vereinfachten Begriffen:
 \begin{align}
     R_x\left(\varphi\right) & =\left[\begin{matrix}1&0&0\\0&c_x&-s_x\\0&s_x&c_x\\\end{matrix}\right]\\
     R_y\left(\theta\right) & =\left[\begin{matrix}c_y&0&s_y\\0&1&0\\-s_y&0&c_y\\\end{matrix}\right]\\
     R_z\left(\psi\right) & =\left[\begin{matrix}c_z&-s_z&0\\s_z&c_z&0\\0&0&1\\\end{matrix}\right]
 \end{align}
-Diese drei Rotationsmatrizen können zu einer allgemeinen Rotationsmatrix zusammengesetzt werden.
+Diese drei Rotationsmatrizen können auch zu einer allgemeinen Rotationsmatrix zusammengesetzt werden.
 \begin{align}
     R\left(\varphi,\theta,\psi\right) & =R_z\left(\psi\right)\times R_y\left(\theta\right)\times R_x\left(\varphi\right)\\ & =\left[\begin{matrix}c_z&-s_z&0\\s_z&c_z&0\\0&0&1\\\end{matrix}\right]\left[\begin{matrix}c_y&0&s_y\\0&1&0\\-s_y&0&c_y\\\end{matrix}\right]\left[\begin{matrix}1&0&0\\0&c_x&-s_x\\0&s_x&c_x\\\end{matrix}\right]\\
     R\left(\varphi,\theta,\psi\right) & =\left[\begin{matrix}c_zc_y&c_zs_ys_x-s_zc_x&c_zs_yc_x+s_zs_x\\s_zc_y&s_zs_ys_x+c_zc_x&s_zs_yc_x-c_zs_x\\-s_y&c_ys_x&c_yc_x\\\end{matrix}\right]
 \end{align}
 \begin{OutBox}
-Wichtig zu beachten ist, dass die Reihenfolge der Multiplikation der Rotationsmatrizen dementsprechend eine andere Rotation ergibt. Es können Phänomene wie «Gimble-Locking» entstehen.\\
-Dementsprechend wirkt die Rotationmatrize auch anders, wenn eine andere Reihenfolge gewählt wird. In diesem Beispiel wird eine $ZYX$-Rotationsmatrize angewendet, welche ein anderes Resultat geben würde als eine $XYZ$-Rotationsmatrize.
+Wichtig zu beachten ist, dass eine andere Multiplikationsreihenfolge der Rotationsmatrizen einer andere Rotation entsprechen wird. Es können Phänomene wie \textcolor{red}{«Gimble-Locking»} entstehen.\\
+Dementsprechend wirkt die Rotationmatrize auch anders, wenn eine andere Reihenfolge gewählt wird. Es wurde nur als Beispiel eine $ZYX$-Matrize geformt. 
 \end{OutBox}
-\noindent Diese kann somit gleich angewendet werden wie bei einer 2-dimensionellen Konstruktion. In diesem Fall werden die Glieder nur an bestimmten Rotationsachsen gedreht. Als Beispiel nimmt man ein Glied, das parallel zur $Y$-Achse vom Nullpunkt ausgestreckt wird und um die Rotationsachse $Y$ rotiert wird:
+\textcolor{red}
+{\noindent Diese kann somit gleich angewendet werden wie bei einer 2-dimensionellen Konstruktion. In diesem Fall werden die Glieder nur an bestimmten Rotationsachsen gedreht. Als Beispiel wird ein Glied ausgewählt, das parallel zur $Y$-Achse vom Nullpunkt ausgestreckt wird und um die Rotationsachse $Y$ rotiert wird:
 \begin{equation}
     X_D=R\left(0,\theta_{1},0\right)\left[\begin{matrix}0\\L_1\\0\\\end{matrix}\right]=\left[\begin{matrix}c_{y_1}&0&s_{y_1}\\0&1&0\\-s_{y_1}&0&c_{y_1}\\\end{matrix}\right]\left[\begin{matrix}0\\L_1\\0\\\end{matrix}\right]=\left[\begin{matrix}0\\L_1\\0\\\end{matrix}\right]
 \end{equation}
@@ -430,8 +652,8 @@ Da jetzt dieses Glied vom Nullpunkt auf der $Y$-Achse gestreckt wird, wirkt die 
     X_D & =\left[\begin{matrix}c_{y_1}&0&s_{y_1}\\0&1&0\\-s_{y_1}&0&c_{y_1}\\\end{matrix}\right]\left(\left[\begin{matrix}0\\L_1\\0\\\end{matrix}\right]+\left[\begin{matrix}c_{z_2}&-s_{z_2}&0\\s_{z_2}&c_{z_2}&0\\0&0&1\\\end{matrix}\right]\left[\begin{matrix}0\\L_2\\0\\\end{matrix}\right]\right)\\
     X_D & =\left[\begin{matrix}c_{y_1}&0&s_{y_1}\\0&1&0\\-s_{y_1}&0&c_{y_1}\\\end{matrix}\right]\left[\begin{matrix}-s_{z_2}L_2\\c_{z_2}L_2\ +L_1\ \\0\\\end{matrix}\right]\\
     X_D & =\left[\begin{matrix}-c_{y_1}s_{z_2}L_2\\c_{z_2}L_2+L_1\\s_{y_1}s_{z_2}L_2\\\end{matrix}\right]
-\end{align}
-Somit beeinflusst wie bei einer 2-dimensionalen Konstruktion jede Rotation des vorherigen Gliedes diese der Folgenden.
+\end{align}}
+Somit beeinflusst wie bei einer 2-dimensionalen Konstruktion jede Rotation des vorherigen Gliedes diese der Folgenden. In der folgenden Darstellung wird eine Bestimmung von $X_D$ anhand des Aufbaus eines 6-Achsen Roboterarms, wo alle Glieder in die X-Richtung ausgestreckt werden.
 {\scriptsize
 \begin{align}
     X_D = R_x(\theta_1)\left(\left[\begin{matrix}
@@ -449,14 +671,13 @@ Somit beeinflusst wie bei einer 2-dimensionalen Konstruktion jede Rotation des v
     \end{matrix}\right]\right)\right)\right)\right)\right)
 \end{align}}
 \begin{OutBox}
-Wichtig zu beachten ist, dass in dieser Darstellung ein Glied immer in $X$-Richtung ausgespannt wird. Grundsätzlich kann ein Glied nicht nur in $X$-Richtung ausgespannt werden, sondern auch in $Y$- oder $Z$-Richtung, sowie aus Kombination aus allen drei. Deshalb wäre folgende Darstellung eines Gliedes korrekter:
+Wichtig zu beachten ist, dass in dieser Darstellung ein Glied immer in $X$-Richtung ausgespannt wird. Grundsätzlich kann ein Glied nicht nur in $X$-Richtung ausgespannt werden, sondern auch in $Y$- oder $Z$-Richtung, sowie aus Kombination aus allen drei. Deshalb kann für eine Darstellung eines Gliedes für die Berechnung der Endposition $X_D$ auch folgendeweise definiert werden 
 \[\left[\begin{matrix}L_{n,x}\\L_{n,y}\\L_{n,z}\\\end{matrix}\right]\]
 wo $n$ das entsprechende Glied ist.
-Aufgrund visueller Darstellung der Formeln, ist in der Erklärung jedes Glied in X-Richtung gestreckt worden.
 \end{OutBox}
 \newpage
 \section{Inverse Kinematik}
-Das Grundprinzip der inversen Kinematik, im Englischen auch bekannt als ''Inverse Kinematics'' oder ''IK'', besteht darin, dass wird eine Position und Rotation vorgegeben wird die vom Endeffektor erreicht werden muss, wodurch die verschiedenen Gelenkwinkel der einzelnen Glieder berechnet werden. 
+Das Grundprinzip der inversen Kinematik, im Englischen auch bekannt als \textit{''Inverse Kinematics''} oder \textit{''IK''}, besteht darin, dass wird eine Position und Rotation vorgegeben wird die vom Endeffektor erreicht werden muss, wodurch die verschiedenen Gelenkwinkel der einzelnen Glieder berechnet werden. 
 Die inverse Kinematik ist deshalb sehr hilfreich, vor allem wenn man anhand einer Konstruktion einen Punkt $A$ erreichen möchte und von diesem Punkt zu einem Punkt $B$ bewegen möchte. Die Inverse Kinematik kann jedoch nicht nur auf Roboterarme limitiert werden, sondern werden auch in CAD-Softwares für die Simulation von verschiedenen Konstruktionen häufig benützt.
 \subsection{1R-Manipulator}
 Um die Funktionsweise der inversen Kinematik richtig verstehen zu können, ist es am besten zuerst zu verstehen, wenn es nur ein Glied zu Verfügung hat, die um eine Rotationsachse rotiert wird.
@@ -479,13 +700,6 @@ Somit entsteht eine neue Gleichung:
     X_D & =\left[\begin{matrix}1&0\\0&1\\\end{matrix}\right]\left(\left[\begin{matrix}L_1\\0\\\end{matrix}\right]+\left[\begin{matrix}c_2&-s_2\\s_2&c_2\\\end{matrix}\right]\left[\begin{matrix}L_2\\0\\\end{matrix}\right]\right)\\
     X_D & =\left[\begin{matrix}c_2L_2+L_1\\s_2L_2\\\end{matrix}\right]
 \end{align*}
-\begin{OutBox}
-\noindent
-\begin{align*}
-    c_n & =\cos{q_n}\\
-    s_n & =\sin{q_n}
-\end{align*}
-\end{OutBox}
 Durch das jetzt den Winkel $\theta_1$ berechnet werden muss, wird der Betrag von $X_D$ genommen und nach $\theta_1$ aufgelöst:
 \begin{align*}
     \left|X_D\right| & =\sqrt{\left(c_2L_2+L_1\right)^2+\left(s_2L_2\right)^2}\\
@@ -508,16 +722,16 @@ Durch das jetzt den Winkel $\theta_1$ berechnet werden muss, wird der Betrag von
 \end{align*}
 Da durch die umgekehrte Kosinus-Funktion an zwei verschiedenen Stellen den gleichen Wert herausgeben wird, werden auch zwei Werte für $\theta_2$ erhalten
 \begin{align*}
-    q_{2,1} & =cos^{-1}\left(\frac{\left|X_D\right|^2-L_2^2-L_1^2}{2L_2L_1}\right)\\
-    q_{2,2} & =-cos^{-1}\left(\frac{\left|X_D\right|^2-L_2^2-L_1^2}{2L_2L_1}\right)
+    \theta_{2,1} & =cos^{-1}\left(\frac{\left|X_D\right|^2-L_2^2-L_1^2}{2L_2L_1}\right)\\
+    \theta_{2,2} & =-cos^{-1}\left(\frac{\left|X_D\right|^2-L_2^2-L_1^2}{2L_2L_1}\right)
 \end{align*}
 Durch das $\theta_2$ bekannt ist, kann $\theta_1$ dementsprechend auch berechnet werden, indem zuerst der Winkel vom Ursprung zum jetzigen Endeffektor berechnet wird und dieser vom Winkel vom Ursprung zur Endposition subtrahiert wird. 
 \begin{align*}
 \theta & =atan2\left(X_y,X_x\right)={tan}^{-1}{\left(\frac{X_y}{X_x}\right)}\\
 \theta_k & =atan2\left(s_2L_2,c_2L_2+L_1\right)={tan}^{-1}{\left(\frac{s_2L_2}{c_2L_2+L_1}\right)}
 \end{align*}
-\[q_{1,k}=\theta-\theta_k\]
-Da es zwei Lösungen für $\theta_2$ gibt, entstehen zwei weitere Lösungen für $\theta_1$. Somit entstehen die Lösungspaare $\{q_{1,1},q_{2,1}\}$ und $\{q_{1,2},q_{2,2}\}$\\[5pt]
+\[\theta_{1,k}=\theta-\theta_k\]
+Da es zwei Lösungen für $\theta_2$ gibt, entstehen zwei weitere Lösungen für $\theta_1$. Somit entstehen die Lösungspaare $\{\theta_{1,1},\theta_{2,1}\}$ und $\{\theta_{1,2},\theta_{2,2}\}$\\[5pt]
 Da es zwei verschiedene Lösungen gibt, kann die eine oder andere für den Lösungsansatz verwendet werden. Jedoch ist für den Prozess der inversen Kinematik die Berechnung aller möglichen Lösungen kritisch.
 Entsprechend ergeben sich Limitation für die Berechnung der Winkel $\theta_1$ und $\theta_2$.
 Der erste Fall, in dem keine Lösung auffallen würde, wäre, wenn in der Berechnung von $\theta_2$ die Berechnung $\frac{\left|X_D\right|^2-L_2^2-L_1^2}{2L_2L_1} > 1$ wäre, somit $\left|X_D\right|^2-L_2^2-L_1^2\ >2L_2L_1$ oder anders gesagt:
@@ -531,15 +745,17 @@ Wenn man diesen Vorgang in die 3-dimensionale umsetzen würde, wäre der Prozess
 Bei einem 3R Manipulatoren wird das erste Glied um die $Z$-Achse rotiert, das zweite Glied um die $Y$-Achse rotiert mit einer Versetzung von $L_1$ in die Z-Richtung und das dritte Glied nochmals um die $Y$-Achse mit einer Versetzung von $L_2$ in die $X$-Richtung. Der Endeffektor wird vom dritten Glied über eine Distanz von $L_3$ in die $X$-Richtung versetzt.
 Mit dieser Definition können die Koordinaten des Endeffektors festgestellt werden:
 \begin{align*}
-    x\left(q\right) & =R_z\left(\theta_1\right)\left(\left[\begin{matrix}0\\0\\L_1\\\end{matrix}\right]+R_y\left(\theta_2\right)\left(\left[\begin{matrix}L_2\\0\\0\\\end{matrix}\right]+R_y\left(\theta_3\right)\left[\begin{matrix}L_3\\0\\0\\\end{matrix}\right]\right)\right)\\
-    x\left(q\right) & =\left[\begin{matrix}c_1\left(c_2\left(L_2+c_3l_3\right)-s_2s_3L_3\right)\\s_1\left(c_2\left(L_2+c_3L_3\right)-s_2s_3L_3\right)\\L_1-s_2\left(L_2+c_3L_3\right)-c_2s_3L_3\\\end{matrix}\right]
+    x\left(\theta\right) & =R_z\left(\theta_1\right)\left(\left[\begin{matrix}0\\0\\L_1\\\end{matrix}\right]+R_y\left(\theta_2\right)\left(\left[\begin{matrix}L_2\\0\\0\\\end{matrix}\right]+R_y\left(\theta_3\right)\left[\begin{matrix}L_3\\0\\0\\\end{matrix}\right]\right)\right)\\
+    x\left(\theta\right) & =\left[\begin{matrix}c_1\left(c_2\left(L_2+c_3l_3\right)-s_2s_3L_3\right)\\s_1\left(c_2\left(L_2+c_3L_3\right)-s_2s_3L_3\right)\\L_1-s_2\left(L_2+c_3L_3\right)-c_2s_3L_3\\\end{matrix}\right]
 \end{align*}
 Ziel ist es diesen Endeffektor zu der Koordinate $X_D = \left[\begin{matrix}x_D\\y_D\\z_D\\\end{matrix}\right]$ zu bringen.\\
 % GRAFIK
 \\
 Das Vorgehen bei einem Arm mit drei Rotationselementen ist sehr ähnlich, ausser, dass vorerst die Rotation des ersten Gliedes bestimmt werden muss. Anhand der Rotation des ersten Gliedes wird es möglich die Endposition auf eine Fläche projektieren zu können, die entlang zu der Rotation der Konstruktion verläuft. Somit ist die Rotation des ersten Gliedes
-\[\theta_1={tan}^{-1}{\left(\frac{y_D}{x_D}\right)}\]
-Durch die Rotation des ersten Gliedes werden die zwei weiteren Glieder mitrotiert, wodurch die Endposition $X_D$ relativ zum ersten Glied auch mitrotiert wird. Somit erfolgt eine neue Endposition
+\[\theta_1={tan}^{-1}{\left(\frac{y_D}{x_D}\right)}\]\label{eq:3r_tht11}
+Dementsprechend verfügt $\theta_1$ über eine weitere Rotation, die gegenüber des ersten Punktes liegt:
+\[\theta_1={tan}^{-1}{\left(\frac{y_D}{x_D}\right)} + \pi\]\label{eq:3r_tht12}
+\noindent Durch die Rotation des ersten Gliedes werden die zwei weiteren Glieder mitrotiert, wodurch die Endposition $X_D$ relativ zum ersten Glied auch mitrotiert wird. Somit erfolgt eine neue Endposition
 \[R\left(0,0,\theta_1\right)x_D=\left[\begin{matrix}c_1&-s_2&0\\s_2&c_2&0\\0&0&1\\\end{matrix}\right]\left[\begin{matrix}x_D\\y_D\\z_D\\\end{matrix}\right]=\left[\begin{matrix}c_1x_D\\s_1y_D\\z_D\\\end{matrix}\right].\]
 Anhand dieser neuen Endposition wird der Winkel der letzten zwei Glieder berechnen, genauso wie bei einem 2R Manipulator. Somit ist die Endposition $X_G$ für die zwei Glieder auf einer 2-dimensionalen Ebene
 \[X_G=\left[\begin{matrix}\sqrt{\left(c_1x_N\right)^2+\left(s_1y_N\right)^2}\\z_N\\\end{matrix}\right]\]
@@ -547,10 +763,10 @@ Diese neue Endposition wird in die folgende Formel einsetzen:
 \[\theta_3=cos^{-1}\left(\frac{\left|X_G\right|^2-L_2^2-L_1^2}{2L_2L_1}\right)\]
 Dadurch wird dann auch der Winkel $\theta_2$ berechnet:
 \begin{align*}
-    \theta& =\tan^{-1}{\left(\frac{y_D-L_1}{\sqrt{{x_D}^2+{z_D}^2}}\right)}\\
+    \theta_D& =\tan^{-1}{\left(\frac{y_D-L_1}{\sqrt{{x_D}^2+{z_D}^2}}\right)}\\
     \theta_k & =\tan^{-1}{\left(\frac{s_2L_2}{c_2L_2+L_1}\right)}
 \end{align*}
-\[q_{2, k}=\theta-\theta_k\]
+\[\theta_{2, k}=\theta_D-\theta_k\]
 \subsection{6R-Manipulator}
 Die meisten industriellen 6R Manipulatoren sind aus einem Ellbogengelenk (Rotation um die $Z$-Achse), einer Schulter bestehend aus 2 sich orthogonal auftreffenden Achsen und einem Handgelenk mit weiteren 3 sich orthogonal auftreffenden Achsen. In dieser Ordnung ist die Konstruktion des Roboterarms in dieser Arbeit gegliedert\\
 % GRAFIK
@@ -567,7 +783,8 @@ Durch das jetzt die 3 Rotationen für die ersten drei Glieder vorhanden sind, wi
 \begin{align*}
     R_3 & =R_y\left(\theta_1\right)R_z\left(\theta_2\right)R_z\left(\theta_3\right)\\ 
     & =\left[\begin{matrix}c_1&0&-s_1\\0&1&0\\s_1&0&c_1\\\end{matrix}\right]\left[\begin{matrix}c_2&-s_2&0\\s_2&c_2&0\\0&0&1\\\end{matrix}\right]\left[\begin{matrix}c_3&0&-s_3\\0&1&0\\s_3&0&c_3\\\end{matrix}\right]\\
-    R_3 & =\left[\begin{matrix}c_1c_2c_3-c_1s_2s_3&-c_1c_2s_3-c_1s_2c_3&-s_1\\s_2c_3+c_2s_3&-s_2s_3+c_2c_3&0\\s_1c_2c_3-s_1s_2s_3&-s_1c_2s_3-s_1s_2c_3&c_1\\\end{matrix}\right]
+    R_3 & =\left[\begin{matrix}c_1c_2c_3-c_1s_2s_3&-c_1c_2s_3-c_1s_2c_3&-s_1\\s_2c_3+c_2s_3&-s_2s_3+c_2c_3&0\\s_1c_2c_3-s_1s_2s_3&-s_1c_2s_3-s_1s_2c_3&c_1\\\end{matrix}\right]\\
+    \mathcolor{red}{R_3^T & =R_z\left(-\theta_3\right)R_z\left(-\theta_2\right)R_y\left(-\theta_1\right)}
 \end{align*}
 \[R_6=R_3\left(\theta_1,\theta_2,\theta_3\right)R_x\left(\theta_4\right)R_y\left(\theta_5\right)R_x\left(\theta_6\right)=R_D\]
 Durch das, dass die Rotation von $R_3$ vorhanden, kann festgestellt werden, dass die Endrotation $R_D$ durch das transposierte $R_3^T$ zurückgedreht werden kann um dann die Rotation $R_3^6$ der letzten drei Glieder herausfinden zu können.
@@ -642,6 +859,7 @@ Dadurch können die jeglichen Berechnungen der Gelenkwinkel folgende Werte berec
 \end{align*}
 \begin{align*}
     R_3 & =R_y\left(\theta_1\right)R_z\left(\theta_2\right)R_z\left(\theta_3\right)\\
+    \mathcolor{red}{R_3^T & =R_z\left(-\theta_3\right)R_z\left(-\theta_2\right)R_y\left(-\theta_1\right)}\\
     R_3^TR_D & =\left[\begin{matrix}r_{11}&r_{12}&r_{13}\\r_{21}&r_{22}&r_{23}\\r_{31}&r_{32}&r_{33}\\\end{matrix}\right]
 \end{align*}
 \begin{align*}
@@ -657,7 +875,9 @@ Dadurch können die jeglichen Berechnungen der Gelenkwinkel folgende Werte berec
         \theta_6 & =\cos^{-1}r_{22}
     \end{align*}
 \end{OutBox}
+\newpage
 \section{Praktische Umsetzung eines 6R-Manipulatoren mit IK}
+\lstinputlisting[language=pyython, caption={Berechnung anhand Ik von einem 6R-Manipulatoren \textit{(Python)}\label{lst:6r_ik}}]{code/python/ik.py}
 \chapter{Resultate und Diskussion}
 \section{Komplette Konstruktion}
 
@@ -666,8 +886,6 @@ Dadurch können die jeglichen Berechnungen der Gelenkwinkel folgende Werte berec
 \subsection{Geschwindigkeit}
 
 \subsection{Genauigkeit und Wiederholbarkeit}
-
-\subsection{Stromverbrauch}
 
 
 
@@ -680,6 +898,16 @@ Dadurch können die jeglichen Berechnungen der Gelenkwinkel folgende Werte berec
 \section{Reflexion}
 \chapter{Quellenverzeichnis}
 \chapter{Redlichkeitserklärung}
+Ich, Vladimir Morozov, 4A,
+\vspace{0.2cm}
+\\bestätige mit meiner Unterschrift, dass die eingereichte Arbeit selbstständig und ohne unerlaubte Hilfe Dritter verfasst wurde. Die Auseinandersetzung mit dem Thema erfolgte ausschliesslich durch meine persönliche Arbeit und Recherche. Es wurden keine unerlaubten Hilfsmittel benutzt.
+\vspace{0.2cm}
+\\Ich bestätige, dass ich sämtliche verwendeten Quellen sowie Informanten/-innen im Quellenverzeichnis bzw. an anderer da-für vorgesehener Stelle vollständig aufgeführt habe. Alle Zitate und Paraphrasen (indirekte Zitate) wurden gekennzeichnet und belegt. Sofern ich Informationen von einem KI-System wie bspw. ChatGPT verwendet habe, habe ich diese in meiner Maturaarbeit gemäss den Vorgaben im Leitfaden zur Maturaarbeit korrekt als solche gekennzeichnet, einschliesslich der Art und Weise, wie und mit welchen Fragen die KI verwendet wurde.
+\vspace{0.2cm}
+\\Ich bestätige, dass das ausgedruckte Exemplar der Maturaarbeit identisch mit der digitalen Version ist.
+\vspace{0.2cm}
+\\Ich bin mir bewusst, dass die ganze Arbeit oder Teile davon mittels geeigneter Software zur Erkennung von Plagiaten oder KI-Textstellen einer Kontrolle unterzogen werden können.
+
 
 \appendix
 \chapter{Anhang}

@@ -1,0 +1,5 @@
+bool stop_move = true;
+for(int i = 0; i < 6; i++){
+  stop_move = stop_move && (stepper[i].distanceToGo() == 0);
+}
+can_move = !stop_move;

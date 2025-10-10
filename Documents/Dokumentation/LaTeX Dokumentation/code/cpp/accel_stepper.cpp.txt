@@ -1,0 +1,8 @@
+AccelStepper stepper[] = {
+    AccelStepper(1, STEP0_PIN, DIR0_PIN),
+    AccelStepper(1, STEP1_PIN, DIR1_PIN),
+    AccelStepper(1, STEP2_PIN, DIR2_PIN),
+    AccelStepper(1, STEP3_PIN, DIR3_PIN),
+    AccelStepper(1, STEP4_PIN, DIR4_PIN),
+    AccelStepper(1, STEP5_PIN, DIR5_PIN)
+};

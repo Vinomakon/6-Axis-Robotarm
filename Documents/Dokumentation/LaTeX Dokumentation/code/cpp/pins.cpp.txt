@@ -1,0 +1,11 @@
+// PINS FÜR TMC-SPI
+#define SDO_PIN 41
+#define SCK_PIN 39
+#define SDI_PIN 40
+// PINS FÜR MOTOR 1
+#define DIR0_PIN 4
+#define STEP0_PIN 3
+#define EN0_PIN 1
+#define CS0_PIN 2
+#define SW0_PIN 13
+...

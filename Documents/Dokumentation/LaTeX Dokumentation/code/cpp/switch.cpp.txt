@@ -1,0 +1,6 @@
+switch (mot.toInt()) {
+    case 0: // Motor 0
+        if (act == "01") stepper[0].moveTo(msg.substring(3).ToFloat());
+        break;
+    ...
+}

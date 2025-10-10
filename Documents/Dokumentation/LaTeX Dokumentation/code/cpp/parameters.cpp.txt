@@ -1,0 +1,25 @@
+//MOTOR VARIABLES
+int default_steps = 200;
+int mot_speed[6];
+int mot_accel[6];
+float mot_reduction[6];
+int mot_home_speed[6];
+bool mot_home_inv[6];
+int mot_home_accel[6];
+int mot_shome_offset[6];
+float mot_home_mult[6];
+37
+float mot_home_offset[6];
+int mot_mcrs[6];
+int mot_irun[6];
+int mot_ihold[6];
+// MOTOR0 VARIABLES
+//Positional Arguments
+float current_deg0 = 0;
+float move_to_deg0 = 0;
+int move_to0 = 0;
+//Homing Arguments
+bool home_mot0 = false;
+bool second_home0 = false;
+bool home_slow0 = false;
+...

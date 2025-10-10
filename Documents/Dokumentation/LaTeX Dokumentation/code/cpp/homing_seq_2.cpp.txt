@@ -1,0 +1,11 @@
+if (homing_mot0){
+  ...
+  if(second_home0) {
+    if (digitalRead(SW0_PIN) == HIGH) {
+      stepper[0].setCurrentPosition(defaultPosition);
+      homing_mot0 = false;
+    } else {
+      stepper[0].run();
+    }
+  }
+}

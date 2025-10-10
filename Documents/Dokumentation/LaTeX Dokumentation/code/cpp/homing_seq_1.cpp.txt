@@ -1,0 +1,11 @@
+if (homing_mot0) {
+  if (digitalRead(SW0_PIN) == HIGH) {
+    second_home0 = true; // Initierung der zweiten Phase
+    // Versetzung der Rotation nach hinten
+    stepper[0].setCurrentPosition(0);
+    stepper[0].moveTo(mot_shome_offset[0]* (mot_home_inv[0] ? 1 : -1));
+  } else {
+    stepper[0].run(); // Motor laufen lassen
+  }
+  ...
+}
