@@ -457,6 +457,7 @@ werden sollte
 \lstinputlisting[language=cppp, caption={Switch-Case-Block für die Kontrolle des entsprechenden Motors \label{lst:cpp_switch}}]{code/cpp/switch.cpp.txt}
 \subsubsection{Bewegungssteuerung}
 \lstinputlisting[language=cppp, caption={for-Loop für das Antreiben jedes Motors \label{lst:cpp_can_move_for}}]{code/cpp/can_move_for.cpp.txt}
+\lstinputlisting[language=cppp, caption={for-Loop für das Überprüfen aller laufenden Motoren und deren Anhaltung\label{lst:cpp_stop_move_for}}]{code/cpp/stop_move.cpp.txt}
 \newpage
 \section{Kontrolle über PC}
 \subsubsection{Benutzeroberfläche}
@@ -488,9 +489,60 @@ Danach wird berechnet, welcher Motor die längste Rotation abschliessen sollte, 
 Der Begriff ''\textit{Direkte Kinematik}'', auch als ''\textit{Forward Kinematics}'' oder ''\textit{FK}''  bekannt, stammt aus der Robotik und ist dafür da, um aus Gelenkwinkeln der einzelnen Glieder einer gegliederten Konstruktion die Endposition in einem Koordinatensystem bestimmen zu können. Man spricht bei der Endposition des letzten Glieds von einem ''\textit{Endeffektor}''.
 \subsection{FK im 2-dimensionalem Raum}
 Um zu verstehen, was man unter der direkten Kinematik erreichen möchte, wird ein 2-dimensionales $XY$-Koordinatensystem dargestellt. In dem Koordinatensystem befindet sich eine Konstruktion aus 2 Gliedern. Das erste Glied $L_1$ dreht sich mit dem Anfang um den Nullpunkt, während das zweite Glied $L_2$ sich am Schluss des ersten Glieds dreht.
-\\
-%BILD
-\\
+\begin{center}
+\centering
+\begin{tikzpicture}[scale=1.5, thick]
+
+  
+  \def\lone{2.0}
+  \def\ltwo{2.0}
+
+  
+  \def\thetaone{35}   % theta1
+  \def\thetatwo{40}   % theta2 (relative!)
+
+  % Coordinates of joint 1 (origin)
+  \coordinate (O) at (0,0);
+
+  % End of first link
+  \coordinate (A) at ({\lone*cos(\thetaone)}, {\lone*sin(\thetaone)});
+
+  % End of second link (theta1+theta2)
+  \coordinate (B) at ({\lone*cos(\thetaone) + \ltwo*cos(\thetaone+\thetatwo)},
+                      {\lone*sin(\thetaone) + \ltwo*sin(\thetaone+\thetatwo)});
+
+  % Draw base axes
+  \draw[->, gray!70] (-0.5,0) -- (3.5,0) node[right] {$x$};
+  \draw[->, gray!70] (0,-0.5) -- (0,3.5) node[above] {$y$};
+
+  \filldraw[black] (O) circle (1.2pt);
+  \filldraw[black] (A) circle (1.2pt);
+  \filldraw[black] (B) circle (1.2pt) node[above] {$X_\mathbf{D}$};
+  
+  % Draw links
+  \draw[very thick] (O) -- (A) node[midway, above left] {$L_1$};
+  \draw[very thick] (A) -- (B) node[midway, above left] {$L_2$};
+
+  \filldraw[black] (O) circle (0.35pt);
+  \filldraw[black] (A) circle (0.35pt);
+
+  % Angle theta1 at origin
+  \draw[->] (0.8,0) arc[start angle=0, end angle=\thetaone, radius=0.8];
+  \node at (1,0.3) {$\theta_1'$};
+
+  % Angle theta2 at joint A (relative!)
+  \draw[->] (A) ++(0.8,0) arc[start angle=0, end angle=\thetaone+\thetatwo, radius=0.8];
+  \draw[-, dashed] (A)++(0.8, 0) -- (A);
+  \node at ({1.3*cos(\thetaone+0.5*\thetatwo) + \lone*cos(\thetaone)}, {0.8*sin(\thetaone+0.5*\thetatwo) + \lone*sin(\thetaone)}) {$\theta_2'$};
+
+  \draw[->, ultra thick, red, line cap=rect] (O) -- (0.5, 0);
+  \draw[->, ultra thick, blue, line cap=rect] (O) -- (0, 0.5);
+
+  \draw[->, ultra thick, red, line cap=rect]  (A) -- ++(0.5, 0);
+  \draw[->, ultra thick, blue, line cap=rect]  (A) --  ++(0, 0.5);
+\end{tikzpicture}
+\end{center}
+
 Jedes von diesen Gliedern liegt unter einem Winkel relativ zur $X$-Achse. Der Winkel des ersten Gliedes wird als $\theta_1'$ bezeichnet und dies des zweiten Gliedes mit $\theta_2'$.
 Es muss die Position des Endeffektors berechnet werden, wo
 \[\theta_1' , \theta_2' \longrightarrow x_{EE}, y_{EE}\]
@@ -507,11 +559,66 @@ Anstatt alles auf einmal zu berechnen, wird zuerst die Endposition des ersten Gl
 \end{align*}
 \end{OutBox}
 
-Durch das die Endposition des Endes vom ersten Glied bekannt ist, wird diese eigesetzt, um die Endposition des Endes vom zweiten Glied herauszufinden:
+\noindent Durch das die Endposition des Endes vom ersten Glied bekannt ist, wird diese eigesetzt, um die Endposition des Endes vom zweiten Glied herauszufinden:
 \[X_D=R\left(\theta_1'\right)L_1+R\left(\theta_2'\right)L_2=\left(\begin{matrix}c_1L_1\\s_1L_1\\\end{matrix}\right)+\left(\begin{matrix}c_2L_2\\s_2L_2\\\end{matrix}\right)\]
-Jedoch ist der Fall nicht so, dass bewusst ist, unter welchem Winkel das zweite Glied relativ zur $X$-Achse steht, sondern nur relativ zu dem ersten Glied.\\
-%GRAFIK
-\\
+Jedoch ist der Fall nicht so, dass bewusst ist, unter welchem Winkel das zweite Glied relativ zur $X$-Achse steht, sondern nur relativ zu dem ersten Glied.
+\begin{center}
+    \centering
+\begin{tikzpicture}[scale=1.5, thick]
+
+  
+  \def\lone{2.0}
+  \def\ltwo{2.0}
+
+  
+  \def\thetaone{35}   % theta1
+  \def\thetatwo{40}   % theta2 (relative!)
+
+  % Coordinates of joint 1 (origin)
+  \coordinate (O) at (0,0);
+
+  % End of first link
+  \coordinate (A) at ({\lone*cos(\thetaone)}, {\lone*sin(\thetaone)});
+
+  % End of second link (theta1+theta2)
+  \coordinate (B) at ({\lone*cos(\thetaone) + \ltwo*cos(\thetaone+\thetatwo)},
+                      {\lone*sin(\thetaone) + \ltwo*sin(\thetaone+\thetatwo)});
+
+  % Draw base axes
+  \draw[->, gray!70] (-0.5,0) -- (3.5,0) node[right] {$x$};
+  \draw[->, gray!70] (0,-0.5) -- (0,3.5) node[above] {$y$};
+
+  \filldraw[black] (O) circle (1.2pt);
+  \filldraw[black] (A) circle (1.2pt);
+  \filldraw[black] (B) circle (1.2pt) node[above] {$X_\mathbf{D}$};
+  
+  % Draw links
+  \draw[very thick] (O) -- (A) node[midway, above left] {$L_1$};
+  \draw[very thick] (A) -- (B) node[midway, above left] {$L_2$};
+  
+
+
+  \draw[->, ultra thick, red, line cap=rect] (O) -- ({0.5*cos(\thetaone)},{0.5*sin(\thetaone)});
+  \draw[->, ultra thick, blue, line cap=rect] (O) -- ({0.5*cos(\thetaone + 90)},{0.5*sin(\thetaone + 90)});
+
+  \draw[->, ultra thick, red, line cap=rect]  (A) -- ++({0.5*cos(\thetaone + \thetatwo)},{0.5*sin(\thetaone + \thetatwo)});
+  \draw[->, ultra thick, blue, line cap=rect]  (A) --  ++({0.5*cos(\thetaone + \thetatwo + 90)},{0.5*sin(\thetaone + \thetatwo + 90)});
+
+  \filldraw[black] (O) circle (0.35pt);
+  \filldraw[black] (A) circle (0.35pt);
+
+  % Angle theta1 at origin
+  \draw[->] (0.8,0) arc[start angle=0, end angle=\thetaone, radius=0.8];
+  \node at (1,0.3) {$\theta_1$};
+
+  % Angle theta2 at joint A (relative!)
+  \draw[->] (A) ++({0.8*cos(\thetaone)},{0.8*sin(\thetaone)}) arc[start angle=\thetaone, end angle=\thetaone+\thetatwo, radius=0.8];
+  \draw[-, dashed] (A)++({0.8*cos(\thetaone)},{0.8*sin(\thetaone)}) -- (A);
+  \node at ({1*cos(\thetaone+0.5*\thetatwo) + \lone*cos(\thetaone)}, {1*sin(\thetaone+0.5*\thetatwo) + \lone*sin(\thetaone)}) {$\theta_2$};
+
+
+\end{tikzpicture}
+\end{center}
 Dies ist so, da sich das Koordinatensystem für ein anhängendes Glied relativ zum treibenden Glied verändert. Die Rotation $R(\theta_1)$ des ersten Gliedes entspricht somit zum neuen Koordinatensystem des zweiten Gliedes.
 Dadurch werden die beiden Rotationen $R(\theta_1)$ und $R(\theta_2)$ multipliziert. Aufgrund der Multiplikationsregeln von Rotationen kann $R(\theta_1) \cdot R(\theta_2)$ als eine Addition von beiden Winkeln $\theta_1$ und $\theta_2$ umgeformt werden.
 \begin{align*}
@@ -534,16 +641,16 @@ Oder mit der Verkettungsformel (rekursiv):
 \begin{equation}
     X_D=R\left(\theta_1\right)\left(L_1+R\left(\theta_2\right)\left(L_2+R\left(\theta_3\right)L_3\right)\right)
 \end{equation}
-
+\newpage
 \subsection{FK im 3-dimensionalem Raum}
 Dieses Vorgehen in der direkten Kinematik kann man auch in den 3-dimensionalen Raum umsetzen. Jedoch erscheinen durch das Hinzufügen von einer weiteren Achse zwei weitere Rotationsachsen. Somit sind neben den 3 verschiedenen Achsen entsprechend auch drei verschiedene Rotationsachsen vorhanden.
 \\
 \begin{center}
 \centering{
 \begin{multicols}{3}
-\begin{tikzpicture}[tdplot_main_coords, scale=1.5]
+\begin{tikzpicture}[tdplot_main_coords, scale=1.5] % X-Rotation
   % axes
-  \draw[->] (0,0,0) -- (1.4,0,0) node[below left] {\textcolor{Xcol}{$x$}};
+  \draw[->, Xcol] (0,0,0) -- (1.4,0,0) node[below left] {\textcolor{Xcol}{$x$}};
   \draw[->] (0,0,0) -- (0,1.4,0) node[right]  {\textcolor{Ycol}{$y$}};
   \draw[->] (0,0,0) -- (0,0,1.4) node[above]        {\textcolor{Zcol}{$z$}};
 
@@ -565,10 +672,10 @@ Dieses Vorgehen in der direkten Kinematik kann man auch in den 3-dimensionalen R
   \node at (0,{0.7*1.1*cos(22.5)},{0.6*1.1*sin(22.5)}) [left] {$\varphi$};
 \end{tikzpicture}
 
-\begin{tikzpicture}[tdplot_main_coords, scale=1.5]
+\begin{tikzpicture}[tdplot_main_coords, scale=1.5] % Y-Rotation
   % axes
   \draw[->] (0,0,0) -- (1.4,0,0) node[below left] {\textcolor{Xcol}{$x$}};
-  \draw[->] (0,0,0) -- (0,1.4,0) node[right]  {\textcolor{Ycol}{$y$}};
+  \draw[->, Ycol] (0,0,0) -- (0,1.4,0) node[right]  {\textcolor{Ycol}{$y$}};
   \draw[->] (0,0,0) -- (0,0,1.4) node[above]        {\textcolor{Zcol}{$z$}};
 
   % circle in XZ-plane (param: (cos t, 0, sin t))
@@ -588,11 +695,11 @@ Dieses Vorgehen in der direkten Kinematik kann man auch in den 3-dimensionalen R
   \node at ({0.3*1.1*cos(22.5)},0,{2*1.1*sin(22.5)}) [below] {$\theta$};
 \end{tikzpicture}
 
-\begin{tikzpicture}[tdplot_main_coords, scale=1.5]
+\begin{tikzpicture}[tdplot_main_coords, scale=1.5] % Z-Rotation
   % axes
   \draw[->] (0,0,0) -- (1.4,0,0) node[below left] {\textcolor{Xcol}{$x$}};
   \draw[->] (0,0,0) -- (0,1.4,0) node[right]  {\textcolor{Ycol}{$y$}};
-  \draw[->] (0,0,0) -- (0,0,1.4) node[above]  {\textcolor{Zcol}{$z$}};
+  \draw[->, Zcol] (0,0,0) -- (0,0,1.4) node[above]  {\textcolor{Zcol}{$z$}};
 
   % circle in XY-plane
   \draw[thin, dashed] (0,0,0) ++(1.1,0,0) arc (0:360:1.1);
@@ -614,10 +721,10 @@ Dieses Vorgehen in der direkten Kinematik kann man auch in den 3-dimensionalen R
 \end{multicols}}
 \end{center}
 
-Jede von diesen Rotationsachsen verfügt über einer eigenen Winkelrotation.
+\noindent Jede von diesen Rotationsachsen verfügt über einer eigenen Winkelrotation.
 \begin{center}
 \begin{tabular}{c c c}
-    $X$-Rotation: $\varphi$ &\hspace{1cm} $Y$-Rotation: $\theta$ &\hspace{1cm} $Z$-Rotation: $\psi$
+    $X$-Rotation: $\varphi$ &\hspace{2.5cm} $Y$-Rotation: $\theta$ &\hspace{2.5cm} $Z$-Rotation: $\psi$
 \end{tabular}
 \end{center}
 Dementsprechend verfügt jede Rotationsachse über eine Rotationsmatrix im 3-dimensionalem Raum.
@@ -682,10 +789,11 @@ Die inverse Kinematik ist deshalb sehr hilfreich, vor allem wenn man anhand eine
 \subsection{1R-Manipulator}
 Um die Funktionsweise der inversen Kinematik richtig verstehen zu können, ist es am besten zuerst zu verstehen, wenn es nur ein Glied zu Verfügung hat, die um eine Rotationsachse rotiert wird.
 Bei einem 1R-Manipulatoren wird von einer Konstruktion aus einem Glied gesprochen, dass auf einer Achse rotiert wird. Für solch eine Konstruktion aus einem Glied in einem 2-dimensionalem, ist dies ziemlich einfach zu berechnen, indem die Rotation relativ zur Endposition $x_D=\left(x_D,y_D\right)$ zum Nullpunkt anhand des Pythagoras-Theorems berechnet wird.
-\[\theta=\atan2\left(y_D,x_D\right)={tan}^{-1}{\frac{y_D}{x_D}}\]
+\[\theta=\atan2\left(y_D,x_D\right)={tan}^{-1}{\left(\frac{y_D}{x_D}\right)}\]
 Dies führt zu einer einzigen Limitation, dass der Betrag der Endposition gleich zur Länge des Gliedes ist:
 \[L_1=\left|x_D\right|=\sqrt{x_D^2+y_D^2}\]
 Grundsätzlich gehört dieser Prozess nicht direkt zur inversen Kinematik, jedoch ist dies ein Grundsatz für jedes Problem in der inversen Kinematik.
+\newpage
 \subsection{2R-Manipulator}
 Bei einem 2R-Manipulator wird über einer Konstruktion gesprochen, die aus 2 Gliedern besteht. Das erste Glied wird am Nullpunkt rotiert, während das zweite Glied um die Länge des zweiten Gliedes $L_1$ versetzt wird, wodurch der Endeffektor um die Länge des zweiten Gliedes $L_2$ versetzt wird. Es wird über einem 2R-Manipulator im 2-dimensionalem Raum gesprochen.
 Hingegen zum 1R-Manipulator sind 2 verschiedene Glieder vorhanden, die sich unabhängig voneinander drehen können. Somit verfügt das erste Glied über eine Rotation $\theta_1$ und das zweite Glied über eine Rotation $\theta_2$. Durch das 2 einzelne Winkel vorhanden sind, ist deren Berechnung anhand einer gewünschten Position nicht mehr übersichtlich. Deshalb wird der Prozess der inversen Kinematik angewandt. 
@@ -740,6 +848,7 @@ was bestimmt, dass der zu erreichende Punkt ausserhalb der Reichweite des Manipu
 Der zweite Fall wäre, wo die Berechnung von $\theta_2 < -1$ wäre, somit $\left|X_D\right|^2-L_2^2-L_1^2\ <2L_2L_1$, oder anders gesagt:
 \[\left|X_D\right|^2>L_1^2-2L_2L_1+L_2^2=\left(L_1-L_2\right)^2\]
 Damit dies möglich sein kann, müssen die Längen der beiden Glieder ungleich sein, wo der Endpunkt innerhalb eines Kreises mit einem Radius von $\left|L_1-L_2\right|$ am Ursprungspunkt wäre.
+\newpage
 \subsection{3R-Manipulator}
 Wenn man diesen Vorgang in die 3-dimensionale umsetzen würde, wäre der Prozess der indirekten Kinematik ähnlich zu der 2-dimensionalen. Um einen Punkt im 3-dimensionalen Raum erreichen zu können, bräuchte es mindestens ein weiteres Glied, das sich um die $Y$-Achse rotieren würde. Somit würde die optimale Konstruktion aus 3 Gliedern bestehen.
 Bei einem 3R Manipulatoren wird das erste Glied um die $Z$-Achse rotiert, das zweite Glied um die $Y$-Achse rotiert mit einer Versetzung von $L_1$ in die Z-Richtung und das dritte Glied nochmals um die $Y$-Achse mit einer Versetzung von $L_2$ in die $X$-Richtung. Der Endeffektor wird vom dritten Glied über eine Distanz von $L_3$ in die $X$-Richtung versetzt.
@@ -767,6 +876,7 @@ Dadurch wird dann auch der Winkel $\theta_2$ berechnet:
     \theta_k & =\tan^{-1}{\left(\frac{s_2L_2}{c_2L_2+L_1}\right)}
 \end{align*}
 \[\theta_{2, k}=\theta_D-\theta_k\]
+\newpage
 \subsection{6R-Manipulator}
 Die meisten industriellen 6R Manipulatoren sind aus einem Ellbogengelenk (Rotation um die $Z$-Achse), einer Schulter bestehend aus 2 sich orthogonal auftreffenden Achsen und einem Handgelenk mit weiteren 3 sich orthogonal auftreffenden Achsen. In dieser Ordnung ist die Konstruktion des Roboterarms in dieser Arbeit gegliedert\\
 % GRAFIK
@@ -823,7 +933,7 @@ Mit einem bekannten Wert für $\theta_5$ können zusätzlich $\theta_4$ und $\th
     \theta_6&=\atan2\left(r_{12},r_{13}\right)=\tan^{-1}{\left(\frac{r_{12}}{r_{13}}\right)}
 \end{align*}
 \begin{OutBox}
-Es gibt eine einzige Ausnahme in dieser Situation, die zu einer Singularität entspricht. Diese entsteht, wenn $r_{11}=1$ entspricht. Da
+Es gibt eine einzige Ausnahme in dieser Situation, die als eine Singularität definiert wird. Diese entsteht, wenn $r_{11}=1$ entspricht. Da
 \[r_{11}=1\Rightarrow\cos^{-1}{1}=0\Rightarrow \theta_5=0\]
 Somit ist der Fall, dass die Winkel $\theta_4$ und $\theta_6$ nicht berechenbar sind, da
 \[\sin{\theta_5}=0\]
@@ -836,6 +946,7 @@ Durch das aber die Rotation $\theta_4$ und $\theta_6$ auf der $X$-Achse erfolgt,
     \theta_6&=\cos^{-1}r_{22}
 \end{align*}
 \end{OutBox}
+\newpage
 \section{Theoretische Umsetzung eines 6R-Manipulatoren mit IK}
 Durch das die Funktionsweise der Inversen Kinematik bekannt ist, wird es möglich den ganzen Prozess zur Berechnung der Gelenkweinkel eines 6R-Manipulaotren zu verallgemeinern.
 Für die Berechnung von $\{\theta_1,\theta_2,\theta_3,\theta_4,\theta_5, \theta_6\}$ werden die Eingaben $\{x,y,z,\varphi,\theta,\psi,\\ L_1,L_2,L_3, L_4\}$ wo $L_1$ die Länge der Schulter, $L_2$ die Länge des Oberarms, $L_3$ die gesamte Länge vom Anstzpunkt des Oberarms bis zu Handgelenk und $L_4$ die Länge des Handgelenks ist. Somit ist definiert:
@@ -849,7 +960,7 @@ Durch die Eingaben wird zuerst eine zu erreichende Rotationsmatrix $R_D$ geformt
 \[R_D=R_z\left(\psi\right)R_y\left(\theta\right)R_x\left(\varphi\right)\]
 Danach wird festgesetzt, was die Endposition $X_D$ ist
 \[X_D=\left[\begin{matrix}x_D\\y_D\\z_D\\\end{matrix}\right]=\left[\begin{matrix}x\\y\\z\\\end{matrix}\right]-R_D\left[\begin{matrix}L_4\\0\\0\\\end{matrix}\right].\]
-Dadurch können die jeglichen Berechnungen der Gelenkwinkel folgende Werte berechnet werden:
+Dadurch können die Gelenkwinkel durch die vordefinierten Berechnungen erhalten werden:
 
 \begin{align*}
     \theta_1 & =\tan^{-1}{\left(\frac{y_D}{x_D}\right)}=atan2\left(y_D,x_D\right)\\
