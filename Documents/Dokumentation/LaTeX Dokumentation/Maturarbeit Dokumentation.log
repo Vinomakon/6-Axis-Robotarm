@@ -1,10 +1,10 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.9.8)  11 OCT 2025 11:28
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.9.10)  27 OCT 2025 14:59
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
  %&-line parsing enabled.
-**"c:/Users/vovmo/Documents/GitHub/6-Axis-Robotarm/Documents/Dokumentation/LaTeX Dokumentation/Maturarbeit Dokumentation.tex"
-(c:/Users/vovmo/Documents/GitHub/6-Axis-Robotarm/Documents/Dokumentation/LaTeX Dokumentation/Maturarbeit Dokumentation.tex
+**"c:/Users/vovmo/Documents/Bäumlihof 3A/Maturaarbeit/Documents/Dokumentation/LaTeX Dokumentation/Maturarbeit Dokumentation.tex"
+(c:/Users/vovmo/Documents/Bäumlihof 3A/Maturaarbeit/Documents/Dokumentation/LaTeX Dokumentation/Maturarbeit Dokumentation.tex
 LaTeX2e <2025-06-01> patch level 1
 L3 programming layer <2025-08-13>
 (C:\Users\vovmo\AppData\Local\Programs\MiKTeX\tex/latex/koma-script\scrreprt.cls
@@ -1348,9 +1348,8 @@ Package biblatex Info: Automatic encoding selection.
 \openout4 = `"Maturarbeit Dokumentation.bcf"'.
 
 Package biblatex Info: Trying to load bibliographic data...
-Package biblatex Info: ... file '"Maturarbeit Dokumentation".bbl' not found.
-
-No file "Maturarbeit Dokumentation".bbl.
+Package biblatex Info: ... file '"Maturarbeit Dokumentation".bbl' found.
+ (Maturarbeit Dokumentation.bbl)
 Package biblatex Info: Reference section=0 on input line 76.
 Package biblatex Info: Reference segment=0 on input line 76.
 
@@ -1779,13 +1778,13 @@ Package logreq Info: Writing requests to '"Maturarbeit Dokumentation".run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 52603 strings out of 468133
- 1121717 string characters out of 5430713
- 2427471 words of memory out of 5000000
- 79970 multiletter control sequences out of 15000+600000
+ 52606 strings out of 468133
+ 1122009 string characters out of 5430712
+ 2427494 words of memory out of 5000000
+ 79971 multiletter control sequences out of 15000+600000
  715328 words of font info for 183 fonts, out of 8000000 for 9000
  1143 hyphenation exceptions out of 8191
- 108i,18n,107p,11322b,2918s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 108i,18n,107p,11326b,2918s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/vovmo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx12.pfb><C:/Users/vovmo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx8.pfb><C:/Users/vovmo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmex10.pfb><C:/Users/vovmo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi12.pfb><C:/Users/vovmo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi6.pfb><C:/Users/vovmo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi8.pfb><C:/Users/vovmo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr10.pfb><C:/Users/vovmo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr12.pfb><C:/Users/vovmo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr17.pfb><C:/Users/vovmo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr6.pfb><C:/Users/vovmo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr8.pfb><C:/Users/vovmo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmri12.pfb><C:/Users/vovmo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmssbx10.pfb><C:/Users/vovmo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy10.pfb><C:/Users/vovmo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy8.pfb><C:/Users/vovmo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtt10.pfb><C:/Users/vovmo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtt12.pfb>
 Output written on "Maturarbeit Dokumentation.pdf" (54 pages, 5051016 bytes).
 PDF statistics:
