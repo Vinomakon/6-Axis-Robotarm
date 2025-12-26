@@ -79,9 +79,12 @@ def ik_calculate(x_pos, y_pos, z_pos, x_rot, y_rot, z_rot):
 def fk_calculate(mot1, mot2, mot3, mot4, mot5, mot6):
     return [random.randint(0, 10) for i in range(6)]
 
+
 pot = l1 + Vector3(0, l2.x, 0) + l3 + l4
+default_configuration = np.round(np.asarray([pot.x, pot.y, pot.z, 0, 0, 0]), 4)
+
 # print(pot)
-ik = ik_calculate(pot.x-40, pot.y, 0, 0, 0, 90)
-p3 = np.atan2(l3.y, l3.x)
-ik[1] -= np.pi / 2
-ik[2] -= -np.pi / 2 + p3
+# ik = ik_calculate(pot.x-40, pot.y, 0, 0, 0, 90)
+# p3 = np.atan2(l3.y, l3.x)
+# ik[1] -= np.pi / 2
+# ik[2] -= -np.pi / 2 + p3

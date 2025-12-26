@@ -28,7 +28,7 @@ class ToggledFrame(tk.Frame):
             self.toggle_button.configure(text='ᐯ')
 
 class FKControl(tk.Frame):
-    def __init__(self, parent, *args, **kwargs):
+    def __init__(self, parent, robot, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
 
         mot_args = tk.Frame(self)
@@ -64,10 +64,10 @@ class FKControl(tk.Frame):
             ttk.Label(mot, text=f"{axes[i]} Rotation").pack(fill="x", expand=1, padx=3, pady=6)
             ttk.Entry(mot, textvariable=self.fk_results[i+3], state="readonly").pack(fill="x", expand=1, padx=3, pady=6)
 
-        self.submit_but = ttk.Button(self, text="Submit Motor Rotations")
+        self.submit_but = ttk.Button(self, text="Submit Motor Rotations", command=robot.submit_motor_rotations)
         self.submit_but.pack(fill="x", padx=3, pady=3)
 
-        self.submit_default_but = ttk.Button(self, text="Set All to Rotation 0")
+        self.submit_default_but = ttk.Button(self, text="Set All to Rotation 0", command=robot.submit_motor_rotations_zero)
         self.submit_default_but.pack(fill="x", padx=3, pady=3)
 
     def calculate_end_effector(self):
@@ -75,15 +75,15 @@ class FKControl(tk.Frame):
             self.fk_results[idx].set(val)
 
 class IKControl(tk.Frame):
-    def __init__(self, parent, *args, **kwargs):
+    def __init__(self, parent, robot, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
 
-        self.x_pos = tk.DoubleVar(value=0)
-        self.y_pos = tk.DoubleVar(value=0)
-        self.z_pos = tk.DoubleVar(value=0)
-        self.x_rot = tk.DoubleVar(value=0)
-        self.y_rot = tk.DoubleVar(value=0)
-        self.z_rot = tk.DoubleVar(value=0)
+        self.x_pos = tk.DoubleVar(value=kinematics.default_configuration[0])
+        self.y_pos = tk.DoubleVar(value=kinematics.default_configuration[1])
+        self.z_pos = tk.DoubleVar(value=kinematics.default_configuration[2])
+        self.x_rot = tk.DoubleVar(value=kinematics.default_configuration[3])
+        self.y_rot = tk.DoubleVar(value=kinematics.default_configuration[4])
+        self.z_rot = tk.DoubleVar(value=kinematics.default_configuration[5])
 
         self.ik_results_raw = [0.0 for i in range(6)]
         self.ik_results = [tk.DoubleVar(value=0) for i in range(6)]
@@ -123,10 +123,10 @@ class IKControl(tk.Frame):
             ttk.Label(mot, text=f"Rotation of Motor {i}").pack(fill="x", expand=1, padx=3, pady=6)
             ttk.Entry(mot, textvariable=self.ik_results[i], state="readonly").pack(fill="x", expand=1, padx=3, pady=6)
 
-        self.submit_but = ttk.Button(self, text="Submit Positional and Rotational Arguments")
+        self.submit_but = ttk.Button(self, text="Submit Positional and Rotational Arguments", command=robot.submit_ik)
         self.submit_but.pack(fill="x", padx=3, pady=3)
 
-        self.submit_default_but = ttk.Button(self, text="Set to Default")
+        self.submit_default_but = ttk.Button(self, text="Set to Default", command=robot.submit_ik_default)
         self.submit_default_but.pack(fill="x", padx=3, pady=3)
 
     def calculate_motor_rotations(self):
@@ -140,7 +140,7 @@ class IKControl(tk.Frame):
             self.ik_results[i].set(np.rad2deg(self.ik_results_raw[i]))
 
 class MotorControl(tk.Frame):
-    def __init__(self, parent, *args, **kwargs):
+    def __init__(self, parent, robot, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
 
         self.enable_mots = [tk.BooleanVar(value=False) for i in range(6)]
@@ -157,7 +157,7 @@ class MotorControl(tk.Frame):
             mot = tk.Frame(en_mots_frame, borderwidth=1, relief="solid", padx=1)
             mot.pack(expand=1, side="left")
             ttk.Label(en_mots_frame, text=f"Enable Motor {i}").pack(fill="x", side="left")
-            en = ttk.Checkbutton(en_mots_frame, variable=self.enable_mots[i], takefocus = 0)
+            en = ttk.Checkbutton(en_mots_frame, variable=self.enable_mots[i], takefocus = 0, command=lambda: robot.enable_mot(i))
             en.pack(fill="x", side="left")
 
         emergency_set = tk.Frame(self, borderwidth=5, relief="ridge")
@@ -178,13 +178,14 @@ class VEPRParameters(tk.Frame):
         def __init__(self, parent, *args, **kwargs):
             tk.Frame.__init__(self, parent, *args, **kwargs)
 
-            self.global_motor_speed = tk.IntVar(value=300000)
-            self.global_motor_accel = tk.IntVar(value=300000)
+            self.global_motor_speed = tk.IntVar(value=0)
+            self.global_motor_accel = tk.IntVar(value=0)
 
             self.max_speed = [tk.IntVar(value=0) for i in range(6)]
             self.inverse_direction = [tk.BooleanVar(value=False) for i in range(6)]
             self.max_accel = [tk.IntVar(value=0) for i in range(6)]
             self.reduction = [tk.DoubleVar(value=0) for i in range(6)]
+            self.multiplier = [tk.DoubleVar(value=0) for i in range(6)]
 
             ttk.Label(self, text='Global Maximum Speed').pack(fill="x", padx=3, pady=3)
             ttk.Entry(self, textvariable=self.global_motor_speed).pack(fill="x", padx=3, pady=3)
@@ -201,6 +202,8 @@ class VEPRParameters(tk.Frame):
                 ttk.Label(mot, text=f'Motor {i}').pack(fill="x", padx=3, pady=8, expand=1)
                 ttk.Label(mot, text='Maximum Speed').pack(fill="x", padx=3, pady=3, expand=1)
                 ttk.Entry(mot, textvariable=self.max_speed[i]).pack(fill="x", padx=3, pady=3, expand=1)
+                ttk.Label(mot, text='Speed Multiplier').pack(fill="x", padx=3, pady=3, expand=1)
+                ttk.Entry(mot, textvariable=self.multiplier[i]).pack(fill="x", padx=3, pady=3, expand=1)
                 inv_dir_frame = tk.Frame(mot)
                 inv_dir_frame.pack(fill="x", padx=3, pady=3)
                 ttk.Label(inv_dir_frame, text='Inverse Direction').pack(side="left", fill="x", padx=3, pady=3, expand=1)
@@ -246,7 +249,6 @@ class VEPRParameters(tk.Frame):
     class TechnicalParameters(tk.Frame):
         def __init__(self, parent, *args, **kwargs):
             tk.Frame.__init__(self, parent, *args, **kwargs)
-
             self.microsteps = [tk.IntVar(value=0) for i in range(6)]
             self.irun = [tk.IntVar(value=0) for i in range(6)]
             self.ihold = [tk.IntVar(value=0) for i in range(6)]
@@ -270,22 +272,26 @@ class VEPRParameters(tk.Frame):
             ttk.Label(self, text='Steps per full Revolution').pack(fill="x", padx=3, pady=3)
             ttk.Entry(self, textvariable=self.steps_per_full_revolution).pack(fill="x", padx=3, pady=3)
 
-    def __init__(self, parent, *args, **kwargs):
+    def __init__(self, parent, robot, *args, **kwargs):
+        self.robot = robot
         tk.Frame.__init__(self, parent, *args, **kwargs)
         tabs = ttk.Notebook(self)
         tabs.pack(expand=True, fill="both", padx=3, pady=3)
 
-        mot_params = self.MotorParameters(self)
-        home_params = self.HomingParameters(self)
-        tech_params = self.TechnicalParameters(self)
+        self.mot_params = self.MotorParameters(self)
+        self.home_params = self.HomingParameters(self)
+        self.tech_params = self.TechnicalParameters(self)
 
-        tabs.add(mot_params, text='Motor Parameters')
-        tabs.add(home_params, text='Homing Parameters')
-        tabs.add(tech_params, text='Technical Parameters')
+        tabs.add(self.mot_params, text='Motor Parameters')
+        tabs.add(self.home_params, text='Homing Parameters')
+        tabs.add(self.tech_params, text='Technical Parameters')
+
+        submit_params = ttk.Button(self, text="Submit Parameters", command=robot.submit_params)
+        submit_params.pack(fill="x", padx=3, pady=3)
 
 class UIConfig(tk.Frame):
-    def __init__(self, parent, *args, **kwargs):
+    def __init__(self, parent, robot, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
 
-        ttk.Button(self, text="Save Config").pack(fill="x", padx=3, pady=3)
-        ttk.Button(self, text="Load Config").pack(fill="x", padx=3, pady=3)
+        ttk.Button(self, text="Save Config", command=robot.save_config).pack(fill="x", padx=3, pady=3)
+        ttk.Button(self, text="Load Config", command=robot.load_config).pack(fill="x", padx=3, pady=3)
