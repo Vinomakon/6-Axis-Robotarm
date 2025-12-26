@@ -1,0 +1,1 @@
+magick -density 1000 main.pdf output.png

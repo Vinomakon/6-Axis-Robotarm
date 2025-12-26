@@ -1,0 +1,66 @@
+\documentclass{article}
+\usepackage{tikz}
+\usepackage{tikz-3dplot}
+\usepackage{ifthen}
+\usetikzlibrary{calc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usetikzlibrary{arrows.meta, decorations.markings}
+\usepackage[dvipsnames]{xcolor}
+
+\tdplotsetmaincoords{70}{110}
+
+\colorlet{Xcol}{red}
+\colorlet{Ycol}{blue}
+\colorlet{Zcol}{Green}
+
+\colorlet{colPsi}{purple}
+\colorlet{colTheta}{Blue}
+\colorlet{colPhi}{teal}
+
+\def\radius{1.1}
+\def\axlen{1.4}
+\def\rotpsi{40}
+\def\rottheta{50}
+\def\ux{cos(\psi)*cos(\theta)}
+\def\uy{sin(\psi)*cos(\theta)}
+\def\uz{sin(\theta)}
+
+\def\rphi{0.15}
+\def\rotphi{60}
+\pagenumbering{gobble}
+\begin{document}
+\begin{tikzpicture}[tdplot_main_coords, scale=4]
+  \draw[, thick->, black!30] (0,0,0) -- (\axlen,0,0) node[below left, scale=1.5] {\textcolor{Xcol}{$x$}};
+  \draw[->, black!30] (0,0,0) -- (0,\axlen,0) node[right, scale=1.5]  {\textcolor{Ycol}{$y$}};
+  \draw[->, black!30] (0,0,0) -- (0,0,\axlen) node[above, scale=1.5]  {\textcolor{Zcol}{$z$}};
+  
+  % X-Rotation
+  % \draw[thin, dashed] plot[domain=0:360, samples=180] (0,{\radius*cos(\x)},{\radius*sin(\x)});
+  % Y-Rotation
+  % \draw[thin, dashed] plot[domain=0:360, samples=180] ({\radius*cos(\x)},0,{\radius*sin(\x)});
+  % Z-Rotation
+  % \draw[thin] (0, 0, 0) -- (\radius, 0, 0);
+
+  \draw[thin, dashed, black!60] plot[domain=0:360, samples=180] ({\radius*cos(\x)},{\radius*sin(\x)}, 0);
+
+  \draw[very thick, BrickRed, dashed] (0, 0, 0) -- ({\radius * cos(\rotpsi)}, {\radius * sin(\rotpsi)}, 0);
+  \draw[very thick, colPsi, ->] plot[domain=0:\rotpsi, samples=180] ({\radius*cos(\x)},{\radius*sin(\x)}, 0);
+  \node[scale=2] at ({\radius * cos(\rotpsi / 2) * 0.6}, {\radius * sin(\rotpsi / 2) * 0.6}, 0) {\textcolor{colPsi}{$\psi$}};
+
+  
+  
+  \node[scale=2] at ({\radius * cos(\rotpsi) * cos(\rottheta) * 0.5}, {\radius * sin(\rotpsi) * cos(\rottheta / 2) * 0.5}, {\radius * sin(\rottheta / 2) * 0.5}) {\textcolor{colTheta}{$\theta$}};
+
+  
+  \begin{scope}[
+    rotate around z=\rotpsi, rotate around y=-\rottheta
+  ]
+    \draw[very thick, <-, colPhi] plot[domain=-45:225, samples=180] ({\axlen * 0.4}, {\rphi * cos(\x)}, {\rphi * sin(\x)});
+    \node[scale=2, colPhi] at ({\axlen * 0.35}, 0.1, 0.3) {$\varphi$};
+  \end{scope}
+
+  \draw[very thick, blue] (0, 0, 0) -- ({\radius * cos(\rotpsi) * cos(\rottheta)}, {\radius * sin(\rotpsi) * cos(\rottheta)}, {\radius * sin(\rottheta)});
+  \draw[very thick, colTheta, ->] plot[domain=0:\rottheta, samples=180] ({\radius * cos(\rotpsi) * cos(\x)}, {\radius * sin(\rotpsi) * cos(\x)}, {\radius * sin(\x)});
+\end{tikzpicture}
+\end{document}

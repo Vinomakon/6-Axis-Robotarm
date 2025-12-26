@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": "../../.."
+		},
+		{
+			"name": "6-Axis-Robotarm",
+			"path": "../../../Arduino Projects/6-Axis-Robotarm"
+		}
+	],
+	"settings": {}
+}

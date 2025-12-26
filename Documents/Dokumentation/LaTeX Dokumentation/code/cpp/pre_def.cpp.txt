@@ -1,0 +1,2 @@
+stepper[mot].setMaxSpeed(100000)
+driver[mot].microsteps(256)

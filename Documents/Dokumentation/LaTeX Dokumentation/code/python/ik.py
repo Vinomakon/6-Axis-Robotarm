@@ -42,7 +42,7 @@ def inverse_kinematics(x, y, z, rx, ry, rz, l1, l2, l3, l4):
     solutions_3 = []
     for i in solutions_1:
         for j in solutions_2:
-            R_3 = pitch_rotation(i[0]) * yaw_rotation(j[0]) * yaw_rotation(j[1])
+            R_3 = yaw_rotation(j[1]) * yaw_rotation(j[0]) * pitch_rotation(i[0])
             R_N = R_D * R_3.transpose()
             if R_N.item(0, 0) == 1:
                 q4 = 0

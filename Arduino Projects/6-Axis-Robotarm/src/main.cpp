@@ -66,7 +66,6 @@ using namespace TMC2130_n;
 // WRITE ADDRESS
 #define WRITE_ADDR 0x80
 
-int cs_select[] = {8, 2};
 // WIFI
 AsyncWebServer server(80);
 AsyncWebSocket ws("/ws");

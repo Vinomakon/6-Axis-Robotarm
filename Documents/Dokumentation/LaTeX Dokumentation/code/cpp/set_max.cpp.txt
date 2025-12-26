@@ -1,0 +1,2 @@
+stepper[i].setMaxSpeed(speed);
+stepper[i].setAcceleration(acceleration);

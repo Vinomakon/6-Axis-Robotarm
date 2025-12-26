@@ -1,0 +1,98 @@
+\begin{thebibliography}{10}
+
+\bibitem{ESP32}
+Espressif.
+\newblock Esp32-s3 series datasheet version 2.0, 2021.
+\newblock Stand: 10. Oktober 2025.
+
+\bibitem{gradio}
+Gradio.
+\newblock Gradio, 2025.
+\newblock Zugriff: 06. Oktober 2025.
+
+\bibitem{IK}
+Kris Hauser.
+\newblock Chapter 6. inverse kinematics, 2024.
+\newblock Stand: 12. Oktober 2025.
+
+\bibitem{TMC}
+Trinamic Motion Control GmbH &~Co. KG.
+\newblock Tmc5160 / tmc5160a datasheet, 2022.
+\newblock Stand: 10. Oktober 2025.
+
+\bibitem{PlatformIO}
+PlatformIO Labs.
+\newblock Platformio, 2025.
+\newblock Zugriff: 09. Oktober 2025.
+
+\bibitem{AccelStepper}
+Mike McCauley.
+\newblock Accelstepper, 2025.
+\newblock Zugriff: 09. Oktober 2025.
+
+\bibitem{Stepper}
+Orientalmotor.
+\newblock Basics of stepper motors.
+\newblock Stand: 09. Oktober 2025.
+
+\bibitem{PrusaTable}
+Prusa Research.
+\newblock Filament material guide.
+\newblock Stand: 10. Oktober 2025.
+
+\bibitem{NumPy}
+NumPy Team.
+\newblock Numpy, 2025.
+\newblock Zugriff: 06. Oktober 2025.
+
+\bibitem{CAD}
+Wikipedia.
+\newblock Cad, 2025.
+\newblock Zugriff: 09. Oktober 2025.
+
+\bibitem{DOF}
+Wikipedia.
+\newblock Freiheitsgrad, 2025.
+\newblock Stand: 05. Oktober 2025.
+
+\bibitem{FDM}
+Wikipedia.
+\newblock Fused deposition modeling, 2025.
+\newblock Zugriff: 09. Oktober 2025.
+
+\bibitem{PCB}
+Wikipedia.
+\newblock Leiterplatte, 2025.
+\newblock Stand: 05. Oktober 2025.
+
+\bibitem{PID}
+Wikipedia.
+\newblock Regler, 2025.
+\newblock Stand: 08. Oktober 2025.
+
+\bibitem{Belt}
+Wikipedia.
+\newblock Riemengetriebe, 2025.
+\newblock Zugriff: 09. Oktober 2025.
+
+\bibitem{Robot}
+Wikipedia.
+\newblock Roboter, 2025.
+\newblock Stand: 05. Oktober 2025.
+
+\bibitem{Sensor}
+Wikipedia.
+\newblock Sensor, 2025.
+\newblock Zugriff: 09. Oktober 2025.
+
+\bibitem{SPI}
+Wikipedia.
+\newblock Serial peripheral interface, 2025.
+\newblock Stand: 09. Oktober 2025.
+
+\bibitem{Websockets}
+Wikipedia.
+\newblock Websocket, 2025.
+\newblock Zugriff: 09. Oktober 2025.
+
+\end{thebibliography}
