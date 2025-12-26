@@ -1,10 +1,10 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.9.8)  24 OCT 2025 13:17
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.9.10)  27 OCT 2025 14:59
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
  %&-line parsing enabled.
-**"c:/Users/vovmo/Documents/GitHub/6-Axis-Robotarm/Documents/Dokumentation/LaTeX Dokumentation/Maturarbeit Dokumentation.tex"
-(c:/Users/vovmo/Documents/GitHub/6-Axis-Robotarm/Documents/Dokumentation/LaTeX Dokumentation/Maturarbeit Dokumentation.tex
+**"c:/Users/vovmo/Documents/BÃ¤umlihof 3A/Maturaarbeit/Documents/Dokumentation/LaTeX Dokumentation/Maturarbeit Dokumentation.tex"
+(c:/Users/vovmo/Documents/BÃ¤umlihof 3A/Maturaarbeit/Documents/Dokumentation/LaTeX Dokumentation/Maturarbeit Dokumentation.tex
 LaTeX2e <2025-06-01> patch level 1
 L3 programming layer <2025-08-13>
 (C:\Users\vovmo\AppData\Local\Programs\MiKTeX\tex/latex/koma-script\scrreprt.cls
@@ -1214,7 +1214,14 @@ LaTeX Font Info:    Trying to load font information for T1+lmr on input line 76.
 File: t1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 ) (Maturarbeit Dokumentation.aux
 Package babel Info: 'ngerman' activates 'ngerman' shorthands.
-(babel)             Reported on input line 10.
+(babel)             Reported on input line 11.
+
+
+LaTeX Warning: Label `lst:cpp_pins' multiply defined.
+
+
+LaTeX Warning: Label `lst:cpp_pins@cref' multiply defined.
+
 )
 \openout1 = `"Maturarbeit Dokumentation.aux"'.
 
@@ -1341,21 +1348,8 @@ Package biblatex Info: Automatic encoding selection.
 \openout4 = `"Maturarbeit Dokumentation.bcf"'.
 
 Package biblatex Info: Trying to load bibliographic data...
-
-
-c:/Users/vovmo/Documents/GitHub/6-Axis-Robotarm/Documents/Dokumentation/LaTeX Dokumentation/Maturarbeit Dokumentation.tex:76: Package biblatex Error: File '"Maturarbeit Dokumentation".bbl' not created by biblatex.
-
-See the biblatex package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.76 \begin{document}
-                     ^^M
-This file was apparently not created by biblatex. Rename it or
-move it to a location were TeX will not find it. If this error
-persists, consider redefining \blxauxsuffix.See the biblatex
-manual for details.
-
+Package biblatex Info: ... file '"Maturarbeit Dokumentation".bbl' found.
+ (Maturarbeit Dokumentation.bbl)
 Package biblatex Info: Reference section=0 on input line 76.
 Package biblatex Info: Reference segment=0 on input line 76.
 
@@ -1380,4 +1374,421 @@ Package microtype Info: Loading generic protrusion settings for font family
 ]
 Package tocbasic Info: character protrusion at toc deactivated on input line 104.
  (Maturarbeit Dokumentation.toc
-LaTeX Font Info:    Trying to l
+LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 4.
+ (C:\Users\vovmo\AppData\Local\Programs\MiKTeX\tex/latex/lm\ot1lmr.fd
+File: ot1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+)
+LaTeX Font Info:    Trying to load font information for OML+lmm on input line 4.
+ (C:\Users\vovmo\AppData\Local\Programs\MiKTeX\tex/latex/lm\omllmm.fd
+File: omllmm.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+)
+LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 4.
+ (C:\Users\vovmo\AppData\Local\Programs\MiKTeX\tex/latex/lm\omslmsy.fd
+File: omslmsy.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+)
+LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 4.
+ (C:\Users\vovmo\AppData\Local\Programs\MiKTeX\tex/latex/lm\omxlmex.fd
+File: omxlmex.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+)
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <12> on input line 4.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <8> on input line 4.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <6> on input line 4.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 4.
+ (C:\Users\vovmo\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+) (C:\Users\vovmo\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-msa.cfg
+File: mt-msa.cfg 2006/02/04 v1.1 microtype config. file: AMS symbols (a) (RS)
+)
+LaTeX Font Info:    Trying to load font information for U+msb on input line 4.
+ (C:\Users\vovmo\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+) (C:\Users\vovmo\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-msb.cfg
+File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
+)
+
+[3
+
+])
+\tf@toc=\write5
+\openout5 = `"Maturarbeit Dokumentation.toc"'.
+
+
+
+[4]
+chapter 1.
+
+
+
+
+
+
+
+
+[5
+
+
+
+]
+
+[6]
+chapter 2.
+
+Underfull \hbox (badness 10000) in paragraph at lines 143--147
+
+ []
+
+
+
+[7
+
+{C:/Users/vovmo/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathit.enc}{C:/Users/vovmo/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-rm.enc}]
+Underfull \hbox (badness 10000) in paragraph at lines 206--208
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 209--211
+
+ []
+
+
+
+[8{C:/Users/vovmo/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathex.enc}{C:/Users/vovmo/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathsy.enc}]
+Underfull \hbox (badness 10000) in paragraph at lines 232--235
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 242--250
+
+ []
+
+
+
+[9]
+
+[10]
+chapter 3.
+
+
+[11
+
+]
+<images/Screenshots/Fusion360.png, id=165, 1927.2pt x 1047.915pt>
+File: images/Screenshots/Fusion360.png Graphic file (type png)
+<use images/Screenshots/Fusion360.png>
+Package pdftex.def Info: images/Screenshots/Fusion360.png  used on input line 259.
+(pdftex.def)             Requested size: 455.24411pt x 247.53925pt.
+<images/Screenshots/SolidWorks.png, id=167, 1927.2pt x 1047.915pt>
+File: images/Screenshots/SolidWorks.png Graphic file (type png)
+<use images/Screenshots/SolidWorks.png>
+Package pdftex.def Info: images/Screenshots/SolidWorks.png  used on input line 263.
+(pdftex.def)             Requested size: 455.24411pt x 247.53925pt.
+
+
+[12 <./images/Screenshots/Fusion360.png> <./images/Screenshots/SolidWorks.png>]
+<images/Online/PrusaMK4S.png, id=175, 1027.84pt x 1027.84pt>
+File: images/Online/PrusaMK4S.png Graphic file (type png)
+<use images/Online/PrusaMK4S.png>
+Package pdftex.def Info: images/Online/PrusaMK4S.png  used on input line 275.
+(pdftex.def)             Requested size: 182.09486pt x 182.08607pt.
+<images/Online/PrusaCoreONE.png, id=176, 1122.1925pt x 1123.19624pt>
+File: images/Online/PrusaCoreONE.png Graphic file (type png)
+<use images/Online/PrusaCoreONE.png>
+Package pdftex.def Info: images/Online/PrusaCoreONE.png  used on input line 280.
+(pdftex.def)             Requested size: 182.09486pt x 182.25157pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 287--288
+
+ []
+
+
+
+[13 <./images/Online/PrusaMK4S.png> <./images/Online/PrusaCoreONE.png>]
+LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 289.
+ (C:\Users\vovmo\AppData\Local\Programs\MiKTeX\tex/latex/lm\ts1lmr.fd
+File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+)
+
+[14{C:/Users/vovmo/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ts1.enc}]
+chapter 4.
+<images/Online/NEMA17_25.jpg, id=191, 376.40625pt x 376.40625pt>
+File: images/Online/NEMA17_25.jpg Graphic file (type jpg)
+<use images/Online/NEMA17_25.jpg>
+Package pdftex.def Info: images/Online/NEMA17_25.jpg  used on input line 315.
+(pdftex.def)             Requested size: 136.57462pt x 136.57443pt.
+<images/Online/NEMA17_48.jpg, id=192, 376.40625pt x 376.40625pt>
+File: images/Online/NEMA17_48.jpg Graphic file (type jpg)
+<use images/Online/NEMA17_48.jpg>
+Package pdftex.def Info: images/Online/NEMA17_48.jpg  used on input line 319.
+(pdftex.def)             Requested size: 136.57462pt x 136.57443pt.
+<images/Online/NEMA17_60.jpg, id=193, 376.40625pt x 376.40625pt>
+File: images/Online/NEMA17_60.jpg Graphic file (type jpg)
+<use images/Online/NEMA17_60.jpg>
+Package pdftex.def Info: images/Online/NEMA17_60.jpg  used on input line 323.
+(pdftex.def)             Requested size: 136.57462pt x 136.57443pt.
+
+
+[15
+
+ <./images/Online/NEMA17_25.jpg> <./images/Online/NEMA17_48.jpg> <./images/Online/NEMA17_60.jpg>]
+
+[16]
+<images/Screenshots/NEMA17_25mm_TC.png, id=203, 1618.54688pt x 749.80125pt>
+File: images/Screenshots/NEMA17_25mm_TC.png Graphic file (type png)
+<use images/Screenshots/NEMA17_25mm_TC.png>
+Package pdftex.def Info: images/Screenshots/NEMA17_25mm_TC.png  used on input line 334.
+(pdftex.def)             Requested size: 368.74272pt x 170.81459pt.
+<images/Screenshots/NEMA17_48mm_TC.png, id=204, 1620.0525pt x 749.80125pt>
+File: images/Screenshots/NEMA17_48mm_TC.png Graphic file (type png)
+<use images/Screenshots/NEMA17_48mm_TC.png>
+Package pdftex.def Info: images/Screenshots/NEMA17_48mm_TC.png  used on input line 338.
+(pdftex.def)             Requested size: 368.74272pt x 170.65442pt.
+<images/Screenshots/NEMA17_60mm_TC.png, id=205, 1618.54688pt x 753.5653pt>
+File: images/Screenshots/NEMA17_60mm_TC.png Graphic file (type png)
+<use images/Screenshots/NEMA17_60mm_TC.png>
+Package pdftex.def Info: images/Screenshots/NEMA17_60mm_TC.png  used on input line 342.
+(pdftex.def)             Requested size: 368.74272pt x 171.67209pt.
+
+
+[17 <./images/Screenshots/NEMA17_25mm_TC.png> <./images/Screenshots/NEMA17_48mm_TC.png> <./images/Screenshots/NEMA17_60mm_TC.png>]
+<images/Online/Phase SteppingTP.png, id=214, 368.37625pt x 308.15125pt>
+File: images/Online/Phase SteppingTP.png Graphic file (type png)
+<use images/Online/Phase SteppingTP.png>
+Package pdftex.def Info: images/Online/Phase SteppingTP.png  used on input line 353.
+(pdftex.def)             Requested size: 159.33821pt x 133.28767pt.
+<images/Online/Phase SteppingOP.png, id=215, 387.4475pt x 314.17375pt>
+File: images/Online/Phase SteppingOP.png Graphic file (type png)
+<use images/Online/Phase SteppingOP.png>
+Package pdftex.def Info: images/Online/Phase SteppingOP.png  used on input line 358.
+(pdftex.def)             Requested size: 159.33821pt x 129.20515pt.
+<images/Online/Inner_NEMA17.jpg, id=216, 1103.12125pt x 1103.12125pt>
+File: images/Online/Inner_NEMA17.jpg Graphic file (type jpg)
+<use images/Online/Inner_NEMA17.jpg>
+Package pdftex.def Info: images/Online/Inner_NEMA17.jpg  used on input line 367.
+(pdftex.def)             Requested size: 182.09486pt x 182.09131pt.
+
+
+[18 <./images/Online/Phase SteppingTP.png> <./images/Online/Phase SteppingOP.png> <./images/Online/Inner_NEMA17.jpg>]
+<images/Online/LimitSwitch.jpg, id=225, 381.425pt x 381.425pt>
+File: images/Online/LimitSwitch.jpg Graphic file (type jpg)
+<use images/Online/LimitSwitch.jpg>
+Package pdftex.def Info: images/Online/LimitSwitch.jpg  used on input line 378.
+(pdftex.def)             Requested size: 136.57462pt x 136.57373pt.
+<images/Online/LimitSwitchSchematic.png, id=226, 1927.2pt x 1084.05pt>
+File: images/Online/LimitSwitchSchematic.png Graphic file (type png)
+<use images/Online/LimitSwitchSchematic.png>
+Package pdftex.def Info: images/Online/LimitSwitchSchematic.png  used on input line 383.
+(pdftex.def)             Requested size: 273.14923pt x 153.63512pt.
+
+
+[19 <./images/Online/LimitSwitch.jpg> <./images/Online/LimitSwitchSchematic.png>]
+chapter 5.
+<images/Online/ESP32-S3-DevKitM-1.png, id=234, 741.77126pt x 668.4975pt>
+File: images/Online/ESP32-S3-DevKitM-1.png Graphic file (type png)
+<use images/Online/ESP32-S3-DevKitM-1.png>
+Package pdftex.def Info: images/Online/ESP32-S3-DevKitM-1.png  used on input line 396.
+(pdftex.def)             Requested size: 227.62206pt x 205.13078pt.
+<images/Online/TMC5160.jpg, id=235, 714.67pt x 922.44624pt>
+File: images/Online/TMC5160.jpg Graphic file (type jpg)
+<use images/Online/TMC5160.jpg>
+Package pdftex.def Info: images/Online/TMC5160.jpg  used on input line 406.
+(pdftex.def)             Requested size: 127.46584pt x 164.51302pt.
+<images/Online/TMC51260-Schematic.png, id=236, 92.9874pt x 96.36pt>
+File: images/Online/TMC51260-Schematic.png Graphic file (type png)
+<use images/Online/TMC51260-Schematic.png>
+Package pdftex.def Info: images/Online/TMC51260-Schematic.png  used on input line 411.
+(pdftex.def)             Requested size: 182.09486pt x 188.704pt.
+
+
+[20
+
+ <./images/Online/ESP32-S3-DevKitM-1.png>]
+
+[21 <./images/Online/TMC5160.jpg> <./images/Online/TMC51260-Schematic.png>]
+LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 422.
+ (C:\Users\vovmo\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmtt.fd
+File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+)
+Package microtype Info: Loading generic protrusion settings for font family
+(microtype)             `lmtt' (encoding: T1).
+(microtype)             For optimal results, create family-specific settings.
+(microtype)             See the microtype manual for details.
+ (code/cpp/pins.cpp.txt) (code/cpp/parameters.cpp.txt
+
+[22]) (code/cpp/tmc_stepper.cpp.txt) (code/cpp/accel_stepper.cpp.txt)
+Underfull \hbox (badness 2285) in paragraph at lines 430--430
+[][][]|\T1/lmr/m/n/12 (+20) Vor-de-fi-nier-te Kon-troll-funk-tio-nen der Bi-blio-the-ken []\T1/lmtt/m/n/12 AccelStepper.h[] \T1/lmr/m/n/12 (+20) und
+ []
+
+(code/cpp/tmc_stepper.cpp.txt)
+
+[23] (code/cpp/switch.cpp.txt) (code/cpp/can_move_for.cpp.txt
+
+[24]) (code/cpp/stop_move.cpp.txt)
+
+[25]
+<images/Screenshots/Gradio.png, id=363, 1894.55804pt x 1290.0195pt>
+File: images/Screenshots/Gradio.png Graphic file (type png)
+<use images/Screenshots/Gradio.png>
+Package pdftex.def Info: images/Screenshots/Gradio.png  used on input line 467.
+(pdftex.def)             Requested size: 455.24411pt x 309.96532pt.
+
+
+[26 <./images/Screenshots/Gradio.png>] (code/python/send_websockets.py) (code/python/receive_websockets.py)
+
+[27] (code/python/json_load.py)
+
+[28] (code/python/speed_reg.py)
+
+[29]
+chapter 6.
+
+
+[30
+
+]
+Underfull \hbox (badness 10000) in paragraph at lines 550--553
+
+ []
+
+
+
+[31]
+
+[32]
+Underfull \hbox (badness 10000) in paragraph at lines 646--648
+
+ []
+
+
+
+
+
+
+
+
+
+
+Overfull \hbox (7.18777pt too wide) in paragraph at lines 730--731
+\T1/lmr/m/n/12 (-20) Dementsprechend ver-fügt je-de Ro-ta-ti-ons-ach-se über ei-ne Ro-ta-ti-ons-ma-trix im 3-dimensionalem
+ []
+
+
+
+[33]
+
+[34]
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <5> on input line 765.
+
+Overfull \hbox (10.51335pt too wide) detected at line 779
+[]
+ []
+
+
+
+[35]
+
+[36]
+Underfull \hbox (badness 10000) in paragraph at lines 801--806
+
+ []
+
+
+
+[37]
+
+[38]
+
+[39]
+Underfull \hbox (badness 10000) in paragraph at lines 859--864
+
+ []
+
+
+
+[40]
+
+[41]
+Underfull \hbox (badness 10000) in paragraph at lines 881--884
+
+ []
+
+
+
+[42]
+
+[43]
+
+[44]
+
+[45]
+
+[46]
+
+[47] (code/python/ik.py
+
+[48])
+
+[49]
+chapter 7.
+
+
+[50
+
+]
+chapter 8.
+
+
+[51
+
+]
+chapter 9.
+
+
+[52
+
+]
+chapter 10.
+
+
+[53
+
+]
+chapter A.
+
+
+[54
+
+] (Maturarbeit Dokumentation.aux)
+ ***********
+LaTeX2e <2025-06-01> patch level 1
+L3 programming layer <2025-08-13>
+ ***********
+
+
+LaTeX Warning: There were multiply-defined labels.
+
+Package logreq Info: Writing requests to '"Maturarbeit Dokumentation".run.xml'.
+\openout1 = `"Maturarbeit Dokumentation.run.xml"'.
+
+ ) 
+Here is how much of TeX's memory you used:
+ 52606 strings out of 468133
+ 1122009 string characters out of 5430712
+ 2427494 words of memory out of 5000000
+ 79971 multiletter control sequences out of 15000+600000
+ 715328 words of font info for 183 fonts, out of 8000000 for 9000
+ 1143 hyphenation exceptions out of 8191
+ 108i,18n,107p,11326b,2918s stack positions out of 10000i,1000n,20000p,200000b,200000s
+<C:/Users/vovmo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx12.pfb><C:/Users/vovmo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx8.pfb><C:/Users/vovmo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmex10.pfb><C:/Users/vovmo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi12.pfb><C:/Users/vovmo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi6.pfb><C:/Users/vovmo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi8.pfb><C:/Users/vovmo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr10.pfb><C:/Users/vovmo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr12.pfb><C:/Users/vovmo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr17.pfb><C:/Users/vovmo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr6.pfb><C:/Users/vovmo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr8.pfb><C:/Users/vovmo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmri12.pfb><C:/Users/vovmo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmssbx10.pfb><C:/Users/vovmo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy10.pfb><C:/Users/vovmo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy8.pfb><C:/Users/vovmo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtt10.pfb><C:/Users/vovmo/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtt12.pfb>
+Output written on "Maturarbeit Dokumentation.pdf" (54 pages, 5051016 bytes).
+PDF statistics:
+ 949 PDF objects out of 1000 (max. 8388607)
+ 356 named destinations out of 1000 (max. 500000)
+ 52732 words of extra memory for PDF output out of 61914 (max. 10000000)
+
