@@ -34,7 +34,7 @@ class FKControl(tk.Frame):
         mot_args = tk.Frame(self)
         mot_args.pack(fill="x")
 
-        self.mot_pos = [tk.IntVar(value=0) for i in range(6)]
+        self.mot_pos = [tk.IntVar(value=60) for i in range(6)]
         self.fk_results = [tk.DoubleVar(value=0) for i in range(6)]
 
         for i in range(6):
@@ -197,7 +197,7 @@ class VEPRParameters(tk.Frame):
             mots_frame.pack(fill="x", padx=3, pady=3)
 
             for i in range(6):
-                mot = tk.Frame(mots_frame)
+                mot = tk.Frame(mots_frame, relief="solid", borderwidth=1)
                 mot.pack(fill="x", expand=1, side="left")
                 ttk.Label(mot, text=f'Motor {i}').pack(fill="x", padx=3, pady=8, expand=1)
                 ttk.Label(mot, text='Maximum Speed').pack(fill="x", padx=3, pady=3, expand=1)
@@ -224,11 +224,11 @@ class VEPRParameters(tk.Frame):
             self.second_homing_offset = [tk.IntVar(value=0) for i in range(6)]
             self.homing_offset = [tk.IntVar(value=0) for i in range(6)]
 
-            mots_frame = tk.Frame(self, relief="solid", borderwidth=1)
+            mots_frame = tk.Frame(self)
             mots_frame.pack(fill="x", padx=3, pady=3)
 
             for i in range(6):
-                mot = tk.Frame(mots_frame)
+                mot = tk.Frame(mots_frame, relief="solid", borderwidth=1)
                 mot.pack(fill="x", expand=1, side="left")
                 ttk.Label(mot, text=f'Motor {i}').pack(fill="x", padx=3, pady=8, expand=1)
                 ttk.Label(mot, text='Homing Speed').pack(fill="x", padx=3, pady=3, expand=1)
@@ -255,11 +255,11 @@ class VEPRParameters(tk.Frame):
 
             self.steps_per_full_revolution = tk.IntVar(value=200)
 
-            mots_frame = tk.Frame(self, relief="solid", borderwidth=1)
+            mots_frame = tk.Frame(self)
             mots_frame.pack(fill="x", padx=3, pady=3)
 
             for i in range(6):
-                mot = tk.Frame(mots_frame)
+                mot = tk.Frame(mots_frame, relief="solid", borderwidth=1)
                 mot.pack(fill="x", expand=1, side="left")
                 ttk.Label(mot, text=f'Motor {i}').pack(fill="x", padx=3, pady=8, expand=1)
                 ttk.Label(mot, text='Microsteps').pack(fill="x", padx=3, pady=3, expand=1)
@@ -288,6 +288,41 @@ class VEPRParameters(tk.Frame):
 
         submit_params = ttk.Button(self, text="Submit Parameters", command=robot.submit_params)
         submit_params.pack(fill="x", padx=3, pady=3)
+
+class RobotSetup(tk.Frame):
+    def __init__(self, parent, robot, *args, **kwargs):
+        tk.Frame.__init__(self, parent, *args, **kwargs)
+
+        self.x_offset = [tk.DoubleVar(value=0) for i in range(7)]
+        self.y_offset = [tk.DoubleVar(value=0) for i in range(7)]
+        self.z_offset = [tk.DoubleVar(value=0) for i in range(7)]
+
+        joints = tk.Frame(self, relief="solid", borderwidth=1)
+        joints.pack(fill="x", padx=3, pady=3)
+
+        for i in range(6):
+            joint = tk.Frame(joints, relief="solid", borderwidth=1)
+            joint.pack(fill="x", side="left", expand=1)
+            ttk.Label(joint, text=f'Joint {i}').pack(fill="x", padx=3, pady=8, expand=1)
+            ttk.Label(joint, text='X Offset').pack(fill="x", padx=3, pady=3, expand=1)
+            ttk.Entry(joint, textvariable=self.x_offset[i]).pack(fill="x", padx=3, pady=3, expand=1)
+            ttk.Label(joint, text='Y Offset').pack(fill="x", padx=3, pady=3, expand=1)
+            ttk.Entry(joint, textvariable=self.y_offset[i]).pack(fill="x", padx=3, pady=3, expand=1)
+            ttk.Label(joint, text='Z Offset').pack(fill="x", padx=3, pady=3, expand=1)
+            ttk.Entry(joint, textvariable=self.z_offset[i]).pack(fill="x", padx=3, pady=3, expand=1)
+
+        extension = tk.Frame(joints, relief="solid", borderwidth=1)
+        extension.pack(fill="x", side="left", expand=1)
+        ttk.Label(extension, text=f'Extension').pack(fill="x", padx=3, pady=8, expand=1)
+        ttk.Label(extension, text='X Offset').pack(fill="x", padx=3, pady=3, expand=1)
+        ttk.Entry(extension, textvariable=self.x_offset[6]).pack(fill="x", padx=3, pady=3, expand=1)
+        ttk.Label(extension, text='Y Offset').pack(fill="x", padx=3, pady=3, expand=1)
+        ttk.Entry(extension, textvariable=self.y_offset[6]).pack(fill="x", padx=3, pady=3, expand=1)
+        ttk.Label(extension, text='Z Offset').pack(fill="x", padx=3, pady=3, expand=1)
+        ttk.Entry(extension, textvariable=self.z_offset[6]).pack(fill="x", padx=3, pady=3, expand=1)
+
+        ttk.Button(self, text="Save Setup", command=robot.save_robot_setup).pack(fill="x", padx=3, pady=3)
+        ttk.Button(self, text="Load Setup", command=robot.load_robot_setup).pack(fill="x", padx=3, pady=3)
 
 class UIConfig(tk.Frame):
     def __init__(self, parent, robot, *args, **kwargs):

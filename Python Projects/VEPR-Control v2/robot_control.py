@@ -13,15 +13,16 @@ class RobotControl:
         self.ik_tab: ui_tabs.IKControl = None
         self.motor_tab: ui_tabs.MotorControl = None
         self.params_tabs: ui_tabs.VEPRParameters = None
-        with open('../data/user_config.json') as f:
-            self.config = json.load(f)
-            f.close()
+        self.setup_tab: ui_tabs.RobotSetup = None
+        self.config = {}
+        self.ik_config = {}
 
-    def set_tabs(self, fk: ui_tabs.FKControl, ik: ui_tabs.IKControl, motor: ui_tabs.MotorControl, params: ui_tabs.VEPRParameters):
+    def set_tabs(self, fk: ui_tabs.FKControl, ik: ui_tabs.IKControl, motor: ui_tabs.MotorControl, params: ui_tabs.VEPRParameters, setup: ui_tabs.RobotSetup):
         self.fk_tab = fk
         self.ik_tab = ik
         self.motor_tab = motor
         self.params_tabs = params
+        self.setup_tab = setup
 
     def submit_motor_rotations(self):
         self.calculate_movement(np.array([float(i.get()) for i in self.fk_tab.mot_pos]))
@@ -33,12 +34,20 @@ class RobotControl:
         global_mot_speed = self.params_tabs.mot_params.global_motor_speed.get()
         global_mot_accel = self.params_tabs.mot_params.global_motor_accel.get()
 
-        mot_inverse = [int(i.get()) for i in self.params_tabs.mot_params.inverse_direction]
-        mot_speed = [int(i.get()) for i in self.params_tabs.mot_params.max_speed]
-        mot_mult = [int(i.get()) for i in self.params_tabs.mot_params.multiplier]
-        mot_accel = [int(i.get()) for i in self.params_tabs.mot_params.max_accel]
-        mot_reduc = [int(i.get()) for i in self.params_tabs.mot_params.reduction]
+        mot_inverse = np.where(np.asarray([int(i.get()) for i in self.params_tabs.mot_params.inverse_direction]) == 0, 1, -1)
+        mot_speed = np.asarray([int(i.get()) for i in self.params_tabs.mot_params.max_speed])
+        mot_mult = np.asarray([int(i.get()) for i in self.params_tabs.mot_params.multiplier])
+        mot_speed *= mot_mult
+        mot_accel = np.asarray([int(i.get()) for i in self.params_tabs.mot_params.max_accel])
+        mot_reduc = np.asarray([int(i.get()) for i in self.params_tabs.mot_params.reduction])
 
+        mot_microsteps = np.asarray([int(i.get()) for i in self.params_tabs.tech_params.microsteps]) / 16
+
+        default_steps = self.params_tabs.tech_params.steps_per_full_revolution.get()
+
+
+
+        """
         class StepModule:
             def __init__(self, mot_: int, deg_: float, speed_: int, mult_: float, accel_: int, reduc_: float,
                          cur_: float):
@@ -129,6 +138,63 @@ class RobotControl:
         data.append(c.istart)
         # print(data)
         asyncio.run(con(data))
+        """
+
+        mot_dir = np.where(rotations < 0, -1, 1) * mot_inverse
+
+        absolute_steps = np.abs(rotations * mot_reduc * mot_microsteps * default_steps)
+        max_mot = np.argmax(absolute_steps)
+
+        max_steps = absolute_steps[max_mot]
+
+        if max_steps == 0:
+            return
+
+        mults = absolute_steps / max_steps
+        speeds = mults * global_mot_speed
+        accels = mults * global_mot_accel
+
+        overdrives_speed = np.argwhere(speeds > mot_speed).flatten()
+        print("Overdrive detected at:", overdrives_speed)
+        if len(overdrives_speed):
+            max_od_mult = 0
+            max_od_idx = 0
+            for od in overdrives_speed:
+                cur_mult = (mults * global_mot_speed)[od] / mot_speed[od]
+                if max_od_mult < cur_mult:
+                    max_od_mult = cur_mult
+                    max_od_idx = od
+            speeds = mults * mot_speed[max_od_idx] / mults[max_od_idx]
+
+        overdrives_accel = np.argwhere(accels > mot_accel).flatten()
+        print("Overdrive detected at:", overdrives_accel)
+        if len(overdrives_accel):
+            max_od_mult = 0
+            max_od_idx = 0
+            for od in overdrives_speed:
+                cur_mult = (mults * global_mot_accel)[od] / mot_accel[od]
+                if max_od_mult < cur_mult:
+                    max_od_mult = cur_mult
+                    max_od_idx = od
+            accels = mults * mot_accel[max_od_idx] / mults[max_od_idx]
+
+        print("After:", speeds)
+        print("Maximum:", mot_speed)
+
+        print("After:", accels)
+        print("Maximum:", mot_accel)
+
+        new_rotations = rotations * mot_inverse
+
+        send_data = []
+        for n in range(6):
+            send_data.append(f"{n}{c.ispeed}{speeds[n]}")
+            send_data.append(f"{n}{c.iaccel}{accels[n]}")
+            send_data.append(f"{n}{c.ireduc}{mot_reduc[n]}")
+            send_data.append(f"{n}{c.iangle}{new_rotations[n]}")
+        send_data.append(c.istart)
+        print(send_data)
+        # asyncio.run(con(send_data))
 
     def submit_ik(self):
         ik_results = ik_calculate(self.ik_tab.x_pos.get(), self.ik_tab.y_pos.get(), self.ik_tab.z_pos.get(), self.ik_tab.x_rot.get(), self.ik_tab.y_rot.get(), self.ik_tab.z_rot.get())
@@ -179,6 +245,10 @@ class RobotControl:
         asyncio.run(con([f'{mot}{c.istpos}{self.motor_tab.emergency_motor_position[mot]}']))
 
     def load_config(self):
+        with open('../data/user_config.json') as f:
+            self.config = json.load(f)
+            f.close()
+
         self.params_tabs.mot_params.global_motor_speed.set(self.config["general"]["global_mot_speed"])
         self.params_tabs.mot_params.global_motor_accel.set(self.config["general"]["global_mot_accel"])
         self.params_tabs.tech_params.steps_per_full_revolution.set(self.config["general"]["steps_p_revolution"])
@@ -233,3 +303,36 @@ class RobotControl:
         self.config = config
 
         print('Successfully saved config to \'user_config.json\'')
+
+    def load_robot_setup(self):
+        with open('../data/ik_config.json') as f:
+            self.ik_config = json.load(f)
+            f.close()
+
+        for i in range(6):
+            self.setup_tab.x_offset[i].set(self.ik_config[f"motor{i}"]["x"])
+            self.setup_tab.y_offset[i].set(self.ik_config[f"motor{i}"]["y"])
+            self.setup_tab.z_offset[i].set(self.ik_config[f"motor{i}"]["z"])
+
+        self.setup_tab.x_offset[6].set(self.ik_config["extension"]["x"])
+        self.setup_tab.y_offset[6].set(self.ik_config["extension"]["y"])
+        self.setup_tab.z_offset[6].set(self.ik_config["extension"]["z"])
+
+    def save_robot_setup(self):
+        config = {}
+
+        for i in range(6):
+            config[f"motor{i}"] = {}
+            config[f"motor{i}"]["x"] = self.setup_tab.x_offset[i].get()
+            config[f"motor{i}"]["y"] = self.setup_tab.y_offset[i].get()
+            config[f"motor{i}"]["z"] = self.setup_tab.z_offset[i].get()
+
+        config["extension"] = {}
+        config["extension"]["x"] = self.setup_tab.x_offset[6].get()
+        config["extension"]["y"] = self.setup_tab.y_offset[6].get()
+        config["extension"]["z"] = self.setup_tab.z_offset[6].get()
+
+        with open('../data/ik_config.json', "w") as f:
+            json.dump(config, f)
+            f.close()
+        print('Successfully saved setup to \'ik_config.json\'')

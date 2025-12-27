@@ -22,14 +22,18 @@ if __name__ == "__main__":
     vepr_params.pack(fill="both", expand=1)
     ui_config = ui_tabs.UIConfig(tabs, robot)
     ui_config.pack(fill="both", expand=1)
+    robot_setup = ui_tabs.RobotSetup(tabs, robot)
+    robot_setup.pack(fill="both", expand=0)
 
-    robot.set_tabs(fk_control, ik_control, motor_control, vepr_params)
+    robot.set_tabs(fk_control, ik_control, motor_control, vepr_params, robot_setup)
     robot.load_config()
+    robot.load_robot_setup()
 
     tabs.add(fk_control, text='Forward Kinematics')
     tabs.add(ik_control, text='Inverse Kinematics')
     tabs.add(motor_control, text='Motor Control')
     tabs.add(vepr_params, text='Parameters')
+    tabs.add(robot_setup, text='Robot Setup')
     tabs.add(ui_config, text='UI Config')
 
     vepr_params_frame = ui_tabs.ToggledFrame(root, text='Parameters', relief="raised", borderwidth=1)
