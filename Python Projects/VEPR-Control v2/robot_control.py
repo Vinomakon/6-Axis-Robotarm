@@ -25,7 +25,7 @@ class RobotControl:
         self.setup_tab = setup
 
     def submit_motor_rotations(self):
-        self.calculate_movement(np.array([float(i.get()) for i in self.fk_tab.mot_pos]))
+        self.calculate_movement(np.asarray([float(i.get()) for i in self.fk_tab.mot_pos]))
 
     def submit_motor_rotations_zero(self):
         self.calculate_movement(np.zeros(6, dtype="float"))
@@ -35,117 +35,23 @@ class RobotControl:
         global_mot_accel = self.params_tabs.mot_params.global_motor_accel.get()
 
         mot_inverse = np.where(np.asarray([int(i.get()) for i in self.params_tabs.mot_params.inverse_direction]) == 0, 1, -1)
-        mot_speed = np.asarray([int(i.get()) for i in self.params_tabs.mot_params.max_speed])
-        mot_mult = np.asarray([int(i.get()) for i in self.params_tabs.mot_params.multiplier])
+        mot_speed = np.asarray([int(i.get()) for i in self.params_tabs.mot_params.max_speed], dtype="float")
+        mot_mult = np.asarray([float(i.get()) for i in self.params_tabs.mot_params.multiplier])
         mot_speed *= mot_mult
-        mot_accel = np.asarray([int(i.get()) for i in self.params_tabs.mot_params.max_accel])
-        mot_reduc = np.asarray([int(i.get()) for i in self.params_tabs.mot_params.reduction])
+        mot_accel = np.asarray([int(i.get()) for i in self.params_tabs.mot_params.max_accel], dtype="float")
+        mot_reduc = np.asarray([float(i.get()) for i in self.params_tabs.mot_params.reduction], dtype="float")
 
-        mot_microsteps = np.asarray([int(i.get()) for i in self.params_tabs.tech_params.microsteps]) / 16
+        mot_microsteps = np.asarray([int(i.get()) for i in self.params_tabs.tech_params.microsteps], dtype="float") / 16
 
         default_steps = self.params_tabs.tech_params.steps_per_full_revolution.get()
 
+        cur_pos = np.float64(np.asarray(asyncio.run(con_get([f'{mot}{c.icrpos}' for mot in range(6)]))))
 
-
-        """
-        class StepModule:
-            def __init__(self, mot_: int, deg_: float, speed_: int, mult_: float, accel_: int, reduc_: float,
-                         cur_: float):
-                self.motor = mot_
-                self.deg = deg_
-                self.a_deg = abs(deg_ - cur_)
-                self.d_deg = abs(deg_)
-                self.speed = 0
-                self.accel = 0
-                self.max_speed = round(speed_ * mult_)
-                self.max_accel = round(accel_ * mult_)
-                self.speed_overdrive = 0  # How much the calculated speed is over the current motor's maximum speed
-                self.accel_overdrive = 0  # How much the calculated acceleration is over the current motor's maximum acceleration
-                self.reduc = reduc_
-
-            def __lt__(self, other):
-                return self.a_deg < other.a_deg
-
-            def __repr__(self):
-                return f"(Motor: {self.motor}, Degrees: {self.a_deg})"
-
-            def __int__(self):
-                return self.deg
-
-            def set_values(self, deg_: float, speed: int, accel: int, reduc_: int) -> None:
-                if self.a_deg == 0:
-                    return
-                else:
-                    self.speed = round(speed * (self.a_deg / deg_) * self.reduc / reduc_)
-                    self.speed_overdrive = max(0, self.speed - self.max_speed)
-                    self.accel = round(accel * (self.a_deg / deg_) * self.reduc / reduc_)
-                    self.accel_overdrive = max(0, self.accel - self.max_accel)
-
-            def get_overdrive(self):
-                return self.max_speed, self.speed_overdrive, self.max_accel, self.accel_overdrive, self.a_deg
-
-            def get_msg(self) -> list:
-                if self.a_deg > 0:
-                    return [f"{self.motor}{c.ispeed}{self.speed}", f"{self.motor}{c.iaccel}{self.accel}",
-                            f"{self.motor}{c.ireduc}{self.reduc}", f"{self.motor}{c.iangle}{self.deg}"]
-                else:
-                    return []
-
-        # cur_pos = asyncio.run(con_get([f'{mot}{c.icrpos}' for mot in range(6)]))
-        cur_pos = [0 for n in range(6)]
-
-        values = []
-        highest_reduc = 0
-        for n in range(6):
-            temp_ = StepModule(n, rotations[n] * (-1 if mot_inverse[n] else 1), mot_speed[n], mot_mult[n],
-                               mot_accel[n], mot_reduc[n], float(cur_pos[n]))
-            if temp_.a_deg > 0:
-                values.append(temp_)
-                if highest_reduc < temp_.reduc:
-                    highest_reduc = temp_.reduc
-        if len(values) == 0:
-            # print("no more values")
-            return
-        values.sort(reverse=True)
-        main_val = values[0]
-        not_satisfied = True
-        overdrive_speed: int
-        overdrive_accel: int
-        while not_satisfied:
-
-            if main_val.a_deg == 0:
-                return
-            for n in range(len(values)):
-                values[n].set_values(main_val.a_deg, global_mot_speed, global_mot_accel, highest_reduc)
-            overdrive_speed = 0
-            overdrive_accel = 0
-            for n in range(len(values)):
-                overdrive = values[n].get_overdrive()
-                if overdrive[1] > overdrive_speed or overdrive[3] > overdrive_accel:
-                    overdrive_speed = overdrive[1]
-                    global_mot_speed = overdrive[0] / (overdrive[4] / main_val.a_deg)
-                    overdrive_accel = overdrive[3]
-                    global_mot_accel = overdrive[2] / (overdrive[4] / main_val.a_deg)
-                    # print( f"overdrive at {n} with speed now being {global_mot_speed_} and acceleration {global_mot_accel_}")
-                    # print(f"overdriven speed {overdrive[0]} or acceleration {overdrive[2]}")
-
-            if overdrive_speed <= 0 and overdrive_accel <= 0:
-                not_satisfied = False
-            # print("not satisfied")
-        data = []
-        for n in range(len(values)):
-            data = data + values[n].get_msg()
-        data.append(c.istart)
-        # print(data)
-        asyncio.run(con(data))
-        """
-
-        mot_dir = np.where(rotations < 0, -1, 1) * mot_inverse
-
-        absolute_steps = np.abs(rotations * mot_reduc * mot_microsteps * default_steps)
+        absolute_steps = np.abs(np.abs(rotations - cur_pos) * mot_reduc * mot_microsteps * default_steps)
         max_mot = np.argmax(absolute_steps)
 
         max_steps = absolute_steps[max_mot]
+
 
         if max_steps == 0:
             return
@@ -155,7 +61,7 @@ class RobotControl:
         accels = mults * global_mot_accel
 
         overdrives_speed = np.argwhere(speeds > mot_speed).flatten()
-        print("Overdrive detected at:", overdrives_speed)
+        # print("Overdrive detected at:", overdrives_speed)
         if len(overdrives_speed):
             max_od_mult = 0
             max_od_idx = 0
@@ -166,37 +72,43 @@ class RobotControl:
                     max_od_idx = od
             speeds = mults * mot_speed[max_od_idx] / mults[max_od_idx]
 
+        # FIX ACCELERATION, WHERE IT SHOULD BE DEPENDENT ON THE REDUCTION, NOT THE ABSOLUTE AMOUNT OF STEPS
+        
         overdrives_accel = np.argwhere(accels > mot_accel).flatten()
         print("Overdrive detected at:", overdrives_accel)
         if len(overdrives_accel):
             max_od_mult = 0
             max_od_idx = 0
-            for od in overdrives_speed:
+            for od in overdrives_accel:
                 cur_mult = (mults * global_mot_accel)[od] / mot_accel[od]
                 if max_od_mult < cur_mult:
                     max_od_mult = cur_mult
                     max_od_idx = od
             accels = mults * mot_accel[max_od_idx] / mults[max_od_idx]
 
-        print("After:", speeds)
-        print("Maximum:", mot_speed)
+        print("Speeds:", speeds)
+        # print("Maximum:", mot_speed)
 
-        print("After:", accels)
-        print("Maximum:", mot_accel)
+        print("Accelerations:", accels)
+        # print("Maximum:", mot_accel)
 
         new_rotations = rotations * mot_inverse
 
         send_data = []
         for n in range(6):
+            if absolute_steps[n] == 0:
+                continue
             send_data.append(f"{n}{c.ispeed}{speeds[n]}")
             send_data.append(f"{n}{c.iaccel}{accels[n]}")
             send_data.append(f"{n}{c.ireduc}{mot_reduc[n]}")
             send_data.append(f"{n}{c.iangle}{new_rotations[n]}")
         send_data.append(c.istart)
-        print(send_data)
-        # asyncio.run(con(send_data))
+        # print(send_data)
+        asyncio.run(con(send_data))
 
     def submit_ik(self):
+        print([self.ik_tab.x_pos.get(), self.ik_tab.y_pos.get(), self.ik_tab.z_pos.get(), self.ik_tab.x_rot.get(), self.ik_tab.y_rot.get(), self.ik_tab.z_rot.get()])
+
         ik_results = ik_calculate(self.ik_tab.x_pos.get(), self.ik_tab.y_pos.get(), self.ik_tab.z_pos.get(), self.ik_tab.x_rot.get(), self.ik_tab.y_rot.get(), self.ik_tab.z_rot.get())
 
         o3 = np.atan2(kinematics.l3.y, kinematics.l3.x)
@@ -204,9 +116,7 @@ class RobotControl:
         ik_results[2] -= -np.pi / 2 + o3
 
         ik_results = np.asarray(ik_results)
-        np.rad2deg(ik_results)
-        print(ik_results)
-        self.calculate_movement(ik_results)
+        self.calculate_movement(np.round(np.rad2deg(ik_results), 6))
 
     def submit_ik_default(self):
         print(kinematics.default_configuration)
@@ -216,14 +126,16 @@ class RobotControl:
         ik_results[1] -= np.pi / 2
         ik_results[2] -= -np.pi / 2 + o3
 
-        ik_results = np.asarray(ik_results)
-        np.rad2deg(ik_results)
-        np.round(ik_results, 6)
+        ik_results = np.round(np.rad2deg(np.asarray(ik_results)), 6)
+
         print(ik_results)
         self.calculate_movement(ik_results)
 
-    def enable_mot(self, mot):
-        asyncio.run(con([f'{mot}{c.ienmot}{"1" if self.motor_tab.enable_mots[mot] else "0"}']))
+    def enable_mot(self):
+        data = []
+        for i in range(6):
+            data.append(f'{i}{c.ienmot}{"1" if self.motor_tab.enable_mots[i].get() else "0"}')
+        asyncio.run(con(data))
 
     def init_tmcs(self):
         microsteps = [int(i.get()) for i in self.params_tabs.tech_params.microsteps]

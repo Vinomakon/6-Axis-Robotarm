@@ -10,7 +10,7 @@ from vector import Vector3
 
 DEFAULT_STEPS = 1000
 
-allow_send = False
+allow_send = True
 
 async def con(data: list) -> None:
     if not allow_send:
@@ -590,8 +590,8 @@ with gr.Blocks() as iface:
     with gr.Accordion(label="IK Movement", open=False):
         with gr.Row():
             with gr.Column():
-                x_pos = gr.Number(value=0, label=f'X Position')
-                y_pos = gr.Number(value=0, label=f'Y Position')
+                x_pos = gr.Number(value=276.8, label=f'X Position')
+                y_pos = gr.Number(value=378.21, label=f'Y Position')
                 z_pos = gr.Number(value=0, label=f'Z Position')
             with gr.Column():
                 x_rot = gr.Number(value=0, label=f'X Rotation')
@@ -604,7 +604,7 @@ with gr.Blocks() as iface:
                                          global_mot_speed, global_mot_accel])
                 ik_default_btn = gr.Button("Set All to Default Position")
                 ik_default_btn.click(ik_movement,
-                                  inputs=[*[zero_state for i in range(6)], *mot_speed, *mot_inverse, *mot_mult, *mot_accel,
+                                  inputs=[gr.State(276.8), gr.State(378.21), *[zero_state for i in range(4)], *mot_speed, *mot_inverse, *mot_mult, *mot_accel,
                                           *mot_reduc, global_mot_speed, global_mot_accel])
 
     with gr.Accordion(label='Config Options', open=False):

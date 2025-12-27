@@ -34,7 +34,7 @@ class FKControl(tk.Frame):
         mot_args = tk.Frame(self)
         mot_args.pack(fill="x")
 
-        self.mot_pos = [tk.IntVar(value=60) for i in range(6)]
+        self.mot_pos = [tk.IntVar(value=0) for i in range(6)]
         self.fk_results = [tk.DoubleVar(value=0) for i in range(6)]
 
         for i in range(6):
@@ -134,10 +134,9 @@ class IKControl(tk.Frame):
         o3 = np.atan2(kinematics.l3.y, kinematics.l3.x)
         self.ik_results_raw[1] -= np.pi / 2
         self.ik_results_raw[2] -= -np.pi / 2 + o3
-
         print(self.ik_results_raw)
         for i in range(6):
-            self.ik_results[i].set(np.rad2deg(self.ik_results_raw[i]))
+            self.ik_results[i].set(np.round(np.rad2deg(self.ik_results_raw[i]), 6))
 
 class MotorControl(tk.Frame):
     def __init__(self, parent, robot, *args, **kwargs):
@@ -146,18 +145,17 @@ class MotorControl(tk.Frame):
         self.enable_mots = [tk.BooleanVar(value=False) for i in range(6)]
         self.emergency_motor_position = [tk.IntVar(value=False) for i in range(6)]
 
-        init_tmcs = ttk.Button(self, text="Initialize TMC5160-Drivers")
+        init_tmcs = ttk.Button(self, text="Initialize TMC5160-Drivers", command=robot.init_tmcs)
         init_tmcs.pack(fill="x", padx=3, pady=3)
 
         en_mots_frame = tk.Frame(self)
         en_mots_frame.pack(fill="x", padx=3, pady=3)
 
-
         for i in range(6):
             mot = tk.Frame(en_mots_frame, borderwidth=1, relief="solid", padx=1)
             mot.pack(expand=1, side="left")
             ttk.Label(en_mots_frame, text=f"Enable Motor {i}").pack(fill="x", side="left")
-            en = ttk.Checkbutton(en_mots_frame, variable=self.enable_mots[i], takefocus = 0, command=lambda: robot.enable_mot(i))
+            en = ttk.Checkbutton(en_mots_frame, variable=self.enable_mots[i], takefocus=0, command=robot.enable_mot)
             en.pack(fill="x", side="left")
 
         emergency_set = tk.Frame(self, borderwidth=5, relief="ridge")

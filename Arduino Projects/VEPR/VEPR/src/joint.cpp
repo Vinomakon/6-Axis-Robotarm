@@ -2,8 +2,8 @@
 #include <Arduino.h>
 
 MotorJoint::MotorJoint(uint8_t stepPin, uint8_t dirPin, uint8_t csPin, uint8_t enPin, float rSense)
-  : stepper(1, stepPin, dirPin)   // AccelStepper(mode, stepPin, dirPin)
-  , driver(csPin, rSense)       // TMC5160Stepper(CS_PIN, R_SENSE)
+    : stepper(1, stepPin, dirPin)
+    , driver(csPin, rSense)
 {
     en_pin = enPin;
     // set sensible defaults:
@@ -20,7 +20,7 @@ MotorJoint::MotorJoint(uint8_t stepPin, uint8_t dirPin, uint8_t csPin, uint8_t e
 }
 
 void MotorJoint::InitTMC(){
-    if (!AreVariablesSet()) return;
+    if (mot_mcrs == 0 || mot_irun == 0 || mot_ihold == 0) return;
     driver.begin();                                                                      // Initiate pins and registeries
     driver.en_pwm_mode(1);                                                               // Enable extremely quiet stepping
     driver.toff(4);                                                                      // off time
@@ -54,8 +54,8 @@ bool MotorJoint::AreVariablesSet(){
     return ok;
 }
 
-void MotorJoint::EnableMotor(bool enable){
-    digitalWrite(en_pin, enable);
+void MotorJoint::EnableMotor(int enable){
+    digitalWrite(en_pin, !enable);
 }
 
 bool MotorJoint::IsFinished(){

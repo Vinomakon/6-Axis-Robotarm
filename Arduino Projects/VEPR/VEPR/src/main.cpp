@@ -36,8 +36,10 @@ void actionSwitcher(int mot, String msg){
   Serial.println((String)mot + " action: " + act + ", " + msg.substring(3, str_len));
   switch (act.toInt()){
     case 00: //Enable motor
-        joints[mot].EnableMotor(msg.charAt(3) == '1' ? LOW : HIGH);
+        joints[mot].EnableMotor(msg.charAt(3) == '1' ? HIGH : LOW);
         break;
+    case 01:
+        joints[mot].SetTravel(msg.substring(3, str_len).toFloat());
     case 02: //Set speed
         joints[mot].mot_speed = msg.substring(3, str_len).toInt();
         Serial.println("Changed speed of " + (String)mot + ", " + (String)joints[mot].mot_speed);
@@ -144,6 +146,7 @@ void onEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType 
     case WS_EVT_DISCONNECT:
       break;
     case WS_EVT_DATA:
+        Serial.println("Received Message");
       handleWebSocketMessage(arg, data, len);
       break;
     case WS_EVT_PONG:
@@ -181,6 +184,10 @@ void setup(){
     pinMode(EN4_PIN, OUTPUT);
     pinMode(EN5_PIN, OUTPUT);
 
+    for (int i = 0; i < 6; i++){
+        joints[i].EnableMotor(0);
+    }
+
     pinMode(SW0_PIN, INPUT_PULLUP);
     pinMode(SW1_PIN, INPUT_PULLUP);
     pinMode(SW2_PIN, INPUT_PULLUP);
@@ -196,10 +203,14 @@ void loop(){
         for(int i = 0; i < 6; i++){
             joints[i].stepper.run();
         }
-
+        bool stop_move = true;
         for(int i = 0; i < 6; i++){
-            if (!joints[i].IsFinished()) break;
+            if (!joints[i].IsFinished()){
+                stop_move = false;
+                break;
+            } 
         }
-        can_move = false;
+        can_move = !stop_move;
+        if (stop_move) Serial.println("STOPPED");
     }
 }

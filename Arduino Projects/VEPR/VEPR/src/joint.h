@@ -43,7 +43,7 @@ struct MotorJoint{
     TMC5160Stepper driver;
     bool AreVariablesSet();
     void InitTMC();
-    void EnableMotor(bool enable);
+    void EnableMotor(int enable);
     bool IsFinished();
     void SetTravel(float angle);
     float GetCurrentPosition();

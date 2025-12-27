@@ -21,18 +21,18 @@ l2 = m2
 l3 = m3 + m4
 l4 = m5
 
-nm5 = Vector3(d['motor5']['x'], d['motor5']['y'], d['motor5']['z'])
-
+tcp = Vector3(d['motor5']['x'], d['motor5']['y'], d['motor5']['z'])
 
 def ik_calculate(x_pos, y_pos, z_pos, x_rot, y_rot, z_rot):
-    global nm5
     x_d = Vector3(x_pos, y_pos, z_pos)
     x_rot = np.deg2rad(x_rot)
     y_rot = np.deg2rad(y_rot)
     z_rot = np.deg2rad(z_rot)
     r_d = roll_rotation(x_rot) * pitch_rotation(y_rot) * yaw_rotation(z_rot)
     # print("NEW OPERATION")
-    nm5 = Vector3(nm5.vec2matrix * roll_rotation(x_rot) * pitch_rotation(y_rot) * yaw_rotation(-z_rot))
+    print(tcp)
+    nm5 = Vector3(tcp.vec2matrix * roll_rotation(x_rot) * pitch_rotation(y_rot) * yaw_rotation(-z_rot))
+    print(nm5)
     # print(nm5, "nm5")
     x_n = copy.copy(x_d)
     x_n = x_n - nm5
