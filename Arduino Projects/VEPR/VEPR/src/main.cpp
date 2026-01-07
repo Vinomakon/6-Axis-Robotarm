@@ -14,7 +14,8 @@
 using namespace std;
 using namespace TMC2130_n;
 
-bool can_move = false;
+bool can_move_normal = false;
+bool can_move_interpolated = false;
 int default_steps = 200;
 
 MotorJoint joints[] = {
@@ -36,10 +37,8 @@ void actionSwitcher(int mot, String msg){
   Serial.println((String)mot + " action: " + act + ", " + msg.substring(3, str_len));
   switch (act.toInt()){
     case 00: //Enable motor
-        joints[mot].EnableMotor(msg.charAt(3) == '1' ? HIGH : LOW);
+        joints[mot].EnableMotor(msg.charAt(3) == '1' ? LOW : HIGH);
         break;
-    case 01:
-        joints[mot].SetTravel(msg.substring(3, str_len).toFloat());
     case 02: //Set speed
         joints[mot].mot_speed = msg.substring(3, str_len).toInt();
         Serial.println("Changed speed of " + (String)mot + ", " + (String)joints[mot].mot_speed);
@@ -130,7 +129,7 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
             }
             break;
         case 9:
-            can_move = true;
+            can_move_normal = true;
             break;
         default:
             break;
@@ -146,7 +145,6 @@ void onEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType 
     case WS_EVT_DISCONNECT:
       break;
     case WS_EVT_DATA:
-        Serial.println("Received Message");
       handleWebSocketMessage(arg, data, len);
       break;
     case WS_EVT_PONG:
@@ -184,10 +182,6 @@ void setup(){
     pinMode(EN4_PIN, OUTPUT);
     pinMode(EN5_PIN, OUTPUT);
 
-    for (int i = 0; i < 6; i++){
-        joints[i].EnableMotor(0);
-    }
-
     pinMode(SW0_PIN, INPUT_PULLUP);
     pinMode(SW1_PIN, INPUT_PULLUP);
     pinMode(SW2_PIN, INPUT_PULLUP);
@@ -199,18 +193,14 @@ void setup(){
 }
 
 void loop(){
-    if (can_move){
+    if (can_move_normal){
         for(int i = 0; i < 6; i++){
             joints[i].stepper.run();
         }
-        bool stop_move = true;
+
         for(int i = 0; i < 6; i++){
-            if (!joints[i].IsFinished()){
-                stop_move = false;
-                break;
-            } 
+            if (!joints[i].IsFinished()) break;
         }
-        can_move = !stop_move;
-        if (stop_move) Serial.println("STOPPED");
+        can_move_normal = false;
     }
 }

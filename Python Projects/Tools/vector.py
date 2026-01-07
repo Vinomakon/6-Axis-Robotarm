@@ -97,7 +97,7 @@ class Vector3:
 
     @property
     def vec2matrix(self):
-        return np.matrix([self.x, self.y, self.z], dtype="float")
+        return np.matrix([self.x, self.y, self.z])
 
     def matrix2vec(self, matrix):
         x = matrix.item((0, 0))

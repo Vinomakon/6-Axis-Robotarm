@@ -78,6 +78,7 @@ def ik_calculate(x_pos, y_pos, z_pos, x_rot, y_rot, z_rot):
 
 def specific_ik_calculate(x_pos, y_pos, z_pos, x_rot, y_rot, z_rot):
     ik_results = ik_calculate(x_pos, y_pos, z_pos, x_rot, y_rot, z_rot)
+    print("HUH___")
 
     o3 = np.atan2(l3.y, l3.x)
     ik_results[1] -= np.pi / 2
@@ -86,35 +87,10 @@ def specific_ik_calculate(x_pos, y_pos, z_pos, x_rot, y_rot, z_rot):
     return np.round(np.rad2deg(np.asarray(ik_results)), 6)
 
 def fk_calculate(mot1, mot2, mot3, mot4, mot5, mot6):
-    mot_rotations = np.deg2rad(np.array([mot1, mot2, mot3, mot4, mot5, mot6]))
+    return [random.randint(0, 10) for i in range(6)]
 
-    rot_matrices = [roll_rotation(mot_rotations[5]), pitch_rotation(mot_rotations[4]), roll_rotation(mot_rotations[3]), yaw_rotation(mot_rotations[2]), yaw_rotation(mot_rotations[1]), pitch_rotation(mot_rotations[0])]
-    begin = np.matrix([0, 0, 0], dtype="float")
-    joints = [m0, m1, m2, m3, m4, m5]
-    for i in range(6):
-        begin += joints[5-i].vec2matrix
-        begin *= rot_matrices[i]
-    r_n = np.matrix([[1, 0, 0], [0, 1, 0], [0, 0, 1]], dtype="float")
-    for rot in rot_matrices:
-        r_n = r_n * rot
-    # r_n = pitch_rotation(mot_rotations[0]) * yaw_rotation(mot2) * yaw_rotation(mot3) * roll_rotation(mot4) * pitch_rotation(mot5) * roll_rotation(mot6)
 
-    r_y = r_n.item(0, 2)
-    if r_y == 1:
-        r_x = 0
-        r_y = np.arcsin(r_y)
-        r_z = 0
-    else:
-        r_x = -np.atan2(-r_n.item(1, 2), r_n.item(2, 2))
-        r_y = np.arcsin(r_y)
-        r_z = np.atan2(-r_n.item(1, 0), r_n.item(0, 0))
-    positions = np.asarray([begin[0, i] for i in range(3)])
-    rotations = np.rad2deg(np.asarray([r_x, r_y, r_z], dtype="float"))
-    # print(r_n)
-    # print(np.deg2rad(rotations))
-    # print(rotations)
-    return np.round(np.concatenate((positions, rotations)), 4)
-pot = l1 + l2 + l3 + l4
+pot = l1 + Vector3(0, l2.x, 0) + l3 + l4
 default_configuration = np.round(np.asarray([pot.x, pot.y, pot.z, 0, 0, 0]), 4)
 
 # print(pot)

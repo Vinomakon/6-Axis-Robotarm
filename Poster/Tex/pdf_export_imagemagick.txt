@@ -1,1 +1,1 @@
-magick -density 1000 main.pdf output.png
+magick -density 1500 main.pdf -transparent white output.png

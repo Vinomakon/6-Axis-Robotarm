@@ -1,6 +1,6 @@
 import websockets
 
-allow_send = True
+allow_send = False
 
 async def con(data: list) -> None:
     if not allow_send:

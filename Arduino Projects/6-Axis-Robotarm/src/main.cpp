@@ -513,16 +513,8 @@ void setup() {
   pinMode(EN3_PIN, OUTPUT);
   pinMode(EN4_PIN, OUTPUT);
   pinMode(EN5_PIN, OUTPUT);
-
-  pinMode(SW0_PIN, INPUT_PULLUP);
-  pinMode(SW1_PIN, INPUT_PULLUP);
-  pinMode(SW2_PIN, INPUT_PULLUP);
-  pinMode(SW3_PIN, INPUT_PULLUP);
-  pinMode(SW4_PIN, INPUT_PULLUP);
-  pinMode(SW5_PIN, INPUT_PULLUP);
   
   
-  SPI.begin(SCK_PIN, SDO_PIN, SDI_PIN);
   for(int i = 0; i < 6; i++)
   
   digitalWrite(EN0_PIN, HIGH);

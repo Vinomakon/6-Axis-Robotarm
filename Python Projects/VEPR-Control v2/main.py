@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 import ui_tabs
 import robot_control
+import data_transfer
 
 
 if __name__ == "__main__":
@@ -11,7 +12,7 @@ if __name__ == "__main__":
 
     tabs = ttk.Notebook(root)
     tabs.pack(expand=True, fill="both", padx=3, pady=3)
-    robot = robot_control.RobotControl()
+    robot = robot_control.RobotControl(root)
     fk_control = ui_tabs.FKControl(tabs, robot=robot)
     fk_control.pack(fill="both", expand=1)
     ik_control = ui_tabs.IKControl(tabs, robot=robot)
@@ -25,9 +26,14 @@ if __name__ == "__main__":
     robot_setup = ui_tabs.RobotSetup(tabs, robot)
     robot_setup.pack(fill="both", expand=0)
 
-    robot.set_tabs(fk_control, ik_control, motor_control, vepr_params, robot_setup)
+    automation = ui_tabs.RobotAutomation(root, robot)
+    automation.pack(fill="both", expand=1)
+
+    robot.set_tabs(fk_control, ik_control, motor_control, vepr_params, robot_setup, automation)
     robot.load_config()
     robot.load_robot_setup()
+    robot.load_automation()
+    robot.toggle_data_transfer(False)
 
     tabs.add(fk_control, text='Forward Kinematics')
     tabs.add(ik_control, text='Inverse Kinematics')
@@ -36,10 +42,7 @@ if __name__ == "__main__":
     tabs.add(robot_setup, text='Robot Setup')
     tabs.add(ui_config, text='UI Config')
 
-    vepr_params_frame = ui_tabs.ToggledFrame(root, text='Parameters', relief="raised", borderwidth=1)
+    # vepr_params_frame = ui_tabs.ToggledFrame(root, text='Parameters', relief="raised", borderwidth=1)
     #vepr_params_frame.pack(fill="x", expand=1, pady=2, padx=2, anchor="n")
-
-    ttk.Label(vepr_params_frame.sub_frame, text='Global Motor Speed').pack(fill="x", expand=1)
-    ttk.Entry(vepr_params_frame.sub_frame).pack()
 
     root.mainloop()

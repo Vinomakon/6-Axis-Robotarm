@@ -1,11 +1,16 @@
 import tkinter as tk
 from tkinter import ttk
+
+from torch.backends.cudnn import enabled
+import copy
+
 import kinematics
 import numpy as np
+import asyncio
 
 class ToggledFrame(tk.Frame):
-    def __init__(self, parent, text="", *args, **options):
-        tk.Frame.__init__(self, parent, *args, **options)
+    def __init__(self, parent, text="", *args, **kwargs):
+        tk.Frame.__init__(self, parent, *args, **kwargs)
 
         self.show = tk.IntVar()
         self.show.set(0)
@@ -64,10 +69,10 @@ class FKControl(tk.Frame):
             ttk.Label(mot, text=f"{axes[i]} Rotation").pack(fill="x", expand=1, padx=3, pady=6)
             ttk.Entry(mot, textvariable=self.fk_results[i+3], state="readonly").pack(fill="x", expand=1, padx=3, pady=6)
 
-        self.submit_but = ttk.Button(self, text="Submit Motor Rotations", command=robot.submit_motor_rotations)
+        self.submit_but = ttk.Button(self, text="Submit Motor Rotations", command=robot.submit_tab_motor_rotations)
         self.submit_but.pack(fill="x", padx=3, pady=3)
 
-        self.submit_default_but = ttk.Button(self, text="Set All to Rotation 0", command=robot.submit_motor_rotations_zero)
+        self.submit_default_but = ttk.Button(self, text="Set All to Rotation 0", command=robot.submit_tab_motor_rotations_zero)
         self.submit_default_but.pack(fill="x", padx=3, pady=3)
 
     def calculate_end_effector(self):
@@ -123,10 +128,10 @@ class IKControl(tk.Frame):
             ttk.Label(mot, text=f"Rotation of Motor {i}").pack(fill="x", expand=1, padx=3, pady=6)
             ttk.Entry(mot, textvariable=self.ik_results[i], state="readonly").pack(fill="x", expand=1, padx=3, pady=6)
 
-        self.submit_but = ttk.Button(self, text="Submit Positional and Rotational Arguments", command=robot.submit_ik)
+        self.submit_but = ttk.Button(self, text="Submit Positional and Rotational Arguments", command=robot.submit_tab_ik)
         self.submit_but.pack(fill="x", padx=3, pady=3)
 
-        self.submit_default_but = ttk.Button(self, text="Set to Default", command=robot.submit_ik_default)
+        self.submit_default_but = ttk.Button(self, text="Set to Default", command=robot.submit_tab_ik_default)
         self.submit_default_but.pack(fill="x", padx=3, pady=3)
 
     def calculate_motor_rotations(self):
@@ -328,3 +333,100 @@ class UIConfig(tk.Frame):
 
         ttk.Button(self, text="Save Config", command=robot.save_config).pack(fill="x", padx=3, pady=3)
         ttk.Button(self, text="Load Config", command=robot.load_config).pack(fill="x", padx=3, pady=3)
+        ttk.Button(self, text="Toggle \"Allow Data Transfer\"", command=robot.toggle_data_transfer).pack(fill="x", padx=3, pady=10)
+
+class RobotAutomation(ToggledFrame):
+    def __init__(self, parent, robot, *args, **kwargs):
+        self.robot = robot
+        ToggledFrame.__init__(self, parent, text="Automation", *args, **kwargs)
+        button_frame = ttk.Frame(self.sub_frame)
+        button_frame.pack(fill="both", expand=1)
+        self.start_but = ttk.Button(button_frame, text="Start Automation", command=self.start_automation)
+        self.start_but.pack(fill="both", side="left", expand=1)
+        self.stop_but = ttk.Button(button_frame, text="Stop Automation", command=self.stop_automation, state="disabled")
+        self.stop_but.pack(fill="both", side="left", expand=1)
+        # self.update_but = ttk.Button(button_frame, text="Update Automation", command=self.update)
+        # self.update_but.pack(fill="both", side="left", expand=1)
+        self.steps_frame = ttk.Frame(self.sub_frame)
+        self.steps_frame.pack(fill="both", expand=1, padx=4, pady=4)
+        self.step_frames = []
+        self.steps = []
+        self.passage = 0
+
+    def update(self):
+        self.robot.automations["steps"] = []
+        for step in enumerate(self.steps):
+            self.robot.automations["steps"].append([])
+            for param in enumerate(step[1]):
+                self.robot.automations["steps"][step[0]].append(param[1].get())
+
+
+    def add_step_fk(self, m1, m2, m3, m4, m5, m6, delay):
+        print("added")
+        self.robot.automations["steps"].append(["fk", m1, m2, m3, m4, m5, m6, delay])
+        step = [tk.StringVar(value="  FK  "), tk.DoubleVar(value=m1), tk.DoubleVar(value=m2), tk.DoubleVar(value=m3),
+                tk.DoubleVar(value=m4), tk.DoubleVar(value=m5), tk.DoubleVar(value=m6), tk.DoubleVar(value=delay), tk.IntVar(value=len(self.steps))]
+        self.steps.append(step)
+        step_frame = tk.Frame(self.steps_frame, relief="solid", borderwidth=1)
+        step_frame.pack(fill="both", expand=1)
+        self.step_frames.append(step_frame)
+        ttk.Label(step_frame, textvariable=step[0]).pack(fill="both", side="left", expand=1)
+        for i in range(7):
+            ttk.Entry(step_frame, textvariable=step[1 + i]).pack(fill="both", side="left", expand=1)
+
+    def add_step_ik(self, x, y, z, psi, theta, phi, delay):
+        texts = ["X", "Y", "Z", "Psi", "Theta", "Phi", "Delay"]
+        self.robot.automations["steps"].append(["ik", x, y, z, psi, theta, phi, delay])
+        step = [tk.StringVar(value="ik"), tk.DoubleVar(value=float(x)), tk.DoubleVar(value=float(y)),
+                tk.DoubleVar(value=float(z)),
+                tk.DoubleVar(value=float(psi)), tk.DoubleVar(value=float(theta)), tk.DoubleVar(value=float(phi)),
+                tk.DoubleVar(value=float(delay)), tk.IntVar(value=len(self.steps))]
+        self.steps.append(step)
+        step_frame = tk.Frame(self.steps_frame, relief="solid", borderwidth=1)
+        step_frame.pack(fill="both", expand=1)
+        self.step_frames.append(step_frame)
+        ttk.Label(step_frame, text="  IK  ", font="bold").pack(fill="both", side="left", expand=1)
+        for i in range(7):
+            param_frame = ttk.Frame(step_frame)
+            param_frame.pack(fill="both", side="left", expand=1, padx=4)
+            ttk.Label(param_frame, text=texts[i]+": ").pack(side="left", expand=0)
+            ttk.Entry(param_frame, textvariable=step[1 + i]).pack(fill="both", side="left", expand=1)
+        """
+        ttk.Button(step_frame, text="Remove").pack(side="left", expand=0)
+        
+        param_frame = ttk.Frame(step_frame)
+        param_frame.pack(fill="both", side="left", expand=1, padx=4)
+        ttk.Label(param_frame, text="Order").pack(side="left", expand=0)
+        ttk.Entry(param_frame, textvariable=step[8]).pack(fill="both", side="left", expand=1)
+        """
+
+    def remove_step(self):
+        pass
+
+    def start_automation(self):
+        self.update()
+        self.robot.enable_automation(True)
+        self.start_but.configure(state="disabled")
+        self.stop_but.configure(state="enabled")
+        self.step_frames[self.passage].configure(background="#00ff00")
+
+    def stop_automation(self):
+        self.robot.enable_automation(False)
+        self.start_but.configure(state="enabled")
+        self.stop_but.configure(state="disabled")
+        self.step_frames[self.passage].configure(background=ttk.Style().lookup("TFrame", "background"))
+        self.passage = 0
+
+    def next_step(self):
+        self.step_frames[self.passage].configure(background=ttk.Style().lookup("TFrame", "background"))
+        self.passage = (self.passage + 1) % len(self.steps)
+        if self.robot.run_automation:
+            self.step_frames[self.passage].configure(background="#00ff00")
+
+    def load_steps(self, steps):
+
+        for step in copy.copy(steps):
+            if step[0] == "fk":
+                self.add_step_fk(*step[1:])
+            elif step[0] == "ik":
+                self.add_step_ik(*step[1:])

@@ -3,31 +3,151 @@ import numpy as np
 from data_transfer import *
 import constants as c
 import asyncio
-from kinematics import ik_calculate
+from kinematics import ik_calculate, specific_ik_calculate
 import kinematics
 import json
+import data_transfer
+import tkinter as tk
+from tkinter import ttk
+import asyncio
+import threading
 
 class RobotControl:
-    def __init__(self):
+    def __init__(self, root):
+        self.root = root
         self.fk_tab: ui_tabs.FKControl = None
         self.ik_tab: ui_tabs.IKControl = None
         self.motor_tab: ui_tabs.MotorControl = None
         self.params_tabs: ui_tabs.VEPRParameters = None
         self.setup_tab: ui_tabs.RobotSetup = None
+        self.automation: ui_tabs.RobotAutomation = None
         self.config = {}
         self.ik_config = {}
+        self.positions = {}
+        self.automations = {}
+        self.data_transfer_notification: ttk.Label= ttk.Label(root, text="DATA TRANSFER OFFLINE", foreground="#ff0000", font=("bold", 30))
+        self.run_automation = False
+        self.automation_loop = asyncio.new_event_loop()
+        self.automation_thread = None
+        self._automation_future = None
 
-    def set_tabs(self, fk: ui_tabs.FKControl, ik: ui_tabs.IKControl, motor: ui_tabs.MotorControl, params: ui_tabs.VEPRParameters, setup: ui_tabs.RobotSetup):
+    async def automation_runner(self):
+        step = 0
+        automations = self.automations["steps"]
+        print(automations)
+        while self.run_automation:
+            if automations[step][0] == "fk":
+                print("FK")
+                self.submit_motor_rotations(*automations[step][1:-1])
+            if automations[step][0] == "ik":
+                print("IK")
+                print(*automations[step][1:7])
+                self.submit_ik(*automations[step][1:7])
+
+            print("TOGETHER")
+            await asyncio.sleep(automations[step][7] / 1000)
+            print("YES")
+            step = (step + 1) % len(self.automations["steps"])
+            self.automation.next_step()
+
+    def toggle_data_transfer(self, override: bool = None):
+        if override is not None:
+            data_transfer.allow_send = override
+            if override:
+                self.data_transfer_notification.pack_forget()
+            else:
+                self.data_transfer_notification.pack(fill="x")
+            return
+        data_transfer.allow_send = not data_transfer.allow_send
+        if data_transfer.allow_send:
+            self.data_transfer_notification.pack_forget()
+        else:
+            self.data_transfer_notification.pack(fill="x")
+
+    def enable_automation(self, enable):
+        self.run_automation = enable
+        # Run the automation coroutine on a background asyncio event loop so
+        # it doesn't block the Tkinter mainloop.
+        if enable:
+            # create a fresh loop and background thread for each enable
+            self.automation_loop = asyncio.new_event_loop()
+
+            def _run_loop():
+                # set the event loop for this thread and run it
+                asyncio.set_event_loop(self.automation_loop)
+                try:
+                    self.automation_loop.run_forever()
+                finally:
+                    # cancel any pending tasks and close the loop cleanly
+                    try:
+                        pending = asyncio.all_tasks(self.automation_loop)
+                        for t in pending:
+                            t.cancel()
+                        self.automation_loop.run_until_complete(asyncio.gather(*pending, return_exceptions=True))
+                    except Exception:
+                        pass
+                    try:
+                        self.automation_loop.close()
+                    except Exception:
+                        pass
+
+            self.automation_thread = threading.Thread(target=_run_loop, daemon=True)
+            self.automation_thread.start()
+
+            # schedule the automation coroutine on the background loop
+            self._automation_future = asyncio.run_coroutine_threadsafe(self.automation_runner(), self.automation_loop)
+        else:
+            # signal the automation coroutine to stop
+            self.run_automation = False
+            # attempt to stop the loop and join the thread
+            try:
+                if self.automation_loop and self.automation_loop.is_running():
+                    # stop the loop from the loop thread
+                    self.automation_loop.call_soon_threadsafe(self.automation_loop.stop)
+            except Exception:
+                pass
+            try:
+                if self.automation_thread and self.automation_thread.is_alive():
+                    self.automation_thread.join(timeout=1)
+            except Exception:
+                pass
+
+    def set_tabs(self, fk: ui_tabs.FKControl, ik: ui_tabs.IKControl, motor: ui_tabs.MotorControl, params: ui_tabs.VEPRParameters, setup: ui_tabs.RobotSetup, automation: ui_tabs.RobotAutomation):
         self.fk_tab = fk
         self.ik_tab = ik
         self.motor_tab = motor
         self.params_tabs = params
         self.setup_tab = setup
+        self.automation = automation
 
-    def submit_motor_rotations(self):
+    def _run_coro_blocking(self, coro):
+        """Run an async coroutine and return its result.
+
+        If we're running inside the automation thread's event loop use
+        run_coroutine_threadsafe against that loop. Otherwise fall back to
+        asyncio.run so interactive calls from the Tk main thread still work.
+        """
+        try:
+            # If the automation loop is running and we're inside its thread,
+            # schedule the coroutine there and wait for the result.
+            if getattr(self, 'automation_loop', None) and getattr(self, 'automation_thread', None) and self.automation_loop.is_running() and threading.current_thread() == self.automation_thread:
+                fut = asyncio.run_coroutine_threadsafe(coro, self.automation_loop)
+                return fut.result()
+            # Otherwise run in this thread (synchronous blocking)
+            return asyncio.run(coro)
+        except Exception as e:
+            print(f"Error while running coroutine: {e}")
+            raise
+
+
+    def submit_motor_rotations(self, m1, m2, m3, m4, m5, m6):
+        print(m1, m2, m3, m4, m5, m6)
+        self.calculate_movement(np.asarray([m1, m2, m3, m4, m5, m6], dtype="float"))
+
+    def submit_tab_motor_rotations(self):
         self.calculate_movement(np.asarray([float(i.get()) for i in self.fk_tab.mot_pos]))
 
-    def submit_motor_rotations_zero(self):
+    def submit_tab_motor_rotations_zero(self):
         self.calculate_movement(np.zeros(6, dtype="float"))
 
     def calculate_movement(self, rotations):
@@ -45,13 +165,14 @@ class RobotControl:
 
         default_steps = self.params_tabs.tech_params.steps_per_full_revolution.get()
 
-        cur_pos = np.float64(np.asarray(asyncio.run(con_get([f'{mot}{c.icrpos}' for mot in range(6)]))))
+        cur_pos = np.float64(np.asarray(self._run_coro_blocking(con_get([f'{mot}{c.icrpos}' for mot in range(6)]))))
+        if len(cur_pos) == 0:
+            cur_pos = np.zeros(6)
 
         absolute_steps = np.abs(np.abs(rotations - cur_pos) * mot_reduc * mot_microsteps * default_steps)
         max_mot = np.argmax(absolute_steps)
 
         max_steps = absolute_steps[max_mot]
-
 
         if max_steps == 0:
             return
@@ -104,38 +225,27 @@ class RobotControl:
             send_data.append(f"{n}{c.iangle}{new_rotations[n]}")
         send_data.append(c.istart)
         # print(send_data)
-        asyncio.run(con(send_data))
+        self._run_coro_blocking(con(send_data))
 
-    def submit_ik(self):
-        print([self.ik_tab.x_pos.get(), self.ik_tab.y_pos.get(), self.ik_tab.z_pos.get(), self.ik_tab.x_rot.get(), self.ik_tab.y_rot.get(), self.ik_tab.z_rot.get()])
+    def submit_ik(self, x, y, z, psi, theta, phi):
+        print(x, y, z, psi, theta, phi, "Hey")
+        ik_results = specific_ik_calculate(x, y, z, psi, theta, phi)
+        self.calculate_movement(ik_results)
 
-        ik_results = ik_calculate(self.ik_tab.x_pos.get(), self.ik_tab.y_pos.get(), self.ik_tab.z_pos.get(), self.ik_tab.x_rot.get(), self.ik_tab.y_rot.get(), self.ik_tab.z_rot.get())
+    def submit_tab_ik(self):
+        ik_results = specific_ik_calculate(self.ik_tab.x_pos.get(), self.ik_tab.y_pos.get(), self.ik_tab.z_pos.get(), self.ik_tab.x_rot.get(), self.ik_tab.y_rot.get(), self.ik_tab.z_rot.get())
+        self.calculate_movement(ik_results)
 
-        o3 = np.atan2(kinematics.l3.y, kinematics.l3.x)
-        ik_results[1] -= np.pi / 2
-        ik_results[2] -= -np.pi / 2 + o3
 
-        ik_results = np.asarray(ik_results)
-        self.calculate_movement(np.round(np.rad2deg(ik_results), 6))
-
-    def submit_ik_default(self):
-        print(kinematics.default_configuration)
-        ik_results = ik_calculate(*kinematics.default_configuration)
-
-        o3 = np.atan2(kinematics.l3.y, kinematics.l3.x)
-        ik_results[1] -= np.pi / 2
-        ik_results[2] -= -np.pi / 2 + o3
-
-        ik_results = np.round(np.rad2deg(np.asarray(ik_results)), 6)
-
-        print(ik_results)
+    def submit_tab_ik_default(self):
+        ik_results = specific_ik_calculate(*kinematics.default_configuration)
         self.calculate_movement(ik_results)
 
     def enable_mot(self):
         data = []
         for i in range(6):
             data.append(f'{i}{c.ienmot}{"1" if self.motor_tab.enable_mots[i].get() else "0"}')
-        asyncio.run(con(data))
+        self._run_coro_blocking(con(data))
 
     def init_tmcs(self):
         microsteps = [int(i.get()) for i in self.params_tabs.tech_params.microsteps]
@@ -148,13 +258,13 @@ class RobotControl:
             data.append(f'{mot}{c.i_hold}{ihold[mot]}')
             data.append(f'{mot}{c.itmcen}')
         data.append(f'{c.igener}{c.idefst}{self.params_tabs.tech_params.steps_per_full_revolution}')
-        asyncio.run(con(data))
+        self._run_coro_blocking(con(data))
 
     def submit_params(self):
         pass
 
     def set_motor_position(self, mot):
-        asyncio.run(con([f'{mot}{c.istpos}{self.motor_tab.emergency_motor_position[mot]}']))
+        self._run_coro_blocking(con([f'{mot}{c.istpos}{self.motor_tab.emergency_motor_position[mot]}']))
 
     def load_config(self):
         with open('../data/user_config.json') as f:
@@ -248,3 +358,26 @@ class RobotControl:
             json.dump(config, f)
             f.close()
         print('Successfully saved setup to \'ik_config.json\'')
+
+    def load_positions(self):
+        with open('../data/positions.json') as f:
+            self.positions = json.load(f)
+            f.close()
+
+    def save_positions(self):
+        with open('../data/positions.json') as f:
+            self.positions = json.load(f)
+            f.close()
+
+    def load_automation(self):
+        with open('../data/automations.json') as f:
+            self.automations = json.load(f)
+            f.close()
+
+        print(self.automations["steps"])
+        self.automation.load_steps(self.automations["steps"])
+
+    def save_automation(self):
+        with open('../data/automations.json') as f:
+            self.automations = json.load(f)
+            f.close()
